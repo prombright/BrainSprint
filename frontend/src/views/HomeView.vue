@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import AvatarBadge from '../components/AvatarBadge.vue'
 import BrandLogo from '../components/BrandLogo.vue'
 import LeagueCard from '../components/LeagueCard.vue'
 import LiveNow from '../components/LiveNow.vue'
-import ParentGate from '../components/ParentGate.vue'
 import PowerPill from '../components/PowerPill.vue'
-import { BADGES } from '../game/badges'
 import { DAILY_GOAL } from '../game/progress'
 import { bossThisWeek } from '../game/boss'
 import { FREE_SPRINTS_PER_DAY, PAYWALL_ENABLED } from '../game/scoring'
@@ -18,10 +16,11 @@ import { usePlayer } from '../stores/player'
 
 const player = usePlayer()
 const router = useRouter()
-const gateOpen = ref(false)
 const boss = bossThisWeek()
 // a subject opens for this class once it has questions (bank subjects arrive from the server)
 const available = (subject: Subject) => (bankVersion.value, !!player.profile && hasQuestions(subject, player.profile.grade))
+// only subjects a child can play are shown: a locked "coming soon" tile is just noise to a child
+const playable = computed(() => SUBJECTS.filter((s) => available(s.id)))
 
 // the first subject this class has questions for (Maths for everyone today)
 const weak = computed(() => (player.profile ? player.weakTopics('maths', player.profile.grade) : []))
@@ -113,7 +112,7 @@ onMounted(() => {
         </button>
 
         <!-- adaptive practice -->
-        <button class="btn-chunky flex items-center gap-3 bg-white p-4 text-left hover:bg-cream" @click="router.push('/progress')">
+        <button class="btn-chunky hidden items-center gap-3 bg-white p-4 text-left hover:bg-cream md:flex" @click="router.push('/progress')">
           <span class="text-4xl">🎯</span>
           <span class="min-w-0 flex-1">
             <span class="block text-lg">My weak spots</span>
@@ -125,47 +124,51 @@ onMounted(() => {
           <span class="text-2xl text-ink/40">›</span>
         </button>
 
-        <div class="lg:hidden"><LeagueCard /></div>
+        <!-- phones have the League tab; tablets show the card here -->
+        <div class="hidden md:block lg:hidden"><LeagueCard /></div>
 
         <section>
-          <h2 class="mb-3 text-2xl font-bold">Choose a subject</h2>
+          <h2 class="mb-3 text-2xl font-bold">Let's play!</h2>
           <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
             <button
-              v-for="s in SUBJECTS"
+              v-for="s in playable"
               :key="s.id"
               class="btn-chunky relative flex aspect-[4/3] flex-col items-center justify-center gap-1 text-white hover:brightness-105 md:aspect-square"
               :class="TILE_COLOURS[s.id]"
-              :disabled="!available(s.id)"
               @click="router.push(`/subject/${s.id}`)"
             >
-              <span class="text-5xl">{{ s.emoji }}</span>
+              <span class="text-6xl md:text-5xl">{{ s.emoji }}</span>
               <span class="text-2xl">{{ s.label }}</span>
-              <span v-if="!available(s.id)" class="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-xs text-ink">Coming soon</span>
             </button>
           </div>
         </section>
 
-        <!-- weekly boss, competitions, friends, school -->
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
-          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-ink to-berry py-3 text-white hover:brightness-110 md:py-5" @click="router.push('/boss')">
-            <span class="animate-float text-4xl md:text-5xl">{{ boss.emoji }}</span>
-            <span class="text-base leading-tight md:text-lg">Boss Battle</span>
+        <!-- weekly boss, competitions, practice (phones) · friends and school (bigger screens) -->
+        <div class="grid grid-cols-3 gap-3 md:grid-cols-4 md:gap-4">
+          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-ink to-berry py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/boss')">
+            <span class="animate-float text-5xl">{{ boss.emoji }}</span>
+            <span class="text-lg leading-tight md:text-lg">Boss Battle</span>
           </button>
-          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-3 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
-            <span class="text-4xl md:text-5xl">⚔️</span>
-            <span class="text-base leading-tight md:text-lg">Compete</span>
+          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
+            <span class="text-5xl">⚔️</span>
+            <span class="text-lg leading-tight md:text-lg">Compete</span>
           </button>
-          <button class="btn-chunky flex flex-col items-center gap-1 bg-white py-3 hover:bg-cream md:py-5" @click="router.push('/friends')">
-            <span class="text-4xl md:text-5xl">👫</span>
-            <span class="text-base leading-tight md:text-lg">Friends</span>
+          <button class="btn-chunky relative flex flex-col items-center gap-1 bg-white py-5 hover:bg-cream md:hidden" @click="router.push('/progress')">
+            <span class="text-5xl">🎯</span>
+            <span class="text-lg leading-tight">Practise</span>
+            <span v-if="weak.length || due" class="absolute top-1.5 right-1.5 grid min-w-6 place-items-center rounded-full bg-cherry px-1.5 text-sm font-bold text-white">{{ weak.length + due }}</span>
           </button>
-          <button class="btn-chunky flex flex-col items-center gap-1 bg-white py-3 hover:bg-cream md:py-5" @click="router.push('/school')">
-            <span class="text-4xl md:text-5xl">🏫</span>
-            <span class="text-base leading-tight md:text-lg">My School</span>
+          <button class="btn-chunky hidden flex-col items-center gap-1 bg-white py-5 hover:bg-cream md:flex md:py-5" @click="router.push('/friends')">
+            <span class="text-5xl">👫</span>
+            <span class="text-lg leading-tight md:text-lg">Friends</span>
+          </button>
+          <button class="btn-chunky hidden flex-col items-center gap-1 bg-white py-5 hover:bg-cream md:flex md:py-5" @click="router.push('/school')">
+            <span class="text-5xl">🏫</span>
+            <span class="text-lg leading-tight md:text-lg">My School</span>
           </button>
         </div>
 
-        <div class="lg:hidden"><LiveNow /></div>
+        <div class="hidden md:block lg:hidden"><LiveNow /></div>
       </div>
 
       <!-- side column on tablets and laptops -->
@@ -175,15 +178,5 @@ onMounted(() => {
       </aside>
     </div>
 
-    <!-- phones only: the sidebar has these on bigger screens -->
-    <div class="mt-auto grid gap-3 md:hidden" :class="PAYWALL_ENABLED ? 'grid-cols-4' : 'grid-cols-3'">
-      <button class="btn-chunky bg-white py-3 text-lg" @click="router.push('/badges')">🏅 {{ player.state.badges.length }}/{{ BADGES.length }}</button>
-      <button class="btn-chunky bg-white py-3 text-lg" @click="gateOpen = true">👨‍👩‍👧 Adults</button>
-      <button class="btn-chunky bg-white py-3 text-lg" @click="router.push('/settings')">⚙️ Settings</button>
-      <button v-if="PAYWALL_ENABLED" class="btn-chunky bg-white py-3 text-lg" @click="router.push('/pass')">🎟️ Pass</button>
-    </div>
-    <button class="text-sm text-ink/50 underline" @click="router.push('/welcome')">Change name or class</button>
-
-    <ParentGate v-if="gateOpen" @passed="router.push('/parent')" @cancel="gateOpen = false" />
   </main>
 </template>

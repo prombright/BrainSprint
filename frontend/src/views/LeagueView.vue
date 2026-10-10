@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from 'vue'
 import AvatarBadge from '../components/AvatarBadge.vue'
+import LiveNow from '../components/LiveNow.vue'
 import PlayerCardModal from '../components/PlayerCardModal.vue'
 import TopBar from '../components/TopBar.vue'
 import { tierBadge, timeLeft } from '../lib/league'
@@ -82,5 +83,6 @@ function zone(rank: number) {
     </template>
 
     <PlayerCardModal v-if="openId" :player-id="openId" @close="openId = null" />
+    <div class="mt-4 lg:hidden"><LiveNow /></div>
   </main>
 </template>
