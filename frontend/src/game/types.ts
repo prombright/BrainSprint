@@ -64,9 +64,10 @@ export const LEVELS: { id: Level; label: string; emoji: string; seconds: number 
   { id: 'pro', label: 'Pro', emoji: '🏆', seconds: 10 },
 ]
 
-export const SUBJECTS: { id: Subject; label: string; emoji: string; ready: boolean }[] = [
-  { id: 'maths', label: 'Maths', emoji: '🔢', ready: true },
-  { id: 'english', label: 'English', emoji: '🔤', ready: true },
-  { id: 'science', label: 'Science', emoji: '🔬', ready: false },
-  { id: 'sst', label: 'SST', emoji: '🌍', ready: false },
+// whether a class can play a subject comes from hasQuestions() (generated, or approved bank questions)
+export const SUBJECTS: { id: Subject; label: string; emoji: string }[] = [
+  { id: 'maths', label: 'Maths', emoji: '🔢' },
+  { id: 'english', label: 'English', emoji: '🔤' },
+  { id: 'science', label: 'Science', emoji: '🔬' },
+  { id: 'sst', label: 'SST', emoji: '🌍' },
 ]

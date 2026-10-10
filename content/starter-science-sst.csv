@@ -1,0 +1,41 @@
+subject,grade,level,topic,prompt,choice1,choice2,choice3,choice4,answer,steps
+science,P3,simple,plants,Which part of a plant takes in water from the soil?,roots,leaves,flowers,fruits,roots,Roots grow under the ground. | They take in water and mineral salts from the soil.
+science,P3,simple,animals,Which of these animals lays eggs?,hen,cow,goat,dog,hen,"Birds lay eggs. | A hen is a bird; cows, goats and dogs give birth to young ones."
+science,P3,medium,insects,How many legs does an insect have?,6,8,4,2,6,All insects have three pairs of legs. | 3 × 2 = 6 legs.
+science,P3,simple,sense organs,Which sense organ do we use to smell?,nose,eyes,ears,tongue,nose,"We smell with the nose. | Eyes see, ears hear, the tongue tastes."
+science,P3,simple,light,Which of these gives us light?,the sun,a stone,a book,a chair,the sun,"The sun is a natural source of light. | Stones, books and chairs do not give light."
+science,P4,simple,states of matter,Water changes into ice when it is…,cooled,heated,boiled,stirred,cooled,Cooling water a lot makes it freeze. | Frozen water is ice.
+science,P4,medium,plants,What do green plants need from the sky to make their own food?,sunlight,darkness,sand,salt,sunlight,"Green plants make food in their leaves. | They need sunlight, water and carbon dioxide."
+science,P4,medium,diseases,Which disease is spread by the female Anopheles mosquito?,malaria,cholera,measles,polio,malaria,The female Anopheles mosquito carries malaria germs. | Sleeping under a treated mosquito net helps prevent malaria.
+science,P4,simple,human body,Which part of the body pumps blood?,heart,lungs,liver,kidney,heart,The heart is a muscle that pumps blood around the body.
+science,P4,medium,food and nutrition,Which food group helps the body to grow and repair itself?,proteins,carbohydrates,fats,water,proteins,"Proteins are body-building foods. | Examples: beans, fish, eggs, milk and meat."
+science,P5,medium,classification,Which of these is a mammal?,bat,frog,lizard,chicken,bat,Mammals have hair or fur and feed their young on milk. | A bat is a mammal that can fly.
+science,P5,simple,states of matter,Boiling water changes into…,steam,ice,sand,oil,steam,Heating water until it boils turns it into a gas. | That gas is steam (water vapour).
+science,P5,medium,teeth,Which teeth are used for tearing food?,canines,incisors,molars,premolars,canines,"Incisors cut, canines tear, premolars and molars grind."
+science,P5,simple,magnetism,A magnet attracts…,iron nails,wood,paper,plastic,iron nails,"Magnets attract things made of iron and steel. | Wood, paper and plastic are not attracted."
+science,P5,hard,breathing,Which gas does the body produce and breathe out as a waste?,carbon dioxide,oxygen,hydrogen,helium,carbon dioxide,We breathe in air with oxygen. | The body makes carbon dioxide as waste and we breathe it out.
+science,P6,medium,excretion,Which organ removes urea from the blood?,kidney,heart,stomach,lungs,kidney,The kidneys clean the blood. | They remove urea and extra water as urine.
+science,P6,hard,flowering plants,Which part of a flower becomes the fruit?,ovary,petal,sepal,anther,ovary,After fertilisation the ovary grows into the fruit. | The ovules inside become the seeds.
+science,P6,hard,plants,What is the loss of water from plant leaves called?,transpiration,photosynthesis,germination,pollination,transpiration,Plants lose water vapour through tiny holes in their leaves called stomata. | This is transpiration.
+science,P6,medium,machines,A see-saw is an example of which simple machine?,lever,pulley,inclined plane,wheel and axle,lever,A lever is a bar that turns on a pivot (fulcrum). | A see-saw turns on its middle: a lever.
+science,P7,medium,sound,Sound travels fastest through…,solids,liquids,gases,a vacuum,solids,"Particles in solids are closest together, so sound passes fastest. | Sound cannot travel through a vacuum at all."
+science,P7,medium,circulatory system,Which blood vessels carry blood away from the heart?,arteries,veins,capillaries,nerves,arteries,Arteries carry blood away from the heart. | Veins bring blood back to the heart.
+science,P7,hard,food and nutrition,Which vitamin does the skin make when it is in sunlight?,vitamin D,vitamin C,vitamin A,vitamin K,vitamin D,Sunlight on the skin helps the body make vitamin D. | Vitamin D keeps bones and teeth strong.
+science,P7,medium,flowering plants,What is it called when a seed starts to grow?,germination,pollination,transpiration,fertilisation,germination,"A seed needs water, air and warmth to germinate."
+sst,P3,simple,our country,What is the capital city of Uganda?,Kampala,Entebbe,Jinja,Gulu,Kampala,Kampala is the capital city of Uganda.
+sst,P3,simple,national symbols,Which colours are on the flag of Uganda?,"black, yellow and red","green, white and blue","red, white and blue","black, green and white","black, yellow and red","Uganda's flag has black, yellow and red stripes, with a crested crane in the middle."
+sst,P3,simple,national symbols,Which bird is on Uganda's flag?,crested crane,eagle,ostrich,hen,crested crane,The crested crane is Uganda's national bird.
+sst,P4,simple,history,On which date does Uganda celebrate Independence Day?,9th October,1st May,26th January,25th December,9th October,Uganda became independent on 9th October 1962.
+sst,P4,medium,history,In which year did Uganda get independence?,1962,1972,1952,1986,1962,Uganda got independence from Britain on 9th October 1962.
+sst,P4,medium,physical features,Which is the largest lake in Africa?,Lake Victoria,Lake Kyoga,Lake Albert,Lake Edward,Lake Victoria,Lake Victoria is the largest lake in Africa. | Uganda shares it with Kenya and Tanzania.
+sst,P4,medium,physical features,At which town does the River Nile flow out of Lake Victoria?,Jinja,Entebbe,Masaka,Mbale,Jinja,The source of the Nile is at Jinja.
+sst,P5,medium,physical features,Which is the highest mountain in Uganda?,Mount Rwenzori,Mount Elgon,Mount Moroto,Mount Muhabura,Mount Rwenzori,The highest point of the Rwenzori is Margherita Peak. | It is the highest place in Uganda.
+sst,P5,simple,maps,Which direction is opposite to north?,south,east,west,north-east,south,North and south are opposite directions. | East and west are opposite each other.
+sst,P5,medium,uganda and neighbours,Which country borders Uganda to the east?,Kenya,Rwanda,DR Congo,South Sudan,Kenya,"Kenya is to the east of Uganda. | South Sudan is to the north, DR Congo to the west, Rwanda and Tanzania to the south."
+sst,P5,medium,uganda and neighbours,Which country borders Uganda to the north?,South Sudan,Kenya,Tanzania,Rwanda,South Sudan,South Sudan is to the north of Uganda.
+sst,P6,medium,national symbols,What is the name of Uganda's national anthem?,"Oh Uganda, Land of Beauty",God Bless Africa,Uganda Forever,Land of Our Fathers,"Oh Uganda, Land of Beauty","Uganda's national anthem is ""Oh Uganda, Land of Beauty""."
+sst,P6,medium,maps,Which important line of latitude passes through Uganda?,the Equator,the Tropic of Cancer,the Tropic of Capricorn,the Prime Meridian,the Equator,The Equator is the line of latitude 0°. | It passes through Uganda.
+sst,P6,hard,government,Which arm of government makes laws in Uganda?,Parliament,the Judiciary,the Police,the Army,Parliament,Parliament (the legislature) makes laws. | The Judiciary interprets laws in courts; the Executive carries them out.
+sst,P7,medium,east africa,Which ocean lies to the east of East Africa?,Indian Ocean,Atlantic Ocean,Pacific Ocean,Arctic Ocean,Indian Ocean,"The Indian Ocean is on the east coast of Africa, for example at Mombasa and Dar es Salaam."
+sst,P7,hard,physical features,The Kazinga Channel joins which two lakes?,Lake George and Lake Edward,Lake Victoria and Lake Kyoga,Lake Albert and Lake Edward,Lake Kyoga and Lake Albert,Lake George and Lake Edward,The Kazinga Channel links Lake George to Lake Edward in western Uganda.
+sst,P7,hard,history,Who was Uganda's first President?,Sir Edward Mutesa II,Milton Obote,Idi Amin,Yoweri Museveni,Sir Edward Mutesa II,In 1963 Sir Edward Mutesa II became Uganda's first President. | Milton Obote was the first Prime Minister.

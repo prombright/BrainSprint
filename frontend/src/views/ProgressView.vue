@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import TopBar from '../components/TopBar.vue'
 import { MIN_ATTEMPTS, type TopicLevel } from '../game/practice'
 import { hasQuestions, topicsOf } from '../game/sprint'
+import { bankVersion } from '../lib/bank'
 import { SUBJECTS, type Subject } from '../game/types'
 import { usePlayer } from '../stores/player'
 
@@ -11,7 +12,7 @@ const player = usePlayer()
 const router = useRouter()
 const grade = computed(() => player.profile!.grade)
 
-const subjects = computed(() => SUBJECTS.filter((s) => s.ready && hasQuestions(s.id, grade.value)))
+const subjects = computed(() => SUBJECTS.filter((s) => (bankVersion.value, hasQuestions(s.id, grade.value))))
 const subject = ref<Subject>(subjects.value[0]?.id ?? 'maths')
 
 const topics = computed(() => player.topicsFor(subject.value, grade.value))

@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { AdminError, adminCall, session, type AdminPlayer, type AdminSchool, type FeedEvent, type Lead, type Overview } from './api'
+import { AdminError, adminCall, session, type AdminPlayer, type AdminSchool, type BankItem, type BankList, type FeedEvent, type Lead, type Overview } from './api'
+import QuestionEditor from '../shared/QuestionEditor.vue'
+import { emptyDraft, fromSaved, toPayload, type QuestionDraft } from '../shared/questionDraft'
+import { csvToQuestions } from '../shared/csv'
+import { GRADES, SUBJECTS } from '../game/types'
 
-type Tab = 'overview' | 'schools' | 'players' | 'leads' | 'feed'
+type Tab = 'overview' | 'questions' | 'schools' | 'players' | 'leads' | 'feed'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'overview', label: '📊 Overview' },
+  { id: 'questions', label: '❓ Questions' },
   { id: 'schools', label: '🏫 Schools' },
   { id: 'players', label: '🧒 Players' },
   { id: 'leads', label: '📨 Enquiries' },
@@ -64,9 +69,81 @@ async function load() {
   if (tab.value === 'schools') schools.value = (await run(() => adminCall<{ schools: AdminSchool[] }>('GET', `/admin/schools?status=${schoolStatus.value}`)))?.schools ?? []
   if (tab.value === 'players') players.value = (await run(() => adminCall<{ players: AdminPlayer[] }>('GET', `/admin/players?q=${encodeURIComponent(playerSearch.value)}`)))?.players ?? []
   if (tab.value === 'leads') leads.value = (await run(() => adminCall<{ leads: Lead[] }>('GET', '/admin/leads')))?.leads ?? []
+  if (tab.value === 'questions') await loadBank()
   if (tab.value === 'feed') feed.value = (await run(() => adminCall<{ events: FeedEvent[] }>('GET', '/admin/feed')))?.events ?? []
 }
 watch([tab, schoolStatus], load)
+
+// ---------- question bank ----------
+const bank = ref<BankList | null>(null)
+const bankFilter = ref({ status: 'draft', subject: '', grade: '', q: '', teacher: false })
+const editing = ref<{ id: number | null; draft: QuestionDraft } | null>(null)
+const importResult = ref<{ created: number; skipped: number; errors: { row: number; error: string }[] } | null>(null)
+
+async function loadBank() {
+  const f = bankFilter.value
+  const qs = new URLSearchParams({ status: f.status, subject: f.subject, grade: f.grade, q: f.q, ...(f.teacher ? { teacher: '1' } : {}) })
+  bank.value = (await run(() => adminCall<BankList>('GET', `/admin/questions?${qs}`))) ?? bank.value
+}
+let bankTimer: number | undefined
+watch(
+  bankFilter,
+  () => {
+    clearTimeout(bankTimer)
+    bankTimer = window.setTimeout(loadBank, 250)
+  },
+  { deep: true },
+)
+
+async function saveQuestion() {
+  if (!editing.value) return
+  busy.value = true
+  const r = await run(() => adminCall('POST', editing.value!.id ? `/admin/questions/${editing.value!.id}` : '/admin/questions', toPayload(editing.value!.draft)))
+  busy.value = false
+  if (r) {
+    editing.value = null
+    loadBank()
+  }
+}
+
+async function setQuestionStatus(item: BankItem, status: BankItem['status'], note?: string) {
+  await run(() => adminCall('POST', `/admin/questions/${item.id}`, { status, review_note: note ?? '' }))
+  loadBank()
+}
+
+function sendBack(item: BankItem) {
+  const note = prompt('What should be changed? (the teacher sees this)', item.review_note ?? '')
+  if (note !== null) setQuestionStatus(item, 'draft', note)
+}
+
+async function approveShown() {
+  const drafts = bank.value?.questions.filter((q) => q.status === 'draft') ?? []
+  if (!drafts.length || !confirm(`Approve all ${drafts.length} drafts shown? Only do this after checking every one.`)) return
+  for (const q of drafts) await run(() => adminCall('POST', `/admin/questions/${q.id}`, { status: 'approved', review_note: '' }))
+  loadBank()
+}
+
+async function importCsv(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  importResult.value = null
+  try {
+    const questions = csvToQuestions(await file.text())
+    busy.value = true
+    importResult.value = (await run(() => adminCall<{ created: number; skipped: number; errors: { row: number; error: string }[] }>('POST', '/admin/questions/import', { file: file.name, questions }))) ?? null
+    bankFilter.value.status = 'draft'
+    loadBank()
+  } catch (err) {
+    error.value = (err as Error).message
+  } finally {
+    busy.value = false
+  }
+}
+
+const subjectName = (s: string) => SUBJECTS.find((x) => x.id === s)?.label ?? s
+const coverageCount = (subject: string, grade: string) => bank.value?.coverage.find((c) => c.subject === subject && c.grade === grade)?.count ?? 0
 let searchTimer: number | undefined
 watch(playerSearch, () => {
   clearTimeout(searchTimer)
@@ -294,6 +371,80 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
           <a v-if="l.email" :href="`mailto:${l.email}`" class="text-ocean">✉️ {{ l.email }}</a>
         </p>
       </article>
+    </section>
+
+    <!-- question bank -->
+    <section v-if="tab === 'questions'" class="space-y-4">
+      <div v-if="editing" class="rounded-2xl bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-xl font-bold">{{ editing.id ? 'Edit question' : 'New question' }}</h2>
+        <QuestionEditor v-model="editing.draft" :busy="busy" :save-label="editing.id ? 'Save changes' : 'Save as draft'" @save="saveQuestion" @cancel="editing = null" />
+      </div>
+
+      <template v-else>
+        <div class="flex flex-wrap items-center gap-2">
+          <button v-for="s in (['draft', 'approved', 'retired'] as const)" :key="s" class="rounded-xl px-3 py-1.5 font-semibold capitalize" :class="bankFilter.status === s ? 'bg-ink text-white' : 'bg-white'" @click="bankFilter.status = s">
+            {{ s === 'draft' ? 'To review' : s }} <span class="opacity-60">{{ bank?.counts[s] ?? '' }}</span>
+          </button>
+          <select v-model="bankFilter.subject" class="rounded-xl border-2 border-ink/10 bg-white px-2 py-1.5"><option value="">All subjects</option><option v-for="s in SUBJECTS" :key="s.id" :value="s.id">{{ s.label }}</option></select>
+          <select v-model="bankFilter.grade" class="rounded-xl border-2 border-ink/10 bg-white px-2 py-1.5"><option value="">All classes</option><option v-for="g in GRADES" :key="g.id" :value="g.id">{{ g.label }}</option></select>
+          <label class="flex items-center gap-1 text-sm font-semibold"><input v-model="bankFilter.teacher" type="checkbox" class="accent-ocean" /> From teachers</label>
+          <input v-model="bankFilter.q" placeholder="Search" class="min-w-32 flex-1 rounded-xl border-2 border-ink/10 bg-white px-3 py-1.5" />
+          <button class="rounded-xl bg-ocean px-3 py-1.5 font-semibold text-white" @click="editing = { id: null, draft: emptyDraft(bankFilter.grade || 'P5', bankFilter.subject || 'science') }">+ New question</button>
+          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">⬆ Import CSV<input type="file" accept=".csv,text/csv" class="sr-only" @change="importCsv" /></label>
+        </div>
+
+        <div v-if="importResult" class="rounded-2xl bg-white p-4 shadow-sm">
+          <p class="font-semibold">Import: {{ importResult.created }} added as drafts{{ importResult.skipped ? `, ${importResult.skipped} already in the bank` : '' }}{{ importResult.errors.length ? `, ${importResult.errors.length} with problems` : '' }}.</p>
+          <ul v-if="importResult.errors.length" class="mt-1 text-sm text-cherry">
+            <li v-for="e in importResult.errors" :key="e.row">Row {{ e.row }}: {{ e.error }}</li>
+          </ul>
+          <p class="mt-1 text-sm text-ink/60">Spreadsheet format: see <code>content/README.md</code>.</p>
+        </div>
+
+        <!-- approved questions per subject and class: a subject opens for a class at 4 -->
+        <details class="rounded-2xl bg-white p-4 shadow-sm">
+          <summary class="font-semibold">Approved questions per class (a subject opens for a class at 4; full sprints need 10+)</summary>
+          <table class="mt-2 w-full text-center text-sm">
+            <thead><tr class="text-ink/60"><th class="text-left">Subject</th><th v-for="g in GRADES" :key="g.id">{{ g.id === 'TOP' ? 'Top' : g.id }}</th></tr></thead>
+            <tbody>
+              <tr v-for="s in SUBJECTS.filter((x) => x.id !== 'maths')" :key="s.id" class="border-t border-ink/5">
+                <td class="py-1 text-left font-semibold">{{ s.label }}</td>
+                <td v-for="g in GRADES" :key="g.id" class="tabular-nums" :class="coverageCount(s.id, g.id) >= 10 ? 'font-bold text-leaf' : coverageCount(s.id, g.id) >= 4 ? 'font-semibold text-sprint-dark' : 'text-ink/30'">
+                  {{ coverageCount(s.id, g.id) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="mt-1 text-xs text-ink/50">English Top Class–P3 is generated in the app; bank questions for those classes are not used.</p>
+        </details>
+
+        <div v-if="bankFilter.status === 'draft' && bank?.questions.length" class="flex justify-end">
+          <button class="text-sm font-semibold text-leaf underline" @click="approveShown">Approve all {{ bank.questions.length }} shown…</button>
+        </div>
+
+        <p v-if="bank && !bank.questions.length" class="rounded-2xl bg-white p-6 text-center text-ink/60">No questions here.</p>
+        <article v-for="item in bank?.questions" :key="item.id" class="rounded-2xl bg-white p-4 shadow-sm">
+          <div class="flex flex-wrap items-start justify-between gap-2">
+            <p class="text-sm text-ink/60">
+              <b class="text-ink">{{ subjectName(item.subject) }} {{ item.grade }}</b> · {{ item.level }} · {{ item.topic }}
+              <span v-if="item.teacher"> · suggested by <b>{{ item.teacher }}</b></span>
+              <span v-else-if="item.source"> · {{ item.source }}</span>
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editing = { id: item.id, draft: fromSaved(item) }">✏️ Edit</button>
+              <button v-if="item.status !== 'approved'" class="rounded-lg bg-leaf px-2 py-1 text-sm font-semibold text-white" @click="setQuestionStatus(item, 'approved')">✓ Approve</button>
+              <button v-if="item.status === 'draft' && item.teacher" class="rounded-lg bg-sun/50 px-2 py-1 text-sm font-semibold" @click="sendBack(item)">↩ Send back</button>
+              <button v-if="item.status !== 'retired'" class="rounded-lg bg-cherry/10 px-2 py-1 text-sm font-semibold text-cherry" @click="setQuestionStatus(item, 'retired')">Retire</button>
+            </div>
+          </div>
+          <p class="mt-1 text-lg font-semibold">{{ item.prompt }}</p>
+          <div class="mt-1 flex flex-wrap gap-2 text-sm">
+            <span v-for="c in item.choices" :key="c" class="rounded-lg px-2 py-0.5" :class="c === item.answer ? 'bg-leaf/15 font-semibold text-leaf' : 'bg-ink/5'">{{ c === item.answer ? '✓ ' : '' }}{{ c }}</span>
+          </div>
+          <p v-if="item.steps.length" class="mt-1 text-sm text-ink/60">💡 {{ item.steps.join(' · ') }}</p>
+          <p v-if="item.review_note" class="mt-1 text-sm text-sprint-dark">Note: {{ item.review_note }}</p>
+        </article>
+      </template>
     </section>
 
     <!-- feed moderation -->

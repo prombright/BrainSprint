@@ -11,14 +11,17 @@ import { BADGES } from '../game/badges'
 import { DAILY_GOAL } from '../game/progress'
 import { bossThisWeek } from '../game/boss'
 import { FREE_SPRINTS_PER_DAY, PAYWALL_ENABLED } from '../game/scoring'
-import { SUBJECTS } from '../game/types'
+import { SUBJECTS, type Subject } from '../game/types'
 import { hasQuestions } from '../game/sprint'
+import { bankVersion } from '../lib/bank'
 import { usePlayer } from '../stores/player'
 
 const player = usePlayer()
 const router = useRouter()
 const gateOpen = ref(false)
 const boss = bossThisWeek()
+// a subject opens for this class once it has questions (bank subjects arrive from the server)
+const available = (subject: Subject) => (bankVersion.value, !!player.profile && hasQuestions(subject, player.profile.grade))
 
 // the first subject this class has questions for (Maths for everyone today)
 const weak = computed(() => (player.profile ? player.weakTopics('maths', player.profile.grade) : []))
@@ -132,12 +135,12 @@ onMounted(() => {
               :key="s.id"
               class="btn-chunky relative flex aspect-[4/3] flex-col items-center justify-center gap-1 text-white hover:brightness-105 md:aspect-square"
               :class="TILE_COLOURS[s.id]"
-              :disabled="!s.ready"
+              :disabled="!available(s.id)"
               @click="router.push(`/subject/${s.id}`)"
             >
               <span class="text-5xl">{{ s.emoji }}</span>
               <span class="text-2xl">{{ s.label }}</span>
-              <span v-if="!s.ready" class="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-xs text-ink">Coming soon</span>
+              <span v-if="!available(s.id)" class="absolute top-2 right-2 rounded-full bg-white/90 px-2 py-0.5 text-xs text-ink">Coming soon</span>
             </button>
           </div>
         </section>

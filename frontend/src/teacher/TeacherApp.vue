@@ -2,7 +2,10 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { GRADES, LEVELS, SUBJECTS, type Grade, type Subject } from '../game/types'
 import { hasQuestions, topicsOf } from '../game/sprint'
+import { bankVersion, loadSavedBanks, refreshBanks } from '../lib/bank'
 import { TeacherError, session, teacherCall, type ClassDetail, type ClassSummary, type Teacher } from './api'
+import QuestionEditor from '../shared/QuestionEditor.vue'
+import { emptyDraft, toPayload, type QuestionDraft } from '../shared/questionDraft'
 
 const signedIn = ref(!!session.get())
 const teacher = ref<Teacher | null>(null)
@@ -75,6 +78,11 @@ async function createClass() {
 watch(openId, async (id) => {
   detail.value = null
   if (id) detail.value = (await run(() => teacherCall<ClassDetail>('GET', `/teacher/classes/${id}`))) ?? null
+  // so homework can be set on bank subjects (Science, SST …) for this class
+  if (detail.value) {
+    loadSavedBanks(detail.value.class.grade as Grade)
+    refreshBanks(detail.value.class.grade as Grade)
+  }
 })
 
 async function refresh() {
@@ -101,8 +109,8 @@ async function removePupil(id: number, name: string) {
 const tomorrow = () => new Date(Date.now() + 864e5).toISOString().slice(0, 10)
 const hw = ref({ title: '', subject: 'maths' as Subject, kind: 'topic' as 'topic' | 'level', topic: '', level: 'medium', due_on: tomorrow() })
 const classGrade = computed(() => (detail.value?.class.grade ?? 'P5') as Grade)
-const hwSubjects = computed(() => SUBJECTS.filter((s) => s.ready && hasQuestions(s.id, classGrade.value)))
-const hwTopics = computed(() => topicsOf(hw.value.subject, classGrade.value, LEVELS.map((l) => l.id)))
+const hwSubjects = computed(() => SUBJECTS.filter((s) => (bankVersion.value, hasQuestions(s.id, classGrade.value))))
+const hwTopics = computed(() => (bankVersion.value, topicsOf(hw.value.subject, classGrade.value, LEVELS.map((l) => l.id))))
 watch(
   hwTopics,
   (t) => {
@@ -131,6 +139,45 @@ async function deleteHomework(id: number) {
   if (!confirm('Delete this homework and its results?')) return
   detail.value = (await run(() => teacherCall<ClassDetail>('POST', `/teacher/assignments/${id}/delete`))) ?? detail.value
 }
+
+// ---------- suggesting questions for the bank ----------
+interface Suggestion {
+  id: number
+  subject: string
+  grade: string
+  level: string
+  topic: string
+  prompt: string
+  choices: string[]
+  answer: string
+  status: 'draft' | 'approved' | 'retired'
+  review_note: string | null
+}
+const suggesting = ref(false)
+const suggestion = ref<QuestionDraft>(emptyDraft())
+const suggestions = ref<Suggestion[]>([])
+const thanks = ref('')
+
+async function openSuggest() {
+  suggesting.value = true
+  openId.value = null
+  suggestion.value = emptyDraft(classes.value[0]?.grade ?? 'P5', 'science')
+  suggestions.value = (await run(() => teacherCall<{ questions: Suggestion[] }>('GET', '/teacher/questions')))?.questions ?? []
+}
+
+async function sendSuggestion() {
+  const r = await run(() => teacherCall<{ questions: Suggestion[] }>('POST', '/teacher/questions', toPayload(suggestion.value)))
+  if (!r) return
+  suggestions.value = r.questions
+  thanks.value = 'Thank you! Your question is waiting to be checked.'
+  // keep subject, class, level and topic for the next one
+  suggestion.value = { ...emptyDraft(suggestion.value.grade, suggestion.value.subject), level: suggestion.value.level, topic: suggestion.value.topic }
+  setTimeout(() => (thanks.value = ''), 4000)
+}
+
+watch(openId, (id) => {
+  if (id) suggesting.value = false
+})
 
 // ---------- helpers ----------
 const nice = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
@@ -218,19 +265,49 @@ const average = (a: ClassDetail['assignments'][number]) => {
           <button type="submit" class="flex-1 rounded-xl bg-ocean py-2 font-semibold text-white" :disabled="!newClass.name.trim()">Create</button>
         </div>
       </form>
+      <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="suggesting ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openSuggest">
+        ❓ Suggest questions
+      </button>
       <button class="mt-auto text-left text-sm text-ink/50 underline" @click="signOut">Sign out</button>
     </aside>
 
     <main class="min-w-0">
       <p v-if="error" class="mb-4 rounded-xl bg-cherry/10 p-3 text-cherry print:hidden">{{ error }}</p>
 
-      <section v-if="!classes.length" class="rounded-3xl bg-white p-8 text-center shadow-sm">
+      <!-- suggest questions for the bank -->
+      <section v-if="suggesting" class="space-y-4">
+        <div>
+          <h1 class="text-3xl font-bold">Suggest questions</h1>
+          <p class="text-ink/70">Help build Science, SST and English for every class. A BrainSprint editor checks each question before children see it.</p>
+        </div>
+        <div class="rounded-3xl bg-white p-5 shadow-sm">
+          <QuestionEditor v-model="suggestion" :busy="busy" save-label="Send for checking" :subjects="['english', 'science', 'sst']" @save="sendSuggestion" @cancel="suggesting = false" />
+          <p v-if="thanks" class="mt-3 font-semibold text-leaf">{{ thanks }}</p>
+        </div>
+        <div v-if="suggestions.length" class="rounded-3xl bg-white p-5 shadow-sm">
+          <h2 class="mb-2 text-lg font-bold">Your suggestions</h2>
+          <ul class="divide-y divide-ink/5">
+            <li v-for="q in suggestions" :key="q.id" class="flex flex-wrap items-start gap-3 py-2">
+              <span class="rounded-full px-2 py-0.5 text-xs font-semibold" :class="q.status === 'approved' ? 'bg-leaf/15 text-leaf' : q.status === 'retired' ? 'bg-ink/10 text-ink/60' : q.review_note ? 'bg-sun/50' : 'bg-ocean/10 text-ocean'">
+                {{ q.status === 'approved' ? '✓ In the game' : q.status === 'retired' ? 'Not used' : q.review_note ? '↩ Please change' : 'Waiting' }}
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-semibold">{{ q.prompt }}</span>
+                <span class="block text-sm text-ink/60">{{ subjectLabel(q.subject) }} {{ q.grade }} · {{ q.topic }} · answer: {{ q.answer }}</span>
+                <span v-if="q.review_note && q.status === 'draft'" class="block text-sm text-sprint-dark">Editor's note: {{ q.review_note }}</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section v-else-if="!classes.length" class="rounded-3xl bg-white p-8 text-center shadow-sm">
         <p class="text-5xl">🏫</p>
         <h2 class="mt-2 text-2xl font-bold">Create your first class</h2>
         <p class="mt-1 text-ink/70">Click "+ New class", then give your pupils the join code.</p>
       </section>
 
-      <template v-if="detail">
+      <template v-if="detail && !suggesting">
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 class="text-3xl font-bold">{{ detail.class.name }}</h1>

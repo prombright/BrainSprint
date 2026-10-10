@@ -6,6 +6,7 @@ import AvatarBadge from './AvatarBadge.vue'
 import { levelFromXp, titleFor } from '../game/progress'
 import { LEVELS, SUBJECTS, type Level, type Subject } from '../game/types'
 import { hasQuestions } from '../game/sprint'
+import { bankVersion } from '../lib/bank'
 import { activityLabel } from '../lib/activity'
 import { api, type PlayerCard } from '../lib/api'
 import { tierBadge } from '../lib/league'
@@ -25,7 +26,7 @@ const isMe = computed(() => props.playerId === player.state.serverId)
 const lvl = computed(() => (card.value ? levelFromXp(card.value.xp_total) : null))
 const title = computed(() => (lvl.value ? titleFor(lvl.value.level) : null))
 const myGrade = computed(() => player.profile!.grade)
-const raceSubjects = computed(() => SUBJECTS.filter((s) => s.ready && hasQuestions(s.id, myGrade.value)))
+const raceSubjects = computed(() => SUBJECTS.filter((s) => (bankVersion.value, hasQuestions(s.id, myGrade.value))))
 const raceLevels = computed(() => LEVELS.filter((l) => player.isUnlocked(subject.value, myGrade.value, l.id)))
 
 onMounted(async () => {

@@ -219,6 +219,23 @@ Child requests send `X-Player-Id` and `X-Player-Token`; parent requests send `Au
   changed and are only marked at the end, with working for every miss. Readiness = average of the last 3.
   Mocks give XP but don't use Brain Power.
 
+## The question bank (Science, SST, English P4–P7)
+
+Maths and English Top–P3 are generated in the app. Everything else comes from the **question bank**:
+questions written by people and **checked before children see them**.
+
+- **Admin panel → Questions**: write questions with a live preview, edit, approve, retire, send a
+  teacher's suggestion back with a note, and **import a spreadsheet** (CSV; format in `content/README.md`).
+  Imported rows always arrive as drafts. A coverage table shows approved questions per subject and class.
+- **Teachers → Suggest questions**: suggestions wait for approval; the teacher sees "In the game",
+  "Waiting" or the editor's note.
+- **In the game**: a subject opens for a class once it has 4 approved questions. The app downloads the
+  class's questions and keeps them for offline play, refreshing when something changes. While a level
+  has fewer than 10 questions it borrows from the class's other levels, and a small bank gives a shorter
+  sprint rather than repeats. Bank questions work with practice, homework and topic reports like any other.
+- `content/starter-science-sst.csv`: 40 P3–P7 Science and SST questions to import as a start.
+  **Have a teacher check them before approving.**
+
 ## The website and admin panel
 
 One build makes four pages: `index.html` (the game), `site.html` (the public landing page, the

@@ -10,6 +10,7 @@ require __DIR__ . '/community.php';
 require __DIR__ . '/admin.php';
 require __DIR__ . '/learning.php';
 require __DIR__ . '/teachers.php';
+require __DIR__ . '/bank.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -64,6 +65,13 @@ try {
             respond(200, ['ok' => true]);
 
         // ---------- the public website ----------
+
+        // approved bank questions for one class + subject (the game caches them for offline play)
+        case $route === 'GET /questions':
+            respond(200, publishedQuestions(oneOf($_GET, 'subject', SUBJECTS), oneOf($_GET, 'grade', GRADES)));
+
+        case $route === 'GET /questions/coverage':
+            respond(200, ['coverage' => bankCoverage()]);
 
         case $route === 'GET /stats':
             respond(200, publicStats());
@@ -129,6 +137,12 @@ try {
         case $route === 'POST /mocks':
             respond(201, saveMock(requirePlayer(), body()));
 
+        case $route === 'GET /teacher/questions':
+            respond(200, teacherSuggestions(requireTeacher()));
+
+        case $route === 'POST /teacher/questions':
+            respond(201, teacherSuggest(requireTeacher(), body()));
+
         // ---------- classes, from the pupil's side ----------
 
         case $route === 'POST /classes/join':
@@ -183,6 +197,19 @@ try {
             requireAdmin();
             q('UPDATE leads SET status = ? WHERE id = ?', [oneOf(body(), 'status', ['new', 'contacted', 'closed']), (int)$mm[1]]);
             respond(200, ['ok' => true]);
+
+        case $route === 'GET /admin/questions':
+            requireAdmin();
+            respond(200, adminQuestions($_GET));
+
+        case $route === 'POST /admin/questions':
+            respond(201, adminSaveQuestion(requireAdmin(), null, body()));
+
+        case $route === 'POST /admin/questions/import':
+            respond(200, adminImport(requireAdmin(), body()));
+
+        case $method === 'POST' && (bool)preg_match('#^/admin/questions/(\d+)$#', $path, $mm):
+            respond(200, adminSaveQuestion(requireAdmin(), (int)$mm[1], body()));
 
         case $route === 'GET /admin/feed':
             requireAdmin();

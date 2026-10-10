@@ -99,3 +99,27 @@ export interface FeedEvent {
   avatar: string
   is_demo: number
 }
+
+export interface BankItem {
+  id: number
+  subject: string
+  grade: string
+  level: string
+  topic: string
+  prompt: string
+  speak: string | null
+  choices: string[]
+  answer: string
+  steps: string[]
+  status: 'draft' | 'approved' | 'retired'
+  source: string | null
+  teacher: string | null
+  review_note: string | null
+  updated_at: string
+}
+
+export interface BankList {
+  questions: BankItem[]
+  counts: { draft: number; approved: number; retired: number }
+  coverage: { subject: string; grade: string; count: number }[]
+}

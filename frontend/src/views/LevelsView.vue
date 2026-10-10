@@ -5,6 +5,7 @@ import StarRow from '../components/StarRow.vue'
 import TopBar from '../components/TopBar.vue'
 import { STARS_TO_UNLOCK } from '../game/scoring'
 import { hasQuestions } from '../game/sprint'
+import { bankVersion } from '../lib/bank'
 import { GRADES, LEVELS, SUBJECTS, type Grade, type Level, type Subject } from '../game/types'
 import { usePlayer } from '../stores/player'
 
@@ -14,10 +15,10 @@ const player = usePlayer()
 
 const subject = route.params.subject as Subject
 const info = SUBJECTS.find((s) => s.id === subject)
-if (!info?.ready) router.replace('/')
+if (!info) router.replace('/')
 
 const grade = ref<Grade>(player.profile?.grade ?? 'P1')
-const available = computed(() => hasQuestions(subject, grade.value))
+const available = computed(() => (bankVersion.value, hasQuestions(subject, grade.value)))
 const levels = computed(() =>
   LEVELS.map((l) => ({
     ...l,
