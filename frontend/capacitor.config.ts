@@ -9,9 +9,10 @@ const config: CapacitorConfig = {
     // mobile money / API calls go over https in production
     allowMixedContent: false,
   },
-  // Wi-Fi test builds only (npm run build:android-lan): the app talks to this computer over plain http,
-  // which Android blocks unless the app itself is served over http and allows it
-  ...(process.env.BSK_LAN_TEST ? { server: { androidScheme: 'http', cleartext: true } } : {}),
+  // Wi-Fi test builds only (npm run build:android-lan): the app may call this computer over plain http.
+  // The app itself stays at https://localhost, so it is the same app to Android and an installed copy
+  // updates in place, keeping the child's saved progress (which belongs to that address).
+  ...(process.env.BSK_LAN_TEST ? { server: { cleartext: true }, android: { allowMixedContent: true } } : {}),
   plugins: {
     SplashScreen: {
       launchShowDuration: 1200,
