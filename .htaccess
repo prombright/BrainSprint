@@ -1,0 +1,4 @@
+# http://localhost/brainsprint/ opens the website (landing page; the game is linked from it).
+# Built from the requested address, so it works whichever folder this lives in.
+RewriteEngine On
+RewriteRule ^$ %{REQUEST_URI}frontend/dist/ [R=302,L]

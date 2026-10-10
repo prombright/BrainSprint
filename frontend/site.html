@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrainSprint Kids · Fun maths & English practice for Ugandan children</title>
+    <meta name="description" content="BrainSprint Kids turns maths and English practice into a game for children from Top Class to P7: endless questions, step-by-step solutions, leagues and a weekly Boss Battle. Free to play on phones, tablets and laptops." />
+    <meta name="theme-color" content="#ff7a1a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta property="og:title" content="BrainSprint Kids" />
+    <meta property="og:description" content="Fast, fun maths and English practice for children from Top Class to P7." />
+    <meta property="og:image" content="/icons/icon-512.png" />
+  </head>
+  <body class="bg-cream text-ink">
+    <!-- top bar -->
+    <header class="sticky top-0 z-30 border-b border-ink/5 bg-cream/90 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-8">
+        <a href="#top" class="flex items-center gap-2" aria-label="BrainSprint Kids home">
+          <svg class="size-9" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#ff7a1a" /><path d="M36 6 L16 36 H30 L26 58 L48 26 H34 Z" fill="#fff" stroke="#1f2547" stroke-width="3" stroke-linejoin="round" /></svg>
+          <span class="leading-none">
+            <span class="block text-xl font-bold">Brain<span class="text-sprint">Sprint</span></span>
+            <span class="block text-[0.6rem] font-semibold tracking-[0.3em] text-ocean uppercase">Kids</span>
+          </span>
+        </a>
+        <nav class="hidden items-center gap-6 font-semibold text-ink/70 md:flex" aria-label="Sections">
+          <a href="#how" class="hover:text-ink">How it works</a>
+          <a href="#parents" class="hover:text-ink">For parents</a>
+          <a href="#schools" class="hover:text-ink">For schools</a>
+          <a href="#faq" class="hover:text-ink">Questions</a>
+        </nav>
+        <a href="index.html" class="btn-chunky bg-sprint px-5 py-2 text-lg text-white">Play now</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- hero -->
+      <section class="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-16 md:grid-cols-[1.1fr_1fr] md:px-8 md:pt-16">
+        <div>
+          <p class="mb-3 inline-block rounded-full bg-ocean/10 px-3 py-1 text-sm font-semibold text-ocean">Top Class to P7 · Made in Uganda</p>
+          <h1 class="text-4xl leading-tight font-bold md:text-6xl">Maths practice your child <span class="text-sprint">asks</span> to play.</h1>
+          <p class="mt-4 max-w-xl text-lg text-ink/75 md:text-xl">
+            Quick 10-question sprints in Maths and English that follow the Ugandan primary syllabus. Children race the clock, climb weekly leagues and fight a
+            weekly Boss, and when they get something wrong, they see exactly how to solve it.
+          </p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a href="index.html" class="btn-chunky bg-sprint px-6 py-3 text-xl text-white">▶ Play free in your browser</a>
+            <a href="#download" class="btn-chunky bg-white px-6 py-3 text-xl">📱 Get the Android app</a>
+          </div>
+          <p class="mt-4 text-sm text-ink/60">Free while we build it · No ads · Works on phones, tablets and laptops</p>
+        </div>
+
+        <!-- a sample question, drawn in HTML -->
+        <div class="mx-auto w-full max-w-sm" aria-hidden="true">
+          <div class="rotate-1 rounded-[2.5rem] border-8 border-ink bg-cream p-4 shadow-2xl">
+            <div class="mb-3 flex items-center justify-between text-sm font-bold">
+              <span class="rounded-full bg-ink px-3 py-1 text-white">🏆 #4 in your league</span>
+              <span class="rounded-full bg-sun px-3 py-1">🪙 145</span>
+            </div>
+            <div class="rounded-3xl bg-white p-6 text-center">
+              <p class="text-sm font-semibold text-ink/50">P5 · Hard</p>
+              <p class="mt-2 text-2xl font-bold">A farmer has hens and goats: 16 heads and 36 legs. How many goats?</p>
+            </div>
+            <div class="mt-3 grid grid-cols-2 gap-3 text-3xl font-bold">
+              <span class="rounded-2xl bg-white py-4 text-center shadow-[0_5px_0_rgb(0_0_0/0.15)]">3</span>
+              <span class="rounded-2xl bg-leaf py-4 text-center text-white shadow-[0_5px_0_rgb(0_0_0/0.15)]">2</span>
+              <span class="rounded-2xl bg-white py-4 text-center shadow-[0_5px_0_rgb(0_0_0/0.15)]">6</span>
+              <span class="rounded-2xl bg-white py-4 text-center shadow-[0_5px_0_rgb(0_0_0/0.15)]">5</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- live numbers (shown only once there are enough players to be worth showing) -->
+      <section id="stats" class="hidden bg-ink py-8 text-white">
+        <div class="mx-auto grid max-w-4xl grid-cols-3 gap-4 px-4 text-center">
+          <div><p class="text-3xl font-bold md:text-5xl" data-stat="players">–</p><p class="text-sm opacity-70 md:text-base">children playing</p></div>
+          <div><p class="text-3xl font-bold md:text-5xl" data-stat="questions">–</p><p class="text-sm opacity-70 md:text-base">questions answered</p></div>
+          <div><p class="text-3xl font-bold md:text-5xl" data-stat="schools">–</p><p class="text-sm opacity-70 md:text-base">schools taking part</p></div>
+        </div>
+      </section>
+
+      <!-- subjects -->
+      <section class="mx-auto max-w-6xl px-4 py-14 md:px-8">
+        <h2 class="text-center text-3xl font-bold md:text-4xl">What children practise</h2>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-3xl bg-sprint p-6 text-white">
+            <p class="text-5xl">🔢</p>
+            <h3 class="mt-2 text-2xl font-bold">Maths</h3>
+            <p class="mt-1 font-semibold opacity-90">Top Class to P7</p>
+            <p class="mt-2 text-sm opacity-90">Counting and number bonds up to PLE topics: fractions, decimals, sets, number bases, algebra, area, circles, simple interest and logic puzzles.</p>
+          </div>
+          <div class="rounded-3xl bg-ocean p-6 text-white">
+            <p class="text-5xl">🔤</p>
+            <h3 class="mt-2 text-2xl font-bold">English</h3>
+            <p class="mt-1 font-semibold opacity-90">Top Class to P3 (P4–P7 coming)</p>
+            <p class="mt-2 text-sm opacity-90">Letters, first sounds, reading picture words, spelling, rhymes, plurals, opposites and grammar.</p>
+          </div>
+          <div class="rounded-3xl bg-leaf/80 p-6 text-white">
+            <p class="text-5xl">🔬</p>
+            <h3 class="mt-2 text-2xl font-bold">Science</h3>
+            <p class="mt-1 font-semibold opacity-90">Coming soon</p>
+            <p class="mt-2 text-sm opacity-90">Questions checked by teachers before children see them.</p>
+          </div>
+          <div class="rounded-3xl bg-berry/80 p-6 text-white">
+            <p class="text-5xl">🌍</p>
+            <h3 class="mt-2 text-2xl font-bold">SST</h3>
+            <p class="mt-1 font-semibold opacity-90">Coming soon</p>
+            <p class="mt-2 text-sm opacity-90">Uganda and East Africa, with questions written for our syllabus.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- how it works -->
+      <section id="how" class="bg-white py-14">
+        <div class="mx-auto max-w-6xl px-4 md:px-8">
+          <h2 class="text-center text-3xl font-bold md:text-4xl">How it works</h2>
+          <ol class="mt-10 grid gap-8 md:grid-cols-3">
+            <li class="text-center">
+              <p class="mx-auto grid size-20 place-items-center rounded-full bg-sun text-4xl">⚡</p>
+              <h3 class="mt-4 text-xl font-bold">1. Sprint</h3>
+              <p class="mt-1 text-ink/70">Ten questions against the clock at the child's class and level: Simple, Medium, Hard or Pro. Fast, correct answers earn bonus points.</p>
+            </li>
+            <li class="text-center">
+              <p class="mx-auto grid size-20 place-items-center rounded-full bg-ocean/15 text-4xl">💡</p>
+              <h3 class="mt-4 text-xl font-bold">2. Learn from mistakes</h3>
+              <p class="mt-1 text-ink/70">A wrong answer pauses the game and shows the working step by step, like a teacher at the board. It can even be read aloud.</p>
+            </li>
+            <li class="text-center">
+              <p class="mx-auto grid size-20 place-items-center rounded-full bg-leaf/15 text-4xl">🏆</p>
+              <h3 class="mt-4 text-xl font-bold">3. Climb and compete</h3>
+              <p class="mt-1 text-ink/70">Weekly leagues with classmates, races against friends, a Boss Battle every week and badges to collect.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- features -->
+      <section class="mx-auto max-w-6xl px-4 py-14 md:px-8">
+        <h2 class="text-center text-3xl font-bold md:text-4xl">Built for real learning</h2>
+        <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">♾️</p><h3 class="mt-2 text-lg font-bold">Questions never run out</h3><p class="mt-1 text-ink/70">Every question is generated fresh, with thousands of different ones per level, so children practise instead of memorising answers.</p></div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">🧠</p><h3 class="mt-2 text-lg font-bold">Thinking, not just sums</h3><p class="mt-1 text-ink/70">Upper classes meet logic puzzles: patterns, ages, hens-and-goats, working backwards. The kind of reasoning PLE asks for.</p></div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">🔊</p><h3 class="mt-2 text-lg font-bold">For children who can't read yet</h3><p class="mt-1 text-ink/70">Questions are read aloud, with big pictures to count and tap. Nursery children get double time.</p></div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">📶</p><h3 class="mt-2 text-lg font-bold">Light on data</h3><p class="mt-1 text-ink/70">The whole game is under half a megabyte and keeps working offline. Scores upload when the phone is back online.</p></div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">💻</p><h3 class="mt-2 text-lg font-bold">Any device</h3><p class="mt-1 text-ink/70">Phones, tablets and laptops in the browser, plus an Android app. On a computer, children can answer with the keyboard.</p></div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm"><p class="text-3xl">👨‍👩‍👧</p><h3 class="mt-2 text-lg font-bold">Parent dashboard</h3><p class="mt-1 text-ink/70">See what your child practised this week, how accurate they were in each subject and where they stand in their league.</p></div>
+        </div>
+      </section>
+
+      <!-- parents & safety -->
+      <section id="parents" class="bg-ink py-14 text-white">
+        <div class="mx-auto grid max-w-6xl gap-10 px-4 md:grid-cols-2 md:px-8">
+          <div>
+            <h2 class="text-3xl font-bold md:text-4xl">Safe for children. Honest with parents.</h2>
+            <p class="mt-3 text-lg opacity-80">BrainSprint is a learning game, not a gambling one. We designed it so children can't spend money or be contacted by strangers.</p>
+          </div>
+          <ul class="space-y-3 text-lg">
+            <li>✅ <b>No ads</b>, ever.</li>
+            <li>✅ <b>Children never buy anything.</b> Points are only earned by answering correctly.</li>
+            <li>✅ <b>Friends only by code</b>, shared in person. No searching for strangers, no chat.</li>
+            <li>✅ <b>First names or nicknames only.</b> No photos, phone numbers or locations are shown.</li>
+            <li>✅ <b>Grown-up areas are locked</b> behind a maths question and a parent PIN.</li>
+            <li>✅ <b>Brain Power</b> builds healthy breaks into play, and it refills for free.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- schools + contact -->
+      <section id="schools" class="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-2 md:px-8">
+        <div>
+          <h2 class="text-3xl font-bold md:text-4xl">For schools</h2>
+          <p class="mt-3 text-lg text-ink/75">Bring BrainSprint into your classrooms and let your pupils play for your school.</p>
+          <ul class="mt-5 space-y-3 text-lg">
+            <li>🏫 <b>School rankings:</b> every pupil's points count for the school, every week.</li>
+            <li>📊 <b>Progress you can see:</b> which topics each class finds hard, pupil by pupil.</li>
+            <li>📝 <b>Homework in two clicks:</b> set practice on a topic and see who has done it.</li>
+            <li>🎓 <b>PLE mock exams</b> for P6 and P7, with a readiness score per pupil.</li>
+            <li>🎯 <b>Syllabus-based practice</b> from Top Class to PLE revision.</li>
+            <li>🏅 <b>Competitions</b> between schools, with prizes from sponsors.</li>
+          </ul>
+          <a href="teacher.html" class="btn-chunky mt-5 inline-block bg-ink px-6 py-3 text-lg text-white">👩‍🏫 Teachers: create your class →</a>
+          <p class="mt-4 text-ink/70">Running BrainSprint for a whole school? Tell us about your school and we'll get in touch to set up a free trial.</p>
+        </div>
+
+        <form id="contact" class="rounded-3xl bg-white p-6 shadow-sm" novalidate>
+          <h3 class="text-2xl font-bold">Get in touch</h3>
+          <fieldset class="mt-4">
+            <legend class="mb-2 font-semibold">I am</legend>
+            <div class="grid grid-cols-3 gap-2 text-sm font-semibold">
+              <label class="rounded-xl border-2 border-ink/10 p-2 text-center has-checked:border-ocean has-checked:bg-ocean/5"><input type="radio" name="kind" value="school" class="sr-only" checked />🏫 A school</label>
+              <label class="rounded-xl border-2 border-ink/10 p-2 text-center has-checked:border-ocean has-checked:bg-ocean/5"><input type="radio" name="kind" value="parent" class="sr-only" />👨‍👩‍👧 A parent</label>
+              <label class="rounded-xl border-2 border-ink/10 p-2 text-center has-checked:border-ocean has-checked:bg-ocean/5"><input type="radio" name="kind" value="other" class="sr-only" />💬 Other</label>
+            </div>
+          </fieldset>
+          <label class="mt-3 block"><span class="mb-1 block font-semibold">Your name</span><input name="name" required maxlength="80" autocomplete="name" class="w-full rounded-xl border-2 border-ink/10 px-3 py-2 outline-none focus:border-ocean" /></label>
+          <label class="mt-3 block"><span class="mb-1 block font-semibold">School or organisation <span class="font-normal text-ink/50">(optional)</span></span><input name="organisation" maxlength="120" class="w-full rounded-xl border-2 border-ink/10 px-3 py-2 outline-none focus:border-ocean" /></label>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2">
+            <label class="block"><span class="mb-1 block font-semibold">Phone</span><input name="phone" required inputmode="tel" autocomplete="tel" placeholder="0772 123456" class="w-full rounded-xl border-2 border-ink/10 px-3 py-2 outline-none focus:border-ocean" /></label>
+            <label class="block"><span class="mb-1 block font-semibold">Email <span class="font-normal text-ink/50">(optional)</span></span><input name="email" type="email" maxlength="120" autocomplete="email" class="w-full rounded-xl border-2 border-ink/10 px-3 py-2 outline-none focus:border-ocean" /></label>
+          </div>
+          <label class="mt-3 block"><span class="mb-1 block font-semibold">Message <span class="font-normal text-ink/50">(optional)</span></span><textarea name="message" rows="3" maxlength="2000" class="w-full rounded-xl border-2 border-ink/10 px-3 py-2 outline-none focus:border-ocean"></textarea></label>
+          <!-- left empty by people; bots fill it in -->
+          <label class="absolute -left-[9999px]" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off" /></label>
+          <p id="contact-msg" class="mt-3 hidden rounded-xl p-3" role="status"></p>
+          <button type="submit" class="btn-chunky mt-4 w-full bg-ocean py-3 text-xl text-white">Send</button>
+        </form>
+      </section>
+
+      <!-- download -->
+      <section id="download" class="bg-sun/40 py-14">
+        <div class="mx-auto grid max-w-6xl items-center gap-8 px-4 md:grid-cols-2 md:px-8">
+          <div>
+            <h2 class="text-3xl font-bold md:text-4xl">Play anywhere</h2>
+            <p class="mt-3 text-lg text-ink/75">Open it in any browser, add it to your home screen, or install the Android app.</p>
+          </div>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <a href="index.html" class="btn-chunky flex flex-col items-center gap-1 bg-white p-5 text-center"><span class="text-4xl">🌐</span><span class="text-lg">Play in the browser</span><span class="text-sm font-normal text-ink/60">Phones, tablets, laptops</span></a>
+            <a id="apk-link" href="BrainSprintKids.apk" class="btn-chunky flex flex-col items-center gap-1 bg-white p-5 text-center" download><span class="text-4xl">🤖</span><span class="text-lg">Android app</span><span class="text-sm font-normal text-ink/60">Download (about 5 MB)</span></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="mx-auto max-w-3xl px-4 py-14 md:px-8">
+        <h2 class="text-center text-3xl font-bold md:text-4xl">Questions parents ask</h2>
+        <div class="mt-8 space-y-3">
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">How much does it cost?</summary><p class="mt-2 text-ink/75">It's free while we build it. Later, a free daily amount will stay, and parents will be able to buy a day, week or month pass with MTN MoMo or Airtel Money for unlimited play.</p></details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">Is it really the Ugandan syllabus?</summary><p class="mt-2 text-ink/75">The Maths topics follow the primary syllabus class by class, from counting in Top Class to PLE topics in P7, such as number bases, finite systems, sets and simple interest.</p></details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">What is Brain Power?</summary><p class="mt-2 text-ink/75">Each wrong answer uses one ⚡ and they refill for free over time. It encourages careful thinking over random tapping, and builds in natural breaks.</p></details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">Can strangers contact my child?</summary><p class="mt-2 text-ink/75">No. There is no chat, and friends can only be added with a code your child shares in person. Other players see only a first name or nickname, an animal picture and game scores.</p></details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">How do I follow my child's progress?</summary><p class="mt-2 text-ink/75">In the app, tap Grown-ups, answer the grown-up question, and create a free account with your phone number and a PIN. You'll see what they practised, how accurate they were and their league position.</p></details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm"><summary class="text-lg font-semibold">Does it use a lot of data?</summary><p class="mt-2 text-ink/75">No. The game is under half a megabyte, works offline once opened, and only sends small score updates.</p></details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-ink/10 py-8 text-center text-sm text-ink/60">
+      <p><b class="text-ink">BrainSprint Kids</b> · Learn fast, think deep</p>
+      <p class="mt-1"><a href="index.html" class="underline">Play</a> · <a href="#schools" class="underline">Contact</a> · <a href="#parents" class="underline">Safety</a></p>
+      <p class="mt-2">© <span id="year"></span> BrainSprint Kids</p>
+    </footer>
+
+    <script type="module" src="/src/site/main.ts"></script>
+  </body>
+</html>

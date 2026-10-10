@@ -1,0 +1,11 @@
+# Same line endings for everyone, whatever their computer: LF in the repository.
+* text=auto eol=lf
+# Windows-only scripts keep Windows line endings
+*.bat text eol=crlf
+*.cmd text eol=crlf
+# binary files are never touched
+*.png binary
+*.jpg binary
+*.jar binary
+*.apk binary
+*.woff2 binary

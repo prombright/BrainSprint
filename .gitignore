@@ -1,0 +1,10 @@
+node_modules/
+frontend/dist/
+api/config.local.php
+.DS_Store
+*.log
+*.apk
+release/
+frontend/.env.live
+.idea/
+.vscode/

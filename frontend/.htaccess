@@ -1,0 +1,2 @@
+# Source code, node_modules and the Android project are never served; only dist/ (the built app) is public.
+Require all denied

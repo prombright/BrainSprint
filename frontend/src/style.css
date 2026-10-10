@@ -1,0 +1,77 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Fredoka', ui-rounded, system-ui, sans-serif;
+
+  --color-sprint: #ff7a1a; /* brand orange */
+  --color-sprint-dark: #e05f00;
+  --color-ocean: #2f8cff;
+  --color-leaf: #22b35e;
+  --color-sun: #ffc93c;
+  --color-berry: #8b5cf6;
+  --color-cherry: #ef4444;
+  --color-ink: #1f2547;
+  --color-cream: #fff8ec;
+}
+
+/* mouse users: show what's clickable */
+button:not(:disabled),
+[role='button'],
+label:has(input),
+summary {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 3px solid var(--color-ocean);
+  outline-offset: 2px;
+}
+
+html,
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* chunky "press me" buttons children can hit easily */
+@utility btn-chunky {
+  border-radius: 1.25rem;
+  font-weight: 600;
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.18);
+  transition:
+    transform 80ms,
+    box-shadow 80ms;
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 0 rgb(0 0 0 / 0.18);
+    }
+  }
+  &:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 rgb(0 0 0 / 0.18);
+  }
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-pop { animation: pop 350ms ease-out both; }
+.animate-shake { animation: shake 250ms ease-in-out 2; }
+.animate-float { animation: float 3s ease-in-out infinite; }

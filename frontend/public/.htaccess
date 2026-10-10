@@ -1,0 +1,21 @@
+# Copied into dist/ on every build: the built site is public.
+Require all granted
+
+# the website's front page is the landing page; the game itself is index.html (#/ routes)
+DirectoryIndex site.html index.html
+
+<IfModule mod_headers.c>
+  # pages and the service worker must always be fresh, or updates never reach phones
+  <FilesMatch "\.(html|webmanifest)$|^(sw|registerSW|workbox-.*)\.js$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # files in assets/ have a fingerprint in their name, so they can be kept for a year
+  <If "%{REQUEST_URI} =~ m#/assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  # the admin panel must not be framed by other sites
+  <Files "admin.html">
+    Header set X-Frame-Options "DENY"
+    Header set X-Robots-Tag "noindex"
+  </Files>
+</IfModule>

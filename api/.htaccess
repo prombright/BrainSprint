@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+
+# only index.php is reachable from the web; helpers, settings, migrations and tools are not
+<FilesMatch "\.(sql|md)$|^(?!index\.php$).*\.php$">
+  Require all denied
+</FilesMatch>
