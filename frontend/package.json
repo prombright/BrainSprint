@@ -12,7 +12,8 @@
     "open:android": "cap open android",
     "check:questions": "node scripts/check-questions.ts",
     "release": "node scripts/release.mjs",
-    "check:practice": "node scripts/check-practice.ts"
+    "check:practice": "node scripts/check-practice.ts",
+    "check:facts": "node scripts/check-facts.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",

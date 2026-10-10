@@ -1,0 +1,591 @@
+[
+  {
+    "subject": "science",
+    "name": "body organs",
+    "grade_from": "P4",
+    "grade_to": "P7",
+    "columns": [
+      "organ",
+      "job",
+      "system"
+    ],
+    "templates": [
+      {
+        "ask": "Which part of the body does this job: {job}?",
+        "answer": "organ",
+        "level": "simple"
+      },
+      {
+        "ask": "What is the work of the {organ}?",
+        "answer": "job",
+        "level": "medium"
+      },
+      {
+        "ask": "The {organ} belongs to which body system?",
+        "answer": "system",
+        "level": "hard"
+      },
+      {
+        "ask": "Which of these is NOT part of the {system} system?",
+        "answer": "organ",
+        "level": "pro",
+        "not": "system"
+      }
+    ],
+    "explain": "The {organ}: {job}. Body system: {system}.",
+    "rows": [
+      [
+        "heart",
+        "pumps blood around the body",
+        "circulatory"
+      ],
+      [
+        "arteries",
+        "carry blood away from the heart",
+        "circulatory"
+      ],
+      [
+        "veins",
+        "carry blood back to the heart",
+        "circulatory"
+      ],
+      [
+        "lungs",
+        "take in oxygen and give out carbon dioxide",
+        "respiratory"
+      ],
+      [
+        "trachea",
+        "carries air to the lungs",
+        "respiratory"
+      ],
+      [
+        "nose",
+        "warms and cleans the air we breathe in",
+        "respiratory"
+      ],
+      [
+        "stomach",
+        "mixes and digests food",
+        "digestive"
+      ],
+      [
+        "small intestine",
+        "absorbs digested food into the blood",
+        "digestive"
+      ],
+      [
+        "liver",
+        "makes bile",
+        "digestive"
+      ],
+      [
+        "kidneys",
+        "remove urea from the blood",
+        "excretory"
+      ],
+      [
+        "bladder",
+        "stores urine",
+        "excretory"
+      ],
+      [
+        "skin",
+        "removes sweat from the body",
+        "excretory"
+      ],
+      [
+        "brain",
+        "controls the whole body",
+        "nervous"
+      ],
+      [
+        "spinal cord",
+        "carries messages between the brain and the body",
+        "nervous"
+      ],
+      [
+        "nerves",
+        "carry messages to and from the brain",
+        "nervous"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "animal groups",
+    "grade_from": "P4",
+    "grade_to": "P7",
+    "columns": [
+      "animal",
+      "group"
+    ],
+    "templates": [
+      {
+        "ask": "{animal} belongs to which group of animals?",
+        "answer": "group",
+        "level": "simple"
+      },
+      {
+        "ask": "Which of these is NOT {group}?",
+        "answer": "animal",
+        "level": "hard",
+        "not": "group"
+      }
+    ],
+    "explain": "{animal} is {group}.",
+    "rows": [
+      [
+        "a frog",
+        "an amphibian"
+      ],
+      [
+        "a toad",
+        "an amphibian"
+      ],
+      [
+        "a salamander",
+        "an amphibian"
+      ],
+      [
+        "a snake",
+        "a reptile"
+      ],
+      [
+        "a lizard",
+        "a reptile"
+      ],
+      [
+        "a crocodile",
+        "a reptile"
+      ],
+      [
+        "a tortoise",
+        "a reptile"
+      ],
+      [
+        "a hen",
+        "a bird"
+      ],
+      [
+        "an eagle",
+        "a bird"
+      ],
+      [
+        "an ostrich",
+        "a bird"
+      ],
+      [
+        "a cow",
+        "a mammal"
+      ],
+      [
+        "a bat",
+        "a mammal"
+      ],
+      [
+        "a whale",
+        "a mammal"
+      ],
+      [
+        "a goat",
+        "a mammal"
+      ],
+      [
+        "a tilapia",
+        "a fish"
+      ],
+      [
+        "a shark",
+        "a fish"
+      ],
+      [
+        "a Nile perch",
+        "a fish"
+      ],
+      [
+        "a butterfly",
+        "an insect"
+      ],
+      [
+        "a housefly",
+        "an insect"
+      ],
+      [
+        "a bee",
+        "an insect"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "diseases and vectors",
+    "grade_from": "P5",
+    "grade_to": "P7",
+    "columns": [
+      "disease",
+      "carrier"
+    ],
+    "templates": [
+      {
+        "ask": "Which disease is spread by the {carrier}?",
+        "answer": "disease",
+        "level": "medium"
+      },
+      {
+        "ask": "{disease} is spread by which vector?",
+        "answer": "carrier",
+        "level": "hard"
+      }
+    ],
+    "explain": "{disease} is spread by the {carrier}.",
+    "rows": [
+      [
+        "malaria",
+        "female Anopheles mosquito"
+      ],
+      [
+        "sleeping sickness",
+        "tsetse fly"
+      ],
+      [
+        "bilharzia",
+        "water snail"
+      ],
+      [
+        "plague",
+        "rat flea"
+      ],
+      [
+        "elephantiasis",
+        "Culex mosquito"
+      ],
+      [
+        "yellow fever",
+        "Aedes mosquito"
+      ],
+      [
+        "river blindness",
+        "black fly"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "parts of a plant",
+    "grade_from": "P3",
+    "grade_to": "P6",
+    "columns": [
+      "part",
+      "job"
+    ],
+    "templates": [
+      {
+        "ask": "Which part of a plant {job}?",
+        "answer": "part",
+        "level": "simple"
+      },
+      {
+        "ask": "What is the work of the {part} of a plant?",
+        "answer": "job",
+        "level": "medium"
+      }
+    ],
+    "explain": "The {part}: {job}.",
+    "rows": [
+      [
+        "roots",
+        "takes in water and mineral salts from the soil"
+      ],
+      [
+        "leaves",
+        "makes food for the plant"
+      ],
+      [
+        "stem",
+        "carries water and food to other parts"
+      ],
+      [
+        "flower",
+        "is used for reproduction"
+      ],
+      [
+        "fruit",
+        "protects the seeds"
+      ],
+      [
+        "seed",
+        "grows into a new plant"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "simple machines",
+    "grade_from": "P6",
+    "grade_to": "P7",
+    "columns": [
+      "tool",
+      "machine"
+    ],
+    "templates": [
+      {
+        "ask": "{tool} is an example of which simple machine?",
+        "answer": "machine",
+        "level": "medium"
+      },
+      {
+        "ask": "Which of these is NOT {machine}?",
+        "answer": "tool",
+        "level": "hard",
+        "not": "machine"
+      }
+    ],
+    "explain": "{tool} is {machine}.",
+    "rows": [
+      [
+        "a see-saw",
+        "a lever"
+      ],
+      [
+        "a wheelbarrow",
+        "a lever"
+      ],
+      [
+        "a pair of scissors",
+        "a lever"
+      ],
+      [
+        "a ramp",
+        "an inclined plane"
+      ],
+      [
+        "a staircase",
+        "an inclined plane"
+      ],
+      [
+        "a slope to a lorry",
+        "an inclined plane"
+      ],
+      [
+        "a screwdriver",
+        "a wheel and axle"
+      ],
+      [
+        "a door knob",
+        "a wheel and axle"
+      ],
+      [
+        "a steering wheel",
+        "a wheel and axle"
+      ],
+      [
+        "a knife",
+        "a wedge"
+      ],
+      [
+        "an axe",
+        "a wedge"
+      ],
+      [
+        "a nail",
+        "a wedge"
+      ],
+      [
+        "a flag pole rope",
+        "a pulley"
+      ],
+      [
+        "a well bucket rope",
+        "a pulley"
+      ],
+      [
+        "a crane hook",
+        "a pulley"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "uganda's neighbours",
+    "grade_from": "P4",
+    "grade_to": "P7",
+    "columns": [
+      "country",
+      "direction",
+      "capital"
+    ],
+    "templates": [
+      {
+        "ask": "Which country borders Uganda to the {direction}?",
+        "answer": "country",
+        "level": "simple"
+      },
+      {
+        "ask": "What is the capital city of {country}?",
+        "answer": "capital",
+        "level": "medium"
+      },
+      {
+        "ask": "{capital} is the capital city of which country?",
+        "answer": "country",
+        "level": "medium"
+      },
+      {
+        "ask": "In which direction from Uganda is {country}?",
+        "answer": "direction",
+        "level": "hard"
+      }
+    ],
+    "explain": "{country} is to the {direction} of Uganda. Its capital city is {capital}.",
+    "rows": [
+      [
+        "Kenya",
+        "east",
+        "Nairobi"
+      ],
+      [
+        "South Sudan",
+        "north",
+        "Juba"
+      ],
+      [
+        "DR Congo",
+        "west",
+        "Kinshasa"
+      ],
+      [
+        "Rwanda",
+        "south-west",
+        "Kigali"
+      ],
+      [
+        "Tanzania",
+        "south",
+        "Dodoma"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "national symbols",
+    "grade_from": "P3",
+    "grade_to": "P5",
+    "columns": [
+      "symbol",
+      "value"
+    ],
+    "templates": [
+      {
+        "ask": "What is Uganda's {symbol}?",
+        "answer": "value",
+        "level": "simple"
+      }
+    ],
+    "explain": "Uganda's {symbol} is {value}.",
+    "rows": [
+      [
+        "national bird",
+        "the crested crane"
+      ],
+      [
+        "national motto",
+        "For God and My Country"
+      ],
+      [
+        "national anthem",
+        "Oh Uganda, Land of Beauty"
+      ],
+      [
+        "capital city",
+        "Kampala"
+      ],
+      [
+        "currency",
+        "the Uganda shilling"
+      ],
+      [
+        "Independence Day",
+        "9th October"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "physical features",
+    "grade_from": "P4",
+    "grade_to": "P6",
+    "columns": [
+      "feature",
+      "kind"
+    ],
+    "templates": [
+      {
+        "ask": "What is {feature}?",
+        "answer": "kind",
+        "level": "simple"
+      },
+      {
+        "ask": "Which of these is NOT a {kind}?",
+        "answer": "feature",
+        "level": "hard",
+        "not": "kind"
+      }
+    ],
+    "explain": "{feature} is a {kind}.",
+    "rows": [
+      [
+        "Lake Victoria",
+        "lake"
+      ],
+      [
+        "Lake Kyoga",
+        "lake"
+      ],
+      [
+        "Lake Albert",
+        "lake"
+      ],
+      [
+        "Lake Edward",
+        "lake"
+      ],
+      [
+        "River Nile",
+        "river"
+      ],
+      [
+        "River Kagera",
+        "river"
+      ],
+      [
+        "River Aswa",
+        "river"
+      ],
+      [
+        "Mount Elgon",
+        "mountain"
+      ],
+      [
+        "Mount Moroto",
+        "mountain"
+      ],
+      [
+        "Mount Muhabura",
+        "mountain"
+      ],
+      [
+        "Murchison Falls",
+        "waterfall"
+      ],
+      [
+        "Sezibwa Falls",
+        "waterfall"
+      ],
+      [
+        "Sipi Falls",
+        "waterfall"
+      ]
+    ]
+  }
+]

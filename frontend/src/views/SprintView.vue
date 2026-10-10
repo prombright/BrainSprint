@@ -220,7 +220,7 @@ function finish(endedEarly = false) {
     endedEarly,
     race,
     mode: isBoss ? 'boss' : isPractice ? 'practice' : isHomework ? 'homework' : undefined,
-    mixed,
+    mixed: mixed || isBoss,
     assignmentId: homeworkId,
     homeworkTitle: isHomework ? String(route.query.title ?? 'Homework') : undefined,
     boss: isBoss ? { ...boss.value, damage: Math.min(300, score.value), defeated: score.value >= BOSS_HP } : undefined,

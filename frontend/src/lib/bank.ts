@@ -3,6 +3,13 @@
 import { ref } from 'vue'
 import type { Grade, Subject } from '../game/types'
 import { registerBank, type BankQuestion } from '../game/sprint'
+import type { FactSet } from '../game/facts'
+
+interface Saved {
+  version: string
+  questions: BankQuestion[]
+  sets: FactSet[]
+}
 
 const BASE = import.meta.env.VITE_API_URL ?? '/brainsprint/api'
 const key = (subject: string, grade: string) => `bsk:bank:${subject}:${grade}`
@@ -28,8 +35,8 @@ function write(k: string, v: unknown) {
 /** Load whatever this class has saved on the device (instant, offline). */
 export function loadSavedBanks(grade: Grade) {
   for (const subject of ['english', 'science', 'sst'] as Subject[]) {
-    const saved = read<{ version: string; questions: BankQuestion[] }>(key(subject, grade))
-    if (saved) registerBank(subject, grade, saved.questions)
+    const saved = read<Saved>(key(subject, grade))
+    if (saved) registerBank(subject, grade, saved.questions, saved.sets ?? [])
   }
   bankVersion.value++
 }
@@ -54,13 +61,16 @@ export async function refreshBanks(grade: Grade) {
         }
         continue
       }
-      const saved = read<{ version: string }>(key(subject, grade))
-      const res = await fetch(`${BASE}/questions?subject=${subject}&grade=${grade}`)
-      if (!res.ok) continue
+      const saved = read<Saved>(key(subject, grade))
+      const [res, factRes] = await Promise.all([fetch(`${BASE}/questions?subject=${subject}&grade=${grade}`), fetch(`${BASE}/facts?subject=${subject}&grade=${grade}`)])
+      if (!res.ok || !factRes.ok) continue
       const bank = (await res.json()) as { version: string; questions: BankQuestion[] }
-      if (bank.version === saved?.version) continue
-      write(key(subject, grade), bank)
-      registerBank(subject, grade, bank.questions)
+      const { sets } = (await factRes.json()) as { sets: FactSet[] }
+      // fact sets change the version too, so edits to them reach phones
+      const version = `${bank.version}|${sets.map((s) => `${s.id}@${s.updated}`).join(',')}`
+      if (version === saved?.version) continue
+      write(key(subject, grade), { version, questions: bank.questions, sets } satisfies Saved)
+      registerBank(subject, grade, bank.questions, sets)
     }
     bankVersion.value++
   } catch {

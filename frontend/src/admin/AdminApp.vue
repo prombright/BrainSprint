@@ -4,12 +4,15 @@ import { AdminError, adminCall, session, type AdminPlayer, type AdminSchool, typ
 import QuestionEditor from '../shared/QuestionEditor.vue'
 import { emptyDraft, fromSaved, toPayload, type QuestionDraft } from '../shared/questionDraft'
 import { csvToQuestions } from '../shared/csv'
+import FactSetEditor from './FactSetEditor.vue'
+import { emptyFactDraft, factDraftFrom, factPayload, type FactSetDraft, type SavedFactSet } from './factDraft'
 import { GRADES, SUBJECTS } from '../game/types'
 
-type Tab = 'overview' | 'questions' | 'schools' | 'players' | 'leads' | 'feed'
+type Tab = 'overview' | 'questions' | 'facts' | 'schools' | 'players' | 'leads' | 'feed'
 const TABS: { id: Tab; label: string }[] = [
   { id: 'overview', label: '📊 Overview' },
   { id: 'questions', label: '❓ Questions' },
+  { id: 'facts', label: '🧩 Fact tables' },
   { id: 'schools', label: '🏫 Schools' },
   { id: 'players', label: '🧒 Players' },
   { id: 'leads', label: '📨 Enquiries' },
@@ -70,6 +73,7 @@ async function load() {
   if (tab.value === 'players') players.value = (await run(() => adminCall<{ players: AdminPlayer[] }>('GET', `/admin/players?q=${encodeURIComponent(playerSearch.value)}`)))?.players ?? []
   if (tab.value === 'leads') leads.value = (await run(() => adminCall<{ leads: Lead[] }>('GET', '/admin/leads')))?.leads ?? []
   if (tab.value === 'questions') await loadBank()
+  if (tab.value === 'facts') await loadFacts()
   if (tab.value === 'feed') feed.value = (await run(() => adminCall<{ events: FeedEvent[] }>('GET', '/admin/feed')))?.events ?? []
 }
 watch([tab, schoolStatus], load)
@@ -139,6 +143,53 @@ async function importCsv(e: Event) {
     error.value = (err as Error).message
   } finally {
     busy.value = false
+  }
+}
+
+// ---------- fact tables (Fact Engine) ----------
+const factSets = ref<SavedFactSet[]>([])
+const editingFacts = ref<{ id: number | null; draft: FactSetDraft } | null>(null)
+const factImport = ref<{ created: number; skipped: number; errors: { set: string; error: string }[] } | null>(null)
+
+async function loadFacts() {
+  factSets.value = (await run(() => adminCall<{ sets: SavedFactSet[] }>('GET', '/admin/facts')))?.sets ?? factSets.value
+}
+
+async function editFacts(id: number | null) {
+  if (id === null) return void (editingFacts.value = { id: null, draft: emptyFactDraft() })
+  const set = await run(() => adminCall<SavedFactSet>('GET', `/admin/facts/${id}`))
+  if (set) editingFacts.value = { id, draft: factDraftFrom(set) }
+}
+
+async function saveFacts() {
+  if (!editingFacts.value) return
+  busy.value = true
+  const { id, draft } = editingFacts.value
+  const status = factSets.value.find((x) => x.id === id)?.status ?? 'draft'
+  const r = await run(() => adminCall('POST', id ? `/admin/facts/${id}` : '/admin/facts', { ...factPayload(draft), status }))
+  busy.value = false
+  if (r) {
+    editingFacts.value = null
+    loadFacts()
+  }
+}
+
+async function setFactStatus(id: number, status: 'draft' | 'approved' | 'retired') {
+  await run(() => adminCall('POST', `/admin/facts/${id}`, { status }))
+  loadFacts()
+}
+
+async function importFacts(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  try {
+    const sets = JSON.parse(await file.text())
+    factImport.value = (await run(() => adminCall<{ created: number; skipped: number; errors: { set: string; error: string }[] }>('POST', '/admin/facts/import', { file: file.name, sets }))) ?? null
+    loadFacts()
+  } catch {
+    error.value = 'That file is not a fact-set JSON file (see content/fact-sets-starter.json)'
   }
 }
 
@@ -443,6 +494,38 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
           </div>
           <p v-if="item.steps.length" class="mt-1 text-sm text-ink/60">💡 {{ item.steps.join(' · ') }}</p>
           <p v-if="item.review_note" class="mt-1 text-sm text-sprint-dark">Note: {{ item.review_note }}</p>
+        </article>
+      </template>
+    </section>
+
+    <!-- fact tables -->
+    <section v-if="tab === 'facts'" class="space-y-4">
+      <div v-if="editingFacts" class="rounded-2xl bg-white p-5 shadow-sm">
+        <h2 class="mb-3 text-xl font-bold">{{ editingFacts.id ? 'Edit fact table' : 'New fact table' }}</h2>
+        <FactSetEditor v-model="editingFacts.draft" :busy="busy" @save="saveFacts" @cancel="editingFacts = null" />
+      </div>
+
+      <template v-else>
+        <div class="rounded-2xl bg-white p-4 text-sm text-ink/80 shadow-sm">
+          <p><b>Fact tables</b> turn checked facts into many questions. Write the facts once (e.g. organ · job · body system) with a few question patterns, and the app makes questions from every fact and pattern, taking wrong answers from the other facts and never asking a question two facts could both answer.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button class="rounded-xl bg-ocean px-3 py-1.5 font-semibold text-white" @click="editFacts(null)">+ New fact table</button>
+          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">⬆ Import JSON<input type="file" accept=".json,application/json" class="sr-only" @change="importFacts" /></label>
+        </div>
+        <div v-if="factImport" class="rounded-2xl bg-white p-4 shadow-sm">
+          <p class="font-semibold">Import: {{ factImport.created }} added as drafts{{ factImport.skipped ? `, ${factImport.skipped} already here` : '' }}{{ factImport.errors.length ? `, ${factImport.errors.length} with problems` : '' }}.</p>
+          <p v-for="e in factImport.errors" :key="e.set" class="text-sm text-cherry">{{ e.set }}: {{ e.error }}</p>
+        </div>
+        <p v-if="!factSets.length" class="rounded-2xl bg-white p-6 text-center text-ink/60">No fact tables yet. Import <code>content/fact-sets-starter.json</code> to start.</p>
+        <article v-for="f in factSets" :key="f.id" class="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
+          <div class="min-w-0 flex-1">
+            <p class="font-bold">{{ f.name }} <span class="ml-1 rounded-full px-2 py-0.5 text-xs font-semibold" :class="f.status === 'approved' ? 'bg-leaf/15 text-leaf' : f.status === 'retired' ? 'bg-ink/10 text-ink/60' : 'bg-sun/50'">{{ f.status === 'draft' ? 'to review' : f.status }}</span></p>
+            <p class="text-sm text-ink/60">{{ subjectName(f.subject) }} · {{ f.grade_from }}–{{ f.grade_to }} · {{ f.row_count }} facts × {{ f.templates.length }} patterns · {{ f.columns.join(' · ') }}</p>
+          </div>
+          <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editFacts(f.id)">✏️ Edit & preview</button>
+          <button v-if="f.status !== 'approved'" class="rounded-lg bg-leaf px-2 py-1 text-sm font-semibold text-white" @click="setFactStatus(f.id, 'approved')">✓ Approve</button>
+          <button v-if="f.status !== 'retired'" class="rounded-lg bg-cherry/10 px-2 py-1 text-sm font-semibold text-cherry" @click="setFactStatus(f.id, 'retired')">Retire</button>
         </article>
       </template>
     </section>

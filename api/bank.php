@@ -62,19 +62,51 @@ function questionOut(array $r): array
     ];
 }
 
-/** What the game downloads: every approved question for one class + subject, with a version for caching. */
+const BANK_SAMPLE = 400; // most questions one phone downloads per class + subject
+
+/**
+ * What the game downloads for one class + subject: every approved question, or, once there are
+ * more than BANK_SAMPLE, a random BANK_SAMPLE that changes each day (the same sample all day, so
+ * phones download it once a day at most). This keeps downloads small however big the bank grows.
+ */
 function publishedQuestions(string $subject, string $grade): array
 {
-    $rows = q("SELECT * FROM questions WHERE subject = ? AND grade = ? AND status = 'approved' ORDER BY id", [$subject, $grade])->fetchAll();
-    $version = (string)q("SELECT COALESCE(MAX(updated_at), '0') FROM questions WHERE subject = ? AND grade = ?", [$subject, $grade])->fetchColumn() . ':' . count($rows);
-    return ['version' => $version, 'questions' => array_map('questionOut', $rows)];
+    $total = (int)q("SELECT COUNT(*) FROM questions WHERE subject = ? AND grade = ? AND status = 'approved'", [$subject, $grade])->fetchColumn();
+    $changed = (string)q("SELECT COALESCE(MAX(updated_at), '0') FROM questions WHERE subject = ? AND grade = ?", [$subject, $grade])->fetchColumn();
+    if ($total <= BANK_SAMPLE) {
+        $rows = q("SELECT * FROM questions WHERE subject = ? AND grade = ? AND status = 'approved' ORDER BY id", [$subject, $grade])->fetchAll();
+        return ['version' => "$changed:$total", 'sampled' => false, 'questions' => array_map('questionOut', $rows)];
+    }
+    $seed = (int)date('Ymd'); // RAND(seed) gives the same order all day
+    $rows = q("SELECT * FROM questions WHERE subject = ? AND grade = ? AND status = 'approved' ORDER BY RAND($seed) LIMIT " . BANK_SAMPLE, [$subject, $grade])->fetchAll();
+    return ['version' => "$changed:$total:" . date('Y-m-d'), 'sampled' => true, 'total' => $total, 'questions' => array_map('questionOut', $rows)];
 }
 
-/** Which class + subject pairs have approved questions (the game turns those subjects on). */
+/**
+ * Which class + subject pairs have approved content (the game turns those subjects on):
+ * bank questions, plus approved fact sets counted as facts × patterns.
+ */
 function bankCoverage(): array
 {
-    $rows = q("SELECT subject, grade, COUNT(*) AS n FROM questions WHERE status = 'approved' GROUP BY subject, grade")->fetchAll();
-    return array_map(fn ($r) => ['subject' => $r['subject'], 'grade' => $r['grade'], 'count' => (int)$r['n']], $rows);
+    $count = [];
+    foreach (q("SELECT subject, grade, COUNT(*) AS n FROM questions WHERE status = 'approved' GROUP BY subject, grade")->fetchAll() as $r) {
+        $count[$r['subject'] . ':' . $r['grade']] = ['questions' => (int)$r['n'], 'facts' => 0];
+    }
+    $sets = q("SELECT s.subject, s.grade_from, s.grade_to, JSON_LENGTH(s.templates) AS patterns, COUNT(f.id) AS facts
+               FROM fact_sets s JOIN facts f ON f.set_id = s.id WHERE s.status = 'approved' GROUP BY s.id")->fetchAll();
+    foreach ($sets as $s) {
+        for ($i = gradeIndex($s['grade_from']); $i <= gradeIndex($s['grade_to']); $i++) {
+            $k = $s['subject'] . ':' . GRADES[$i];
+            $count[$k] ??= ['questions' => 0, 'facts' => 0];
+            $count[$k]['facts'] += (int)$s['facts'] * (int)$s['patterns'];
+        }
+    }
+    $out = [];
+    foreach ($count as $k => $c) {
+        [$subject, $grade] = explode(':', $k);
+        $out[] = ['subject' => $subject, 'grade' => $grade, 'count' => $c['questions'] + $c['facts'], 'questions' => $c['questions'], 'fact_questions' => $c['facts']];
+    }
+    return $out;
 }
 
 // ---------- admin ----------

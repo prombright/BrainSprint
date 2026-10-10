@@ -232,8 +232,9 @@ export const api = {
   boss: (player: PlayerAuth) => call<BossBoard>('GET', '/boss', { player }),
   saveBoss: (player: PlayerAuth, damage: number) => call<BossBoard>('POST', '/boss', { player, body: { damage } }),
 
-  registerPlayer: (p: { device_id: string; name: string; avatar: string; grade: string }) =>
-    call<PlayerSummary & { token: string }>('POST', '/players', { body: p }),
+  /** Creates this device's player, or (with `player`) updates its name, animal or class. */
+  registerPlayer: (p: { device_id: string; name: string; avatar: string; grade: string }, player?: PlayerAuth) =>
+    call<PlayerSummary & { token: string }>('POST', '/players', { body: p, player }),
   me: (player: PlayerAuth) => call<PlayerSummary>('GET', '/players/me', { player }),
   saveSprint: (player: PlayerAuth, s: SprintPayload) => call<PlayerSummary>('POST', '/sprints', { body: s, player }),
   league: (player: PlayerAuth) => call<League>('GET', '/league', { player }),

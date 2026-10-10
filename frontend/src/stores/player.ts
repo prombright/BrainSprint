@@ -32,6 +32,7 @@ interface Saved {
   deviceId: string
   serverId: number | null
   serverToken: string | null // proves to the API that this device owns the player
+  profileChanged?: boolean // name, animal or class changed since the server last heard
   profile: Profile | null
   totalPoints: number
   sprintsPlayed: number
@@ -203,7 +204,7 @@ export const usePlayer = defineStore('player', () => {
 
   function setProfile(p: Profile) {
     state.value.profile = p
-    state.value.serverToken = null // re-register with the new details on next sync
+    state.value.profileChanged = true // sent with the next sync
     sync()
   }
 
@@ -269,11 +270,23 @@ export const usePlayer = defineStore('player', () => {
   async function ensureRegistered(): Promise<PlayerAuth | null> {
     const s = state.value
     if (!s.profile) return null
-    if (auth.value) return auth.value
-    const r = await api.registerPlayer({ device_id: s.deviceId, ...s.profile })
+    if (auth.value && !s.profileChanged) return auth.value
+    let r
+    try {
+      r = await api.registerPlayer({ device_id: s.deviceId, ...s.profile }, auth.value ?? undefined)
+    } catch (e) {
+      // this device id belongs to a player whose token we no longer have (e.g. the server's copy
+      // was reset): carry on as a new player; progress saved on this device is kept
+      if (!(e instanceof ApiError && e.status === 409)) throw e
+      s.deviceId = newId()
+      s.serverId = null
+      s.serverToken = null
+      r = await api.registerPlayer({ device_id: s.deviceId, ...s.profile })
+    }
     s.serverId = r.id
     s.serverToken = r.token
     s.summary = r
+    s.profileChanged = false
     return auth.value
   }
 

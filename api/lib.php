@@ -77,6 +77,12 @@ function tokenHash(string $token): string
     return hash('sha256', $token);
 }
 
+/** Topic names as the app makes them: "fractions", "LCM", "uganda's neighbours", "word problem". */
+function validTopic(mixed $t): bool
+{
+    return is_string($t) && (bool)preg_match("/^[A-Za-z][A-Za-z '\-]{1,58}$/", $t);
+}
+
 function header_(string $name): string
 {
     $key = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
@@ -101,7 +107,8 @@ function requireParent(): array
     $auth = header_('Authorization');
     if (!preg_match('/^Bearer\s+([a-f0-9]{64})$/i', $auth, $m)) respond(401, ['error' => 'Please sign in']);
     $hash = tokenHash($m[1]);
-    $p = q('SELECT p.* FROM parent_tokens t JOIN parents p ON p.id = t.parent_id WHERE t.token_hash = ?', [$hash])->fetch();
+    // a parent stays signed in for 6 months of not using the app
+    $p = q('SELECT p.* FROM parent_tokens t JOIN parents p ON p.id = t.parent_id WHERE t.token_hash = ? AND t.last_used_at > NOW() - INTERVAL 180 DAY', [$hash])->fetch();
     if (!$p) respond(401, ['error' => 'Please sign in']);
     q('UPDATE parent_tokens SET last_used_at = NOW() WHERE token_hash = ?', [$hash]);
     return $p;

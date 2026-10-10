@@ -11,6 +11,7 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/learning.php';
 require __DIR__ . '/teachers.php';
 require __DIR__ . '/bank.php';
+require __DIR__ . '/facts.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -52,6 +53,7 @@ function parentPayload(array $parent): array
 
 function signInParent(array $parent): never
 {
+    q('DELETE FROM parent_tokens WHERE last_used_at < NOW() - INTERVAL 180 DAY'); // tidy old sign-ins
     $token = newToken();
     q('INSERT INTO parent_tokens (token_hash, parent_id) VALUES (?, ?)', [tokenHash($token), $parent['id']]);
     q('UPDATE parents SET failed_logins = 0, locked_until = NULL WHERE id = ?', [$parent['id']]);
@@ -69,6 +71,10 @@ try {
         // approved bank questions for one class + subject (the game caches them for offline play)
         case $route === 'GET /questions':
             respond(200, publishedQuestions(oneOf($_GET, 'subject', SUBJECTS), oneOf($_GET, 'grade', GRADES)));
+
+        // approved fact sets taught in one class (the app turns them into questions)
+        case $route === 'GET /facts':
+            respond(200, ['sets' => publishedFactSets(oneOf($_GET, 'subject', SUBJECTS), oneOf($_GET, 'grade', GRADES))]);
 
         case $route === 'GET /questions/coverage':
             respond(200, ['coverage' => bankCoverage()]);
@@ -211,6 +217,55 @@ try {
         case $method === 'POST' && (bool)preg_match('#^/admin/questions/(\d+)$#', $path, $mm):
             respond(200, adminSaveQuestion(requireAdmin(), (int)$mm[1], body()));
 
+        case $route === 'GET /admin/facts':
+            requireAdmin();
+            respond(200, ['sets' => adminFactSets()]);
+
+        case $method === 'GET' && (bool)preg_match('#^/admin/facts/(\d+)$#', $path, $mm):
+            requireAdmin();
+            $s = q('SELECT * FROM fact_sets WHERE id = ?', [(int)$mm[1]])->fetch() ?: respond(404, ['error' => 'Fact set not found']);
+            respond(200, factSetOut($s));
+
+        // {set…, status?}: create or update a whole set (rows included); or {status} alone
+        case $route === 'POST /admin/facts':
+        case $method === 'POST' && (bool)preg_match('#^/admin/facts/(\d+)$#', $path, $mm):
+            $admin = requireAdmin();
+            $d = body();
+            $id = isset($mm[1]) ? (int)$mm[1] : null;
+            $status = in_array($d['status'] ?? '', ['draft', 'approved', 'retired'], true) ? $d['status'] : 'draft';
+            if ($id && count(array_diff(array_keys($d), ['status'])) === 0) {
+                q('UPDATE fact_sets SET status = ? WHERE id = ?', [$status, $id]);
+                respond(200, ['ok' => true]);
+            }
+            [$set, $problems] = cleanFactSet($d);
+            if ($problems) respond(422, ['error' => $problems[0], 'problems' => $problems]);
+            respond(200, ['id' => saveFactSet($id, $set, $status, 'admin:' . $admin['username'])]);
+
+        // a JSON file of fact sets (like content/fact-sets-starter.json): each arrives as a draft
+        case $route === 'POST /admin/facts/import':
+            $admin = requireAdmin();
+            $d = body();
+            $sets = $d['sets'] ?? null;
+            if (!is_array($sets) || count($sets) > 100) respond(422, ['error' => 'Send up to 100 fact sets']);
+            $created = 0;
+            $skipped = 0;
+            $errors = [];
+            foreach (array_values($sets) as $i => $raw) {
+                [$set, $problems] = cleanFactSet(is_array($raw) ? $raw : []);
+                $label = $set['name'] ?: 'set ' . ($i + 1);
+                if ($problems) {
+                    $errors[] = ['set' => $label, 'error' => implode('; ', array_slice($problems, 0, 3))];
+                    continue;
+                }
+                if (q('SELECT 1 FROM fact_sets WHERE subject = ? AND name = ?', [$set['subject'], $set['name']])->fetchColumn()) {
+                    $skipped++;
+                    continue;
+                }
+                saveFactSet(null, $set, 'draft', 'import:' . mb_substr(preg_replace('/[^\w.\- ]/u', '', (string)($d['file'] ?? 'import')), 0, 40) . ' by ' . $admin['username']);
+                $created++;
+            }
+            respond(200, ['created' => $created, 'skipped' => $skipped, 'errors' => $errors]);
+
         case $route === 'GET /admin/feed':
             requireAdmin();
             respond(200, ['events' => q('SELECT e.id, e.kind, e.detail, e.created_at, p.name, p.avatar, p.is_demo FROM events e JOIN players p ON p.id = e.player_id ORDER BY e.id DESC LIMIT 100')->fetchAll()]);
@@ -230,6 +285,12 @@ try {
             if (looksRude($name)) respond(422, ['error' => 'Please choose a different name']);
             $avatar = text($d, 'avatar', 16);
             $grade = oneOf($d, 'grade', GRADES);
+            // a device already registered must send its own token: knowing a device id alone
+            // is not enough to take over a child's player
+            $existing = q('SELECT token_hash FROM players WHERE device_id = ?', [$deviceId])->fetch();
+            if ($existing && $existing['token_hash'] && !hash_equals($existing['token_hash'], tokenHash(header_('X-Player-Token')))) {
+                respond(409, ['error' => 'This device is already registered']);
+            }
             $token = newToken();
             q(
                 'INSERT INTO players (device_id, token_hash, name, avatar, grade) VALUES (?, ?, ?, ?, ?)

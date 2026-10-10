@@ -12,6 +12,8 @@ function gradeName(string $g): string
 
 function addEvent(int $playerId, string $kind, string $detail): void
 {
+    // the feed only shows recent news: now and then, clear items older than 30 days
+    if (random_int(1, 200) === 1) q('DELETE FROM events WHERE created_at < NOW() - INTERVAL 30 DAY');
     q('INSERT INTO events (player_id, kind, detail) VALUES (?, ?, ?)', [$playerId, $kind, mb_substr($detail, 0, 120)]);
 }
 
@@ -19,7 +21,7 @@ function addEvent(int $playerId, string $kind, string $detail): void
 function sprintEvent(int $playerId, array $s): void
 {
     $where = gradeName($s['grade']) . ' ' . (SUBJECT_NAMES[$s['subject']] ?? $s['subject']);
-    if ($s['total'] >= 10 && $s['correct'] === $s['total']) addEvent($playerId, 'perfect', "got a perfect 10 in $where 💯");
+    if ($s['total'] >= 10 && $s['correct'] === $s['total']) addEvent($playerId, 'perfect', "got every answer right in $where 💯");
     elseif ($s['score'] >= 200) addEvent($playerId, 'big_score', "scored {$s['score']} points in $where 🚀");
     elseif ($s['best_streak'] >= 8) addEvent($playerId, 'streak', "answered {$s['best_streak']} in a row in $where 🔥");
 }

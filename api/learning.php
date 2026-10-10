@@ -14,7 +14,7 @@ function sprintTopics(array $d, int $total): array
     $out = [];
     $sum = 0;
     foreach ($topics as $name => $pair) {
-        if (!is_string($name) || !preg_match('/^[a-z][a-z ]{1,38}$/', $name) || !is_array($pair) || count($pair) !== 2) continue;
+        if (!validTopic($name) || !is_array($pair) || count($pair) !== 2) continue;
         [$c, $t] = array_map('intval', array_values($pair));
         if ($t < 1 || $c < 0 || $c > $t) continue;
         $sum += $t;

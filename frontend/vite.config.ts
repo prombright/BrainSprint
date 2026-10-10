@@ -7,7 +7,7 @@ import { resolve } from 'node:path'
 const pages = (names: string[]): Record<string, string> => Object.fromEntries(names.map((n) => [n, resolve(__dirname, `${n}.html`)]))
 
 // https://vite.dev/config/
-// Three pages: index.html (the game), site.html (the public landing page), admin.html (admin panel).
+// Four pages: index.html (the game), site.html (the public landing page), teacher.html (teachers), admin.html (admin panel).
 // The Android app (`--mode android`) only ships the game.
 export default defineConfig(({ mode }) => ({
   plugins: [

@@ -1,5 +1,8 @@
 # BrainSprint Kids
 
+> **How it all works, and why:** see [`docs/`](docs/README.md): architecture, the algorithms (Template Engine,
+> Fact Engine, mastery, spaced repetition, leagues…), data model, API, decision log and roadmap.
+
 Fast, fun academic practice for nursery and primary children. Answer quickly, earn points, collect badges.
 
 - **Subjects:** Maths and English (live), Science and SST (coming)
@@ -116,7 +119,7 @@ read aloud), and the results screen shows the steps again under *Let's learn the
 | 3 or more right in a row | +5 |
 | Wrong or out of time | 0, and the streak resets |
 
-Stars per sprint: 90%+ = 3 ⭐, 70%+ = 2 ⭐, 50%+ = 1 ⭐ (always out of the full 10 questions).
+Stars per sprint: 90%+ = 3 ⭐, 70%+ = 2 ⭐, 50%+ = 1 ⭐, out of the questions in the sprint (10, or fewer when a small question bank gives a shorter sprint). A sprint cut short by Brain Power still counts every question it should have had.
 
 ## Brain Power, points and leagues
 
@@ -234,6 +237,10 @@ questions written by people and **checked before children see them**.
   has fewer than 10 questions it borrows from the class's other levels, and a small bank gives a shorter
   sprint rather than repeats. Bank questions work with practice, homework and topic reports like any other.
 - `content/starter-science-sst.csv`: 40 P3–P7 Science and SST questions to import as a start.
+- **Fact Engine** (admin panel → **Fact tables**): write a small table of checked facts (e.g. organ · job · system)
+  with a few question patterns, and the app makes many questions from it, never one that two facts could both answer.
+  `content/fact-sets-starter.json` has 8 starter sets (import as JSON; they arrive as drafts). `npm run check:facts`
+  tests the engine. Big banks are downloaded as a daily random sample of 400 per class + subject.
   **Have a teacher check them before approving.**
 
 ## The website and admin panel

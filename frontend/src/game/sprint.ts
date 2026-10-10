@@ -2,6 +2,7 @@ import type { Grade, Level, Question, Subject } from './types.ts'
 import { pick, shuffle } from './random.ts'
 import { MATHS_PLAN } from './maths.ts'
 import { ENGLISH_PLAN } from './english.ts'
+import { factQuestion, type FactSet } from './facts.ts'
 
 export type Make = () => Omit<Question, 'key'>
 // a subject may not cover every class yet
@@ -29,6 +30,7 @@ export interface BankQuestion {
 
 export const BANK_MIN = 4 // a class needs at least this many approved questions before the subject opens
 const bankGrades = new Set<string>() // "science:P5", … filled from the bank, so sprints never repeat its questions
+const bankSubjects = new Set<string>() // classes whose content came from the server (bank or facts), so it can be replaced
 
 const fromBank = (b: BankQuestion): Omit<Question, 'key'> => ({
   topic: b.topic,
@@ -41,26 +43,38 @@ const fromBank = (b: BankQuestion): Omit<Question, 'key'> => ({
 })
 
 /**
- * Makes a class's bank questions playable like any other level. While a level has fewer than 10
- * questions it borrows from the class's other levels, so a small bank still gives full sprints.
- * Generated subjects (Maths, English Top–P3) are never replaced.
+ * Makes a class's downloaded content playable like any other level: written bank questions plus
+ * questions the Fact Engine makes from approved fact sets. While a level has fewer than 10 bank
+ * questions it borrows from the class's other levels. Generated subjects (Maths, English Top–P3)
+ * are never replaced.
  */
-export function registerBank(subject: Subject, grade: Grade, questions: BankQuestion[]) {
+export function registerBank(subject: Subject, grade: Grade, questions: BankQuestion[], factSets: FactSet[] = []) {
   const key = `${subject}:${grade}`
-  if (PLANS[subject]?.[grade] && !bankGrades.has(key)) return
-  if (questions.length < BANK_MIN) {
-    if (bankGrades.has(key)) delete PLANS[subject]![grade]
+  if (PLANS[subject]?.[grade] && !bankSubjects.has(key)) return
+  const factCount = factSets.reduce((t, s) => t + s.rows.length * s.templates.length, 0)
+  if (questions.length + factCount < BANK_MIN) {
+    if (bankSubjects.has(key)) delete PLANS[subject]![grade]
     bankGrades.delete(key)
+    bankSubjects.delete(key)
     return
   }
   const plan = (PLANS[subject] ??= {})
   const levelMaker = (level: Level): Make[] => {
-    const own = questions.filter((q) => q.level === level)
-    const pool = own.length >= 10 ? own : questions
-    return [() => fromBank(pick(pool))]
+    const makers: Make[] = []
+    if (questions.length) {
+      const own = questions.filter((q) => q.level === level)
+      const pool = own.length >= 10 ? own : questions
+      makers.push(() => fromBank(pick(pool)))
+    }
+    // each fact set asks at this level if it has a pattern for it, otherwise any of its patterns
+    for (const set of factSets) makers.push(() => factQuestion(set, level) ?? factQuestion(set)!)
+    return makers
   }
   plan[grade] = { simple: levelMaker('simple'), medium: levelMaker('medium'), hard: levelMaker('hard'), pro: levelMaker('pro') }
-  bankGrades.add(key)
+  // fact questions can repeat a prompt with different choices, so only a pure bank stops at repeats
+  if (factSets.length) bankGrades.delete(key)
+  else bankGrades.add(key)
+  bankSubjects.add(key)
 }
 
 export const questionKey = (q: Omit<Question, 'key'>) => `${q.prompt}|${q.big ?? ''}|${q.visual ?? ''}`

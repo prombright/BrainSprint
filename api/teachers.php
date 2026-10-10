@@ -19,6 +19,7 @@ function teacherPayload(array $t): array
 
 function signInTeacher(array $t): never
 {
+    q('DELETE FROM teacher_tokens WHERE created_at < NOW() - INTERVAL 30 DAY'); // tidy expired sign-ins
     $token = newToken();
     q('INSERT INTO teacher_tokens (token_hash, teacher_id) VALUES (?, ?)', [tokenHash($token), $t['id']]);
     q('UPDATE teachers SET failed_logins = 0, locked_until = NULL WHERE id = ?', [$t['id']]);
@@ -131,7 +132,7 @@ function createAssignment(array $class, array $d): void
     $level = $d['level'] ?? null;
     $topic = isset($d['topic']) && $d['topic'] !== '' ? (string)$d['topic'] : null;
     if ($level !== null && !in_array($level, LEVELS, true)) respond(422, ['error' => 'Invalid level']);
-    if ($topic !== null && !preg_match('/^[a-z][a-z ]{1,38}$/', $topic)) respond(422, ['error' => 'Invalid topic']);
+    if ($topic !== null && !validTopic($topic)) respond(422, ['error' => 'Invalid topic']);
     if (($level === null) === ($topic === null)) respond(422, ['error' => 'Choose a level or a topic']);
     $due = (string)($d['due_on'] ?? '');
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $due) || strtotime($due) < strtotime('today')) respond(422, ['error' => 'Choose a due date from today on']);
