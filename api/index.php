@@ -446,6 +446,10 @@ try {
             $t = requireTeacher();
             respond(200, ['school' => teacherSchoolRow($t), 'subjects' => array_combine(GRADES, array_map(fn ($g) => paperSubjects($g), GRADES))]);
 
+        // the whole school, class by class (no pupil names)
+        case $route === 'GET /teacher/school/overview':
+            respond(200, schoolOverview(requireTeacher()));
+
         case $route === 'POST /teacher/school':
             respond(200, ['school' => setTeacherSchool(requireTeacher(), intIn(body(), 'school_id', 1, PHP_INT_MAX))]);
 

@@ -6,6 +6,8 @@ import { bankVersion, loadSavedBanks, refreshBanks } from '../lib/bank'
 import { TeacherError, session, teacherCall, type ClassDetail, type ClassSummary, type Teacher } from './api'
 import QuestionEditor from '../shared/QuestionEditor.vue'
 import Competitions from './Competitions.vue'
+import SchoolOverview from './SchoolOverview.vue'
+import { downloadCsv } from '../shared/csv'
 import { emptyDraft, toPayload, type QuestionDraft } from '../shared/questionDraft'
 
 const signedIn = ref(!!session.get())
@@ -162,6 +164,7 @@ const thanks = ref('')
 async function openSuggest() {
   suggesting.value = true
   competing.value = false
+  wholeSchool.value = false
   openId.value = null
   suggestion.value = emptyDraft(classes.value[0]?.grade ?? 'P5', 'science')
   suggestions.value = (await run(() => teacherCall<{ questions: Suggestion[] }>('GET', '/teacher/questions')))?.questions ?? []
@@ -178,15 +181,43 @@ async function sendSuggestion() {
 }
 
 watch(openId, (id) => {
-  if (id) suggesting.value = competing.value = false
+  if (id) suggesting.value = competing.value = wholeSchool.value = false
 })
 
 // ---------- school vs school ----------
 const competing = ref(false)
 function openCompete() {
   competing.value = true
-  suggesting.value = false
+  suggesting.value = wholeSchool.value = false
   openId.value = null
+}
+
+// ---------- whole school (class figures only) ----------
+const wholeSchool = ref(false)
+function openWholeSchool() {
+  wholeSchool.value = true
+  suggesting.value = competing.value = false
+  openId.value = null
+}
+
+// ---------- downloads for Excel ----------
+function downloadPupils() {
+  const d = detail.value!
+  const hw = [...d.assignments].reverse() // oldest first, like a mark book
+  downloadCsv(`${d.class.name} - pupils.csv`, [
+    ['Pupil', 'Sprints this week', 'Accuracy this week %', 'Total XP', 'Weak topics', 'PLE readiness %', 'Last seen', ...hw.map((a) => `${a.title} (due ${a.due_on})`)],
+    ...d.pupils.map((p) => [
+      p.name, p.week_sprints, p.week_accuracy, p.xp_total, p.weak.join('; '), p.mock_readiness, p.last_seen_at ?? '',
+      ...hw.map((a) => (a.results[p.id] ? `${a.results[p.id].correct}/${a.results[p.id].total}` : '')),
+    ]),
+  ])
+}
+function downloadTopics() {
+  const d = detail.value!
+  downloadCsv(`${d.class.name} - topics.csv`, [
+    ['Subject', 'Topic', 'Pupils practising', 'Class mastery %', 'Pupils below 70%'],
+    ...d.topics.map((t) => [subjectLabel(t.subject), t.topic, t.pupils, t.mastery, t.struggling]),
+  ])
 }
 
 // ---------- helpers ----------
@@ -218,6 +249,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <li>📝 Set homework on a topic, and see who has done it</li>
         <li>🖨️ Print a report for parents' meetings</li>
         <li>⚔️ Challenge other schools to a competition the server sets and marks</li>
+        <li>⬇️ Download class results for Excel, and see the whole school at a glance</li>
       </ul>
       <p class="mt-4 text-sm text-ink/60">Free while BrainSprint is being built. You only see pupils who join your class with its code.</p>
     </div>
@@ -282,6 +314,9 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="competing ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openCompete">
         ⚔️ School vs School
       </button>
+      <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="wholeSchool ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openWholeSchool">
+        🏫 Whole school
+      </button>
       <button class="mt-auto text-left text-sm text-ink/50 underline" @click="signOut">Sign out</button>
     </aside>
 
@@ -290,6 +325,8 @@ const average = (a: ClassDetail['assignments'][number]) => {
 
       <!-- suggest questions for the bank -->
       <Competitions v-if="competing" />
+
+      <SchoolOverview v-else-if="wholeSchool" />
 
       <section v-else-if="suggesting" class="space-y-4">
         <div>
@@ -323,14 +360,16 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <p class="mt-1 text-ink/70">Click "+ New class", then give your pupils the join code.</p>
       </section>
 
-      <template v-if="detail && !suggesting && !competing">
+      <template v-if="detail && !suggesting && !competing && !wholeSchool">
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 class="text-3xl font-bold">{{ detail.class.name }}</h1>
             <p class="text-ink/60">{{ gradeLabel(detail.class.grade) }} · {{ detail.pupils.length }} pupils · join code <b class="font-mono tracking-widest text-ink">{{ detail.class.code }}</b></p>
           </div>
-          <div class="flex gap-2 print:hidden">
+          <div class="flex flex-wrap gap-2 print:hidden">
             <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="refresh">↻ Refresh</button>
+            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.pupils.length" @click="downloadPupils">⬇️ Pupils (Excel)</button>
+            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.topics.length" @click="downloadTopics">⬇️ Topics (Excel)</button>
             <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="printReport">🖨️ Print report</button>
           </div>
         </header>

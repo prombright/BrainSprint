@@ -51,3 +51,24 @@ export function csvToQuestions(text: string) {
     steps: col('steps') >= 0 ? (r[col('steps')] ?? '').split('|').map((x) => x.trim()).filter(Boolean) : [],
   }))
 }
+
+/** Rows → CSV text that Excel opens correctly (UTF-8 mark, quoted where needed). */
+export function toCsv(rows: (string | number | null | undefined)[][]): string {
+  const cell = (v: string | number | null | undefined) => {
+    let s = v === null || v === undefined ? '' : String(v)
+    // a cell starting with = + - @ would run as a formula in Excel: names are typed by children
+    if (/^[=+\-@]/.test(s)) s = `'${s}`
+    return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+  }
+  return '﻿' + rows.map((r) => r.map(cell).join(',')).join('\r\n')
+}
+
+/** Saves CSV text as a file download. */
+export function downloadCsv(name: string, rows: (string | number | null | undefined)[][]) {
+  const url = URL.createObjectURL(new Blob([toCsv(rows)], { type: 'text/csv;charset=utf-8' }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = name
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}

@@ -194,3 +194,50 @@ function recordHomework(array $p, int $assignmentId, int $correct, int $total, i
         [$assignmentId, $p['id'], $correct, $total, $score, $playedAt],
     );
 }
+
+/**
+ * The whole school at a glance, for any teacher of that school (e.g. the head teacher): every class
+ * of every teacher who chose this school, with counts and topics only. No pupil names: those stay
+ * with each class's own teacher.
+ */
+function schoolOverview(array $teacher): array
+{
+    if (!$teacher['school_id']) respond(422, ['error' => 'First choose your school (under School vs School)']);
+    $week = weekStart();
+    $classes = q(
+        "SELECT c.id, c.name, c.grade, tr.name AS teacher,
+                COUNT(DISTINCT m.player_id) AS pupils,
+                COUNT(DISTINCT CASE WHEN s.id IS NOT NULL THEN m.player_id END) AS active,
+                COUNT(s.id) AS sprints,
+                COALESCE(SUM(s.correct), 0) AS correct, COALESCE(SUM(s.total), 0) AS answered
+         FROM classes c JOIN teachers tr ON tr.id = c.teacher_id
+         LEFT JOIN class_members m ON m.class_id = c.id
+         LEFT JOIN sprints s ON s.player_id = m.player_id AND s.played_at >= ?
+         WHERE tr.school_id = ? GROUP BY c.id ORDER BY FIELD(c.grade, 'TOP','P1','P2','P3','P4','P5','P6','P7'), c.name",
+        [$week, $teacher['school_id']],
+    )->fetchAll();
+    $out = [];
+    foreach ($classes as $c) {
+        $weak = q(
+            "SELECT t.subject, t.topic, ROUND(AVG(t.recent_correct / NULLIF(t.recent_total, 0)) * 100) AS mastery, COUNT(*) AS pupils
+             FROM topic_stats t JOIN class_members m ON m.player_id = t.player_id AND m.class_id = ?
+             WHERE t.grade = ? AND t.total >= ? GROUP BY t.subject, t.topic HAVING pupils >= 2 ORDER BY mastery ASC LIMIT 3",
+            [$c['id'], $c['grade'], MIN_ATTEMPTS],
+        )->fetchAll();
+        $out[] = [
+            'id' => (int)$c['id'], 'name' => $c['name'], 'grade' => $c['grade'], 'teacher' => $c['teacher'],
+            'pupils' => (int)$c['pupils'], 'active_this_week' => (int)$c['active'], 'sprints_this_week' => (int)$c['sprints'],
+            'accuracy' => $c['answered'] ? (int)round($c['correct'] / $c['answered'] * 100) : null,
+            'weak_topics' => array_map(fn ($t) => ['subject' => $t['subject'], 'topic' => $t['topic'], 'mastery' => (int)$t['mastery']], $weak),
+        ];
+    }
+    $pupils = array_sum(array_column($out, 'pupils'));
+    $active = array_sum(array_column($out, 'active_this_week'));
+    return [
+        'school' => teacherSchoolRow($teacher),
+        'teachers' => (int)q('SELECT COUNT(*) FROM teachers WHERE school_id = ?', [$teacher['school_id']])->fetchColumn(),
+        'pupils' => $pupils,
+        'active_this_week' => $active,
+        'classes' => $out,
+    ];
+}
