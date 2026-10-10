@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "icons": "node scripts/make-icons.mjs",
     "build:android": "vue-tsc -b && vite build --mode android && cap sync android",
+    "build:android-lan": "node scripts/android-lan.mjs",
     "open:android": "cap open android",
     "check:questions": "node scripts/check-questions.ts",
     "release": "node scripts/release.mjs",

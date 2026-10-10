@@ -88,6 +88,8 @@ Or in Android Studio (`npm run open:android`): *Settings → Build, Execution, D
 Gradle JDK* → pick the JDK 21 folder, then Run ▶ on a phone, or *Build → Generate Signed App Bundle* for the Play Store.
 
 Set `VITE_API_URL` in `frontend/.env.android` to the live API before a real release.
+
+**Trying the online parts on a phone before the live server exists:** `npm run build:android-lan` builds a test APK that talks to this computer over Wi-Fi (plain http, so only for testing on this network) and prints the address to download it from on the phone. XAMPP must be running, and the phone on the same Wi-Fi.
 To redraw the app icons and splash screen: `npm run icons`.
 
 The app id `com.brainsprint.kids` is permanent once published on the Play Store.

@@ -9,6 +9,9 @@ const config: CapacitorConfig = {
     // mobile money / API calls go over https in production
     allowMixedContent: false,
   },
+  // Wi-Fi test builds only (npm run build:android-lan): the app talks to this computer over plain http,
+  // which Android blocks unless the app itself is served over http and allows it
+  ...(process.env.BSK_LAN_TEST ? { server: { androidScheme: 'http', cleartext: true } } : {}),
   plugins: {
     SplashScreen: {
       launchShowDuration: 1200,
