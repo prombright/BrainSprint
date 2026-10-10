@@ -27,7 +27,7 @@ Capacitor app, and the live domain). The website itself is same-origin.
 | GET | `/questions?subject=&grade=` | Every **approved** bank question for one subject + class, and a `version` for caching | |
 | GET | `/questions?subject=&grade=` | Approved bank questions for one class + subject: all of them up to 400, otherwise a random 400 that stays the same all day (`sampled: true`, `total`) | |
 | GET | `/facts?subject=&grade=` | Approved fact sets taught in that class (with their facts and an `updated` time) for the Fact Engine | |
-| GET | `/questions/coverage` | Approved content per subject + class: `questions` (bank) + `fact_questions` (facts × patterns) = `count`; the game opens a subject at 4 | |
+| GET | `/questions/coverage?grade=` | Approved content per subject + class: `questions` (bank) + `fact_questions` (facts × patterns) = `count`; the game opens a subject at 4. With `grade`, entries for that class also carry `version`, so the app skips downloads it already has | |
 | GET | `/stats` | Public numbers for the landing page | `{"show": false}` until 100 real players |
 | POST | `/leads` | Landing-page contact form `{kind, name, organisation?, phone, email?, message?}` | Ugandan phone required; 5 per IP per hour; a filled hidden `website` field (honeypot) is silently ignored |
 | POST | `/players` | Register or update this device's child `{device_id, name, avatar, grade}`; returns `id`, a new `token` and the XP summary | Name ≤ 30 chars and must pass the word filter; re-registering replaces the token |
@@ -100,13 +100,14 @@ the class code.
 | POST | `/teacher/questions` | Suggest a bank question (same fields as the admin editor) | Saved as a draft; 100 per day |
 | GET | `/teacher/school` | My school (and whether it takes challenges) and, for every class, the subjects with enough questions for a paper | |
 | POST | `/teacher/school` | Choose my school `{school_id}` | Approved schools only |
+| GET | `/teacher/school/overview` | Whole school: every class of every teacher of my school, with pupils, how many played this week, sprints, accuracy and the 3 weakest topics | **No pupil names**; any teacher of the school |
 | POST | `/teacher/school/open` | `{open: true \| false}`: may other schools challenge us | |
 | GET | `/teacher/schools?q=` | Search approved schools | |
 | GET | `/teacher/contests` | My school's competitions (last 90 days) with their phase; finished ones with both scores | |
 | POST | `/teacher/contests` | Challenge `{school_id, grade, subject, starts_at, window_minutes?}` | 15 min to 30 days ahead; window 15–180 min (default 30); 3 a week per school; one open challenge per pair of schools |
 | POST | `/teacher/contests/{id}/accept` | Accept: the server builds the paper now | Only the challenged school, before the start |
 | POST | `/teacher/contests/{id}/decline`, `/cancel` | Say no / call off | Cancel only before it starts |
-| GET | `/teacher/contests/{id}` | A finished competition: both schools, top 10, all our pupils, and the paper with answers | |
+| GET | `/teacher/contests/{id}` | A finished competition: both schools, top 10, all our pupils, and the paper with answers and, per question, how many of our pupils got it right, left it blank, and the most common wrong answer | |
 
 ## Admin (Authorization: Bearer, 12-hour token)
 

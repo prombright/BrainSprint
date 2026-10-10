@@ -418,8 +418,43 @@ function teacherContestDetail(array $t, int $id): array
     $out['result'] = ['schools' => $r['schools'], 'winner_id' => $r['winner_id'], 'draw' => $r['draw'], 'total' => $r['total'],
         'top' => array_slice($r['pupils'], 0, 10),
         'our_pupils' => array_values(array_filter($r['pupils'], fn ($p) => $p['school_id'] === (int)$t['school_id']))];
-    // the paper, so the class can go through it together
-    $out['paper'] = paperQuestions(paperRow((int)$c['paper_id']), true);
+    // the paper, so the class can go through it together, with how our pupils did on each question
+    $paper = paperRow((int)$c['paper_id']);
+    $out['paper'] = paperQuestions($paper, true);
+    $stats = questionStats($paper, (int)$t['school_id']);
+    foreach ($out['paper'] as $i => &$q) $q['stats'] = $stats[$i];
+    unset($q);
+    return $out;
+}
+
+/**
+ * Per question, for one school's pupils: how many got it right, and the wrong answer chosen most
+ * (a wrong answer many pupils share usually shows one misunderstanding worth teaching).
+ */
+function questionStats(array $paper, int $schoolId): array
+{
+    $picks = array_map(fn ($r) => json_decode($r, true) ?: [], q(
+        'SELECT picks FROM paper_attempts WHERE paper_id = ? AND school_id = ? AND submitted_at IS NOT NULL', [$paper['id'], $schoolId],
+    )->fetchAll(PDO::FETCH_COLUMN));
+    $out = [];
+    foreach ($paper['questions'] as $i => $q) {
+        $right = 0;
+        $blank = 0;
+        $wrong = [];
+        foreach ($picks as $p) {
+            $a = $p[$i] ?? null;
+            if ($a === null) $blank++;
+            elseif ($a === $q['answer']) $right++;
+            else $wrong[$a] = ($wrong[$a] ?? 0) + 1;
+        }
+        arsort($wrong);
+        $top = array_key_first($wrong);
+        $out[] = [
+            'answered' => count($picks), 'right' => $right, 'blank' => $blank,
+            'percent' => count($picks) ? (int)round($right / count($picks) * 100) : null,
+            'common_wrong' => $top === null ? null : ['answer' => (string)$top, 'pupils' => $wrong[$top]],
+        ];
+    }
     return $out;
 }
 

@@ -15,6 +15,14 @@
 - Admin panel: overview, schools, players, enquiries, feed moderation, questions.
 - Landing page with contact form; release script and a step-by-step deployment guide (`DEPLOY.md`).
 - Test scripts: `check:questions`, `check:practice` and `check:facts`.
+- **Simpler phone screens for children**: Home shows only the subjects a child can play and three big buttons (Boss,
+  Compete, Practise); everything else is in a menu on the Me tab, the live feed is on the League tab.
+- **Teachers**: class results and topics download for Excel (CSV); a **whole-school view** for any teacher of the
+  school (class figures only, no pupil names); per-question results for competition papers.
+- **Dark screen** (light / dark / like my phone) and **data saver** (league every 10 minutes, presence every 5,
+  new questions once a day; switched on automatically when the phone's own data saver is on). For everyone, question
+  content is downloaded only when it changed.
+- `npm run build:android-lan`: a test app that talks to this computer over Wi-Fi.
 - **School vs School competitions and Duels**, built, timed and marked by the server (the
   [Paper Engine](algorithms.md#15-paper-engine-server-marked-competitions)): teachers challenge and accept in the teacher
   portal; children play a timed paper and see their place, their school's result and the answers afterwards; duels
@@ -60,15 +68,11 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
   `VITE_API_URL` in `frontend/.env.android` to the live API first.
 - [ ] **English P4–P7 content**, and bigger English word lists for Top Class–P3 (English levels have tens to hundreds of
   different questions, not thousands). *Needs:* writers and reviewers, through the bank or the Fact Engine.
-- [ ] **Head-teacher whole-school view and CSV export.** One view of every class in a school, and spreadsheet export of
-  class reports. *Needs:* a decision on how a head teacher is verified and linked to a school without weakening
-  [ADR-007](decisions.md#adr-007-teachers-only-see-pupils-who-joined-with-their-code).
-- [ ] **Dark mode.** Colour tokens for a dark theme across the game, teacher and admin pages. *Needs:* design time only.
-- [ ] **Data-saver mode.** A setting that cuts background traffic (fewer heartbeats, no live feed, bank refresh only on
-  Wi-Fi or on request). *Needs:* decisions on what to switch off by default.
-- [ ] **Per-answer analytics.** Record which question and which wrong choice, to find confusing questions and common
-  mistakes. *Needs:* a short retention period and a summary job (see [data model](data-model.md#plan-to-scale)), and a
-  privacy review.
+- [ ] **Per-answer analytics for everyday sprints.** Competition papers already show, per question, how many got it
+  right and the most common wrong answer. Doing the same for everyday play means recording every answer (today only
+  per-topic totals are kept). *Needs:* a short retention period and a summary job (see
+  [data model](data-model.md#plan-to-scale)), and a privacy review.
+- [ ] **Dark mode for the teacher and admin pages** (the children's game has it). *Needs:* design time only.
 - [ ] **Smaller items from the documentation review.**
   - Topic mastery on the server approximates "the last 20 answers" (it scales old counts), while the device keeps the
     exact last 20, so the two can differ slightly. The 85% "strong" line is also hard-coded in PHP.

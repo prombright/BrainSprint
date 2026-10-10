@@ -473,11 +473,14 @@ by people, stored in the `questions` table, and only sent to children once **app
 
 1. Load any saved banks for the child's class from `localStorage` (`bsk:bank:<subject>:<grade>`) straight away, so
    play works offline.
-2. In the background, `GET /questions/coverage` says which subject + class pairs have approved questions.
-3. For each of English, Science and SST with coverage, the app fetches `GET /questions?subject=&grade=` and
-   `GET /facts?subject=&grade=` (approved [fact sets](#14-fact-engine-fact-table-question-generation)). The questions
-   come with a **version** (latest `updated_at` and the approved count) and each fact set with its `updated` time. If
-   nothing changed nothing is downloaded again; otherwise the new copy is saved and registered.
+2. In the background, `GET /questions/coverage?grade=` says which subject + class pairs have approved questions, and
+   for the child's class the **content version** of each subject: the bank's version (latest `updated_at` and the
+   approved count) and each approved fact set's `id@updated`, built by `contentVersion()` exactly as the app builds it.
+3. If the saved copy already has that version, **nothing is downloaded**. Otherwise the app fetches
+   `GET /questions?subject=&grade=` and `GET /facts?subject=&grade=` (approved
+   [fact sets](#14-fact-engine-fact-table-question-generation)), saves the new copy and registers it. (Before this
+   check the app downloaded everything on every start just to compare versions.) With **data saver** on, the app
+   looks for new content at most once a day.
    **Sampling:** up to 400 approved questions are sent whole. Above that (`BANK_SAMPLE` in `api/bank.php`) the server
    sends a random 400 that stays the same all day (MySQL `RAND(seed)` with today's date as the seed, and the date in
    the version), so a phone downloads at most one new sample a day however big the bank grows

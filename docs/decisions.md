@@ -368,3 +368,33 @@ passing on answers. Race ghosts stay as the quick, casual way to compete; duels 
 **Consequences.** Friends in different classes play the younger class's paper. Limits: 5 duels a day per child, one
 open duel per pair. A wider individual competition (e.g. a national weekly paper per class) can reuse the same engine
 later.
+
+## ADR-023: The whole-school view shows classes, not pupils
+
+**Context.** Head teachers want to see the whole school, but [ADR-007](#adr-007-teachers-only-see-pupils-who-joined-with-their-code)
+says a teacher only sees pupils who joined their class with its code. There is no way yet to verify who really is a
+head teacher.
+
+**Decision.** Any teacher who has chosen a school sees every class of that school: teacher, pupils, how many played this
+week, sprints, accuracy and the weakest topics. **No pupil names.** Names stay with each class's own teacher.
+
+**Why.** It answers the head teacher's real questions ("which classes use it, which topics are weak") without having to
+verify roles, and without giving any teacher names of children they don't teach.
+
+**Consequences.** Someone who wrongly claims to teach at a school sees only class-level numbers. If head teachers later
+need names (e.g. for reports to parents), that needs a verified head-teacher role first.
+
+## ADR-024: Data saver, and download only what changed
+
+**Context.** Many families pay for mobile data by the megabyte. The app re-downloaded every Science/SST/English question
+on every start just to compare versions, and refreshed the league and "playing now" often.
+
+**Decision.** The coverage call now carries each subject's content version, so unchanged content is never downloaded
+(for everyone). A **data saver** setting (on automatically when the phone's own data saver is on) also refreshes the
+league at most every 10 minutes, the "playing now" heartbeat every 5 minutes instead of 45 seconds, and looks for new
+questions once a day.
+
+**Why.** Playing never needs the internet (questions are made or stored on the phone); only the social parts do, and
+they are fine slightly out of date.
+
+**Consequences.** With data saver on, "playing now" and league places can be a few minutes old.

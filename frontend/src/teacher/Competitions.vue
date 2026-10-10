@@ -26,7 +26,14 @@ interface Contest {
 }
 interface Detail extends Contest {
   result?: { schools: SchoolScore[]; winner_id: number | null; draw: boolean; total: number; top: Pupil[]; our_pupils: Pupil[] }
-  paper?: { prompt: string; big?: string; choices: string[]; answer: string; topic: string }[]
+  paper?: {
+    prompt: string
+    big?: string
+    choices: string[]
+    answer: string
+    topic: string
+    stats?: { answered: number; right: number; blank: number; percent: number | null; common_wrong: { answer: string; pupils: number } | null }
+  }[]
 }
 
 const school = ref<SchoolLite | null>(null)
@@ -149,6 +156,14 @@ function outcome(c: Contest) {
   return s.winner_id === school.value?.id ? '🏆 We won' : `${otherSchool(c).name} won`
 }
 const printNow = () => window.print()
+// the questions our pupils found hardest (at least 2 pupils answered)
+const hardest = computed(() =>
+  (detail.value?.paper ?? [])
+    .map((q, i) => ({ ...q, n: i + 1 }))
+    .filter((q) => q.stats && q.stats.answered >= 2 && q.stats.percent !== null)
+    .sort((a, b) => a.stats!.percent! - b.stats!.percent!)
+    .slice(0, 3),
+)
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 </script>
 
@@ -322,12 +337,27 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
           </table>
           <p v-if="!detail.result.our_pupils.length" class="text-ink/60">None of our pupils handed in a paper.</p>
         </div>
+        <div v-if="hardest.length" class="rounded-2xl bg-cherry/5 p-4">
+          <h3 class="mb-1 font-bold">Worth going over in class</h3>
+          <ul class="space-y-1">
+            <li v-for="q in hardest" :key="q.n">
+              <b>Q{{ q.n }}.</b> {{ q.prompt }} <span v-if="q.big" class="text-ocean">{{ q.big }}</span>
+              <span class="block text-sm text-ink/70">
+                {{ q.stats!.percent }}% of our pupils got it right (answer {{ q.answer }}).
+                <template v-if="q.stats!.common_wrong && q.stats!.common_wrong.pupils >= 2">{{ q.stats!.common_wrong.pupils }} chose "{{ q.stats!.common_wrong.answer }}".</template>
+              </span>
+            </li>
+          </ul>
+        </div>
         <details v-if="detail.paper">
-          <summary class="cursor-pointer font-bold">The paper, with answers (to go through in class)</summary>
+          <summary class="cursor-pointer font-bold">The paper, with answers and how our pupils did</summary>
           <ol class="mt-2 list-decimal space-y-2 pl-6">
             <li v-for="(q, i) in detail.paper" :key="i">
               {{ q.prompt }} <span v-if="q.big" class="text-ocean">{{ q.big }}</span>
               <span class="block text-sm text-ink/60">{{ q.choices.join(' · ') }} → <b class="text-leaf">{{ q.answer }}</b></span>
+              <span v-if="q.stats?.answered" class="block text-sm" :class="(q.stats.percent ?? 0) < 50 ? 'text-cherry' : 'text-ink/70'">
+                {{ q.stats.right }} of {{ q.stats.answered }} right ({{ q.stats.percent }}%)<template v-if="q.stats.common_wrong"> · most common wrong answer: "{{ q.stats.common_wrong.answer }}" ({{ q.stats.common_wrong.pupils }})</template><template v-if="q.stats.blank"> · {{ q.stats.blank }} left blank</template>
+              </span>
             </li>
           </ol>
         </details>
