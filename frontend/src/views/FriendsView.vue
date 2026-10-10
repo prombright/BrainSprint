@@ -7,8 +7,10 @@ import TopBar from '../components/TopBar.vue'
 import { activityLabel } from '../lib/activity'
 import { api, type FriendsData } from '../lib/api'
 import { usePlayer } from '../stores/player'
+import { useRouter } from 'vue-router'
 
 const player = usePlayer()
+const router = useRouter()
 const data = ref<FriendsData | null>(null)
 const code = ref('')
 const message = ref('')
@@ -110,10 +112,11 @@ async function share() {
               </span>
             </button>
             <span class="font-bold tabular-nums">{{ f.week_xp.toLocaleString() }} <span class="text-xs font-medium text-ink/50">XP</span></span>
+            <button class="rounded-full bg-sprint/10 px-2 py-1 text-sm font-semibold text-sprint" :aria-label="`Challenge ${f.name} to a duel`" @click="router.push(`/compete?duel=${f.id}`)">⚔️</button>
             <button class="px-1 text-ink/30" :aria-label="`Remove ${f.name}`" @click="remove(f.id, f.name)">✕</button>
           </li>
         </ol>
-        <p v-if="data.friends.length" class="mt-2 text-center text-sm text-ink/50">Tap a friend to race them 🏁</p>
+        <p v-if="data.friends.length" class="mt-2 text-center text-sm text-ink/50">Tap a friend to race them 🏁 · ⚔️ for a duel</p>
       </section>
     </template>
 

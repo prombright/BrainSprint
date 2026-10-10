@@ -48,3 +48,8 @@
 | **PWA** | Progressive Web App: the website installed on a phone's home screen, working offline through a service worker. |
 | **Capacitor** | The tool that wraps the web game into an Android app. |
 | **Kampala week** | Monday 00:00 to Sunday 23:59 in Uganda time (UTC+3), used for everything weekly. |
+| **Paper Engine** | The server code that builds, times and marks competition papers (`api/compete.php`). |
+| **Paper Pool** | Questions exported from the game's generators at release time (`api/pool/`), which the server builds papers from. |
+| **School vs School** | A competition one school's teacher sets up and another's accepts; one paper, one time window, scored on the best 10 pupils. |
+| **Duel** | A one-to-one competition between two friends on the same server-marked paper. |
+| **Window** | The time a school competition is open; each child also has 15 minutes from when they start. |

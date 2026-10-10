@@ -12,6 +12,7 @@ require __DIR__ . '/learning.php';
 require __DIR__ . '/teachers.php';
 require __DIR__ . '/bank.php';
 require __DIR__ . '/facts.php';
+require __DIR__ . '/compete.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -422,6 +423,75 @@ try {
 
         case $route === 'GET /schools/board':
             respond(200, schoolBoard(requirePlayer()));
+
+        // ---------- competitions: school contests (teachers) ----------
+
+        case $route === 'GET /teacher/contests':
+            respond(200, teacherContests(requireTeacher()));
+
+        case $route === 'POST /teacher/contests':
+            $t = requireTeacher();
+            createContest($t, body());
+            respond(201, teacherContests($t));
+
+        case $method === 'GET' && (bool)preg_match('#^/teacher/contests/(\d+)$#', $path, $mm):
+            respond(200, teacherContestDetail(requireTeacher(), (int)$mm[1]));
+
+        case $method === 'POST' && (bool)preg_match('#^/teacher/contests/(\d+)/(accept|decline|cancel)$#', $path, $mm):
+            $t = requireTeacher();
+            $mm[2] === 'cancel' ? cancelContest($t, (int)$mm[1]) : answerContest($t, (int)$mm[1], $mm[2] === 'accept');
+            respond(200, teacherContests($t));
+
+        case $route === 'GET /teacher/school':
+            $t = requireTeacher();
+            respond(200, ['school' => teacherSchoolRow($t), 'subjects' => array_combine(GRADES, array_map(fn ($g) => paperSubjects($g), GRADES))]);
+
+        case $route === 'POST /teacher/school':
+            respond(200, ['school' => setTeacherSchool(requireTeacher(), intIn(body(), 'school_id', 1, PHP_INT_MAX))]);
+
+        case $route === 'POST /teacher/school/open':
+            $t = requireTeacher();
+            q('UPDATE schools SET open_to_challenges = ? WHERE id = ?', [empty(body()['open']) ? 0 : 1, requireTeacherSchool($t)]);
+            respond(200, ['school' => teacherSchoolRow($t)]);
+
+        case $route === 'GET /teacher/schools':
+            requireTeacher();
+            respond(200, ['schools' => teacherSearchSchools(trim((string)($_GET['q'] ?? '')))]);
+
+        // ---------- competitions: the child's side ----------
+
+        case $route === 'GET /compete':
+            $p = requirePlayer();
+            respond(200, ['contests' => playerContests($p), 'duels' => myDuels($p), 'duel_subjects' => paperSubjects($p['grade'], DUEL_QUESTIONS)]);
+
+        case $method === 'GET' && (bool)preg_match('#^/contests/(\d+)$#', $path, $mm):
+            respond(200, playerContest(requirePlayer(), (int)$mm[1]));
+
+        case $method === 'POST' && (bool)preg_match('#^/contests/(\d+)/(start|submit)$#', $path, $mm):
+            $p = requirePlayer();
+            $c = contestRow((int)$mm[1]);
+            $side = contestSide($c, (int)$p['id']);
+            if (!$side || $c['status'] !== 'accepted') respond(404, ['error' => 'Competition not found']);
+            if ($mm[2] === 'start') {
+                if (contestPhase($c) !== 'live') respond(422, ['error' => contestPhase($c) === 'upcoming' ? 'It has not started yet' : 'This competition has closed']);
+                respond(200, startAttempt(paperRow((int)$c['paper_id']), $p, strtotime($c['ends_at']), $side));
+            }
+            respond(200, submitAttempt(paperRow((int)$c['paper_id']), $p, body()['picks'] ?? null));
+
+        case $route === 'POST /duels':
+            $d = body();
+            respond(201, createDuel(requirePlayer(), intIn($d, 'friend_id', 1, PHP_INT_MAX), oneOf($d, 'subject', PAPER_SUBJECTS)));
+
+        case $method === 'GET' && (bool)preg_match('#^/duels/(\d+)$#', $path, $mm):
+            $p = requirePlayer();
+            respond(200, duelOut(duelRow((int)$mm[1], $p), $p, true));
+
+        case $method === 'POST' && (bool)preg_match('#^/duels/(\d+)/(start|submit|decline)$#', $path, $mm):
+            $p = requirePlayer();
+            if ($mm[2] === 'start') respond(200, startDuel($p, (int)$mm[1]));
+            if ($mm[2] === 'submit') respond(200, submitDuel($p, (int)$mm[1], body()['picks'] ?? null));
+            declineDuel($p, (int)$mm[1]);
+            respond(200, ['duels' => myDuels($p)]);
 
         // ---------- weekly Boss Battle ----------
 

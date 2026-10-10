@@ -15,6 +15,10 @@
 - Admin panel: overview, schools, players, enquiries, feed moderation, questions.
 - Landing page with contact form; release script and a step-by-step deployment guide (`DEPLOY.md`).
 - Test scripts: `check:questions`, `check:practice` and `check:facts`.
+- **School vs School competitions and Duels**, built, timed and marked by the server (the
+  [Paper Engine](algorithms.md#15-paper-engine-server-marked-competitions)): teachers challenge and accept in the teacher
+  portal; children play a timed paper and see their place, their school's result and the answers afterwards; duels
+  between friends. `npm run pool` makes the Paper Pool.
 - **Boss and race results join the offline queue** (with sprints and mocks): played offline, they upload on the next
   sync. A late boss result counts for the week it was played in, and only this week's defeat makes the news.
 - **Fact Engine**: fact sets with patterns, an admin editor with live preview and JSON import, approval, offline
@@ -40,9 +44,10 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
 - [ ] **Luganda / local-language read-aloud for nursery.** Many Top Class children understand a local language better
   than English. Browsers' built-in voices don't speak Luganda well. *Needs:* recorded audio or a text-to-speech service
   that supports Luganda (and later other languages), a decision on which languages first, and native speakers to check.
-- [ ] **School-vs-school timed competitions.** Events where every child gets the same questions at the same time and the
-  server marks them, so results can be trusted for prizes. *Needs:* server-generated questions and server-side marking,
-  a sponsor, and the legal check in [ADR-003](decisions.md#adr-003-a-safe-economy-brain-power-points-never-bought-sponsored-prizes).
+- [ ] **Sponsored prizes for competitions.** School vs School works (free entry, server-marked); prizes need a
+  sponsor and the legal check in [ADR-003](decisions.md#adr-003-a-safe-economy-brain-power-points-never-bought-sponsored-prizes).
+  Possible next steps on the same engine: a national weekly paper per class, class-vs-class inside a school, and
+  fact-set questions in papers (needs the Fact Engine on the server or in the pool).
 - [ ] **MTN MoMo / Airtel Money payments.** For Sprint Passes and school licences, then switch on `PAYWALL_ENABLED`.
   The pass screen, parent check and the `payments` / `subscriptions` tables exist. *Needs:* merchant accounts with MTN
   and Airtel (or an aggregator), API keys, final prices, and server-side checking of passes.

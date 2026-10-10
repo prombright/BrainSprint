@@ -13,7 +13,8 @@
     "check:questions": "node scripts/check-questions.ts",
     "release": "node scripts/release.mjs",
     "check:practice": "node scripts/check-practice.ts",
-    "check:facts": "node scripts/check-facts.ts"
+    "check:facts": "node scripts/check-facts.ts",
+    "pool": "node scripts/export-pool.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.3",

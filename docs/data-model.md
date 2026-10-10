@@ -113,6 +113,20 @@ Children can add schools; they stay out of public lists until an admin approves 
 on that topic), `due_on`.
 **`assignment_results`**: each child's best attempt per assignment (best = most correct).
 
+### Competitions
+
+**`papers`**: a paper built by the [Paper Engine](algorithms.md#15-paper-engine-server-marked-competitions):
+`subject` (or `mixed`), `grade`, `questions` (JSON, **with** answers and working; only sent without them until the
+results are out), `minutes`.
+**`paper_attempts`**: one child's single go at a paper: `started_at` and `deadline` (server clock), `submitted_at`,
+`picks` (JSON), `correct`, `seconds` (the tie-break), and `school_id` (the side they played for).
+**`school_contests`**: school A challenges school B: `grade`, `subject`, `starts_at`–`ends_at` (the window),
+`status` (`pending` / `accepted` / `declined` / `cancelled`; "expired", "upcoming", "live" and "finished" are worked
+out from the times), `paper_id` (set on acceptance), who created and who answered.
+**`duels`**: a child challenges a friend: `paper_id`, `challenger_id`, `opponent_id`, `grade`, `subject`, `status`
+(`open` / `declined`), `expires_at` (48 hours).
+Also: `teachers.school_id` (the school a teacher speaks for) and `schools.open_to_challenges`.
+
 ### Content
 
 **`questions`**: the question bank. `subject`, `grade`, `level`, `topic`, `prompt`, `speak` (read-aloud text,

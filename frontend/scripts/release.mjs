@@ -20,6 +20,8 @@ if (!existsSync(join(frontend, '.env.live'))) {
 
 console.log('1/4 Building the website with the live settings …')
 execSync('npx vue-tsc -b && npx vite build --mode live && node scripts/copy-apk.mjs', { cwd: frontend, stdio: 'inherit' })
+// the Paper Pool the server builds competition papers from (made fresh from this release's generators)
+execSync('node scripts/export-pool.ts', { cwd: frontend, stdio: 'inherit' })
 
 console.log('2/4 Collecting files …')
 rmSync(out, { recursive: true, force: true })

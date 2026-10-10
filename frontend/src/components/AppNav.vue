@@ -23,6 +23,7 @@ const MAIN = [
 ]
 const MORE_ALL = [
   { to: '/progress', icon: '🎯', label: 'My Progress' },
+  { to: '/compete', icon: '⚔️', label: 'Compete' },
   { to: '/mock', icon: '🎓', label: 'PLE Prep', grades: ['P6', 'P7'] },
   { to: '/class', icon: '📝', label: 'My Class' },
   { to: '/school', icon: '🏫', label: 'My School' },

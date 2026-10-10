@@ -323,3 +323,48 @@ token is truly lost, the app continues as a new player under a new device id, ke
 **Consequences.** A device whose stored token is lost appears as a new player on the server (leagues and dashboards
 start again); its local progress is kept.
 
+## ADR-020: Competitions are built, timed and marked by the server
+
+**Context.** Practice sprints are made on the phone, which knows the answers. For competitions between schools (and
+later, sponsored prizes) results must be trustworthy, and no child, parent or teacher may see the answers early. At
+first we planned for an admin to set each competition by hand; the user suggested the system should do it.
+
+**Decision.** Two schools agree (one challenges, the other accepts) and the server does everything else: it builds
+one paper for both, opens it at the agreed time, times every child with its own clock, marks it, and only then shows
+results and answers. The PHP server cannot run the TypeScript generators, so a release-time script exports a large
+checked **Paper Pool** from them, and the server draws papers from that pool plus approved bank questions.
+
+**Why.** No person is needed per competition, so any two schools can compete any week; no teacher sees the paper
+before it ends, so no school can be tipped off; and the same generators as the game keep questions at the right level.
+
+**Consequences.** The pool is a few MB, made fresh for every release (not kept in git); a release must be built
+before competitions work on a new server. Fact-set questions aren't in papers yet. Whether children play supervised
+in class is up to the school; a fixed window during lessons is the advice in the teacher screen.
+
+## ADR-021: A school's score is the average of its best 10
+
+**Context.** A school with 80 pupils playing would win any "total points" contest against a school with 15.
+
+**Decision.** Each school's score is the average percentage of its best 10 pupils (at least 3 must play to count).
+Ties go to the faster average time. Every child still sees their own score and places.
+
+**Why.** Small and big schools compete fairly; children who are still learning cannot pull their school down (only the
+best 10 count), so nobody is discouraged from entering.
+
+**Consequences.** A school gains nothing from more than 10 pupils playing, except that more children take part and
+each gets their own result and review. The numbers (10 and 3) are constants in `api/compete.php`.
+
+## ADR-022: Children compete one-to-one through duels with friends only
+
+**Context.** Children also wanted to compete as individuals, not only as a school.
+
+**Decision.** A **duel**: a child challenges a friend (friends are added only by a code shared in person) to the same
+server-built 10-question paper; each plays once within 48 hours; most correct wins, then the faster. Until both have
+played, neither sees the other's score or any answers.
+
+**Why.** It reuses the Paper Engine, keeps strangers out (no searching for opponents, no chat), and cannot be won by
+passing on answers. Race ghosts stay as the quick, casual way to compete; duels are the fair, marked one.
+
+**Consequences.** Friends in different classes play the younger class's paper. Limits: 5 duels a day per child, one
+open duel per pair. A wider individual competition (e.g. a national weekly paper per class) can reuse the same engine
+later.

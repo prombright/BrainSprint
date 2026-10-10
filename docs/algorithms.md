@@ -20,6 +20,8 @@ Every number below is a constant in the code. When you change one, change this p
 | [11. Server-side anti-cheat](#11-server-side-anti-cheat-checks) | `api/index.php` (`POST /sprints`), `api/learning.php`, `api/community.php` |
 | [12. Weekly Boss Battle](#12-weekly-boss-battle) | `frontend/src/game/boss.ts`, `api/community.php` |
 | [13. Player level, titles and badges](#13-player-level-titles-and-badges) | `frontend/src/game/progress.ts`, `badges.ts` |
+| [14. Fact Engine](#14-fact-engine-fact-table-question-generation) | `frontend/src/game/facts.ts`, `api/facts.php` |
+| [15. Paper Engine (server-marked competitions)](#15-paper-engine-server-marked-competitions) | `frontend/scripts/export-pool.ts`, `api/compete.php` |
 
 ---
 
@@ -611,3 +613,63 @@ play, and mixed into every level of that class + subject alongside written quest
 fact, and the algorithm multiplies that checked work into hundreds of questions with no risk of a made-up fact.
 AI-drafted questions (on the [roadmap](roadmap.md)) would still need a human check; fact sets need one check per fact,
 not per question. See [ADR-017](decisions.md#adr-017-fact-engine-checked-facts-turned-into-questions-by-an-algorithm).
+
+## 15. Paper Engine (server-marked competitions)
+
+**What it is.** The engine behind **School vs School** and **Duels**. Everywhere else in BrainSprint the phone makes
+the questions and knows the answers, which is fine for practice. In a competition that would let a clever child (or
+adult) read the answers out of the phone. So here the **server** builds the paper, keeps the answers, keeps the time
+and does the marking. Nobody sees an answer until the competition is over.
+
+**Step 1: the Paper Pool (at release time).** The server is plain PHP and cannot run the TypeScript generators. So
+`npm run pool` (also run by `npm run release`) runs the [Template Engine](#1-template-engine-procedural-question-generation)
+on the computer and saves **300 different questions per level** for every generated subject and class (Maths
+Top–P7, English Top–P3): 14,400 questions, about 3 MB, in `api/pool/<subject>-<grade>.json`. Every question is checked
+on the way (answer among the choices, no repeated choices). The folder is not reachable from the web (`.htaccess` only
+exposes `index.php`) and is not stored in git, because each release makes it fresh. Approved **bank** questions are
+added to a class's pool from the database at paper time. (Fact-set questions are not in the pool yet: the Fact
+Engine runs only in TypeScript.)
+
+**Step 2: building a paper (`buildPaper`).**
+
+| Rule | Value | Why |
+|---|---|---|
+| Questions | 20 (school contest), 10 (duel) | Long enough to be fair, short enough for one lesson |
+| Time | 15 minutes (contest), 6 minutes (duel) from when the child starts | Roughly 45 and 36 seconds a question |
+| Level mix | 20% Simple, 30% Medium, 30% Hard, 20% Pro | Everyone can answer something; the best still get separated |
+| Order | Easiest first | A gentle start for nervous children |
+| Repeats | None (same prompt + picture counts as the same question) | |
+| Choices | Shuffled when the paper is made | |
+| Mixed subject | Split evenly between the subjects that have enough questions | Needs at least two subjects |
+| Enough questions | A subject needs 3× the paper's length in its pool for that class | So papers stay varied |
+
+**Step 3: one go each, timed by the server.** When a child presses Start, the server records `started_at` and a
+`deadline`: the paper's minutes, cut short by the competition's end. Pressing Start again (after a refresh) gives
+the same deadline, so leaving does not pause the clock. The phone only shows the time left. The child's answers are
+saved on the device as they go, so a dropped connection loses nothing. A hand-in is accepted until **2 minutes after
+the deadline** (for slow networks), and only once.
+
+**Step 4: marking.** The server counts the answers that match. The tie-break is the time used, measured by the
+server's clock (start to hand-in, never more than the deadline).
+
+**School result.** Each school's score is the **average percentage of its best 10 pupils** who handed in. A school
+needs **at least 3** to count. Higher average wins; if level, the faster average time wins; if still level, it is a
+draw. If only one school has 3, it wins; if neither does, there is no result. Each child sees their own score, their
+place overall and in their school, whether they were in their school's counted 10, the top 10 overall, and their
+paper with the answers and working.
+
+**Who plays for a school.** Children who are in a teacher's BrainSprint class **for that year** at one of the two
+schools. The teacher's class code is the gate, so a child cannot simply claim to be at a school. The side is saved
+with the attempt, so moving school later does not change old results.
+
+**Duel result.** Most correct wins; if level, the faster one wins. Friends in different classes get the younger
+class's paper. Until both have handed in, a child sees only *that* their friend has played, never the score or the
+answers. Otherwise the first player could pass the answers to the second. If the 48 hours run out first, there is no
+winner.
+
+**Limits against spam.** Each school can send 3 challenges a week, and two schools can have only one open challenge
+between them at a time. A school can switch challenges off. Each child can start 5 duels a day, with one open duel per
+pair of friends. Duels are only between friends (added by code, in person), and children never message each other.
+
+**Why this design:** see [ADR-020](decisions.md#adr-020-competitions-are-built-timed-and-marked-by-the-server) and
+[ADR-021](decisions.md#adr-021-a-schools-score-is-the-average-of-its-best-10).

@@ -8,3 +8,6 @@ release/
 frontend/.env.live
 .idea/
 .vscode/
+
+# made by `npm run pool` (and by `npm run release`)
+api/pool/

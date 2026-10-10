@@ -145,11 +145,15 @@ onMounted(() => {
           </div>
         </section>
 
-        <!-- weekly boss, friends, school -->
-        <div class="grid grid-cols-3 gap-3 md:gap-4">
+        <!-- weekly boss, competitions, friends, school -->
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
           <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-ink to-berry py-3 text-white hover:brightness-110 md:py-5" @click="router.push('/boss')">
             <span class="animate-float text-4xl md:text-5xl">{{ boss.emoji }}</span>
             <span class="text-base leading-tight md:text-lg">Boss Battle</span>
+          </button>
+          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-3 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
+            <span class="text-4xl md:text-5xl">⚔️</span>
+            <span class="text-base leading-tight md:text-lg">Compete</span>
           </button>
           <button class="btn-chunky flex flex-col items-center gap-1 bg-white py-3 hover:bg-cream md:py-5" @click="router.push('/friends')">
             <span class="text-4xl md:text-5xl">👫</span>

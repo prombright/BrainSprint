@@ -215,7 +215,99 @@ export interface BossBoard {
   top: { id: number; name: string; avatar: string; damage: number; defeated: boolean; me: boolean }[]
 }
 
+// ---------- competitions (server-marked) ----------
+
+export interface PaperQuestion {
+  subject: string
+  topic: string
+  prompt: string
+  speak: string
+  visual?: string
+  big?: string
+  choices: string[]
+  answer?: string // only once the results are out
+  steps?: string[]
+  picked?: string | null
+}
+
+export interface AttemptState {
+  state: 'not_started' | 'started' | 'missed' | 'done'
+  deadline?: string
+  correct?: number
+  total?: number
+  seconds?: number
+}
+
+export interface SchoolSide { id: number; name: string; district: string }
+export interface SchoolScore extends SchoolSide { players: number; counted: number; valid: boolean; average_percent: number; average_seconds: number }
+export interface ContestPupil { rank: number; id: number; name: string; avatar: string; school_id: number; correct: number; seconds: number; me?: boolean }
+
+export interface Contest {
+  id: number
+  phase: 'pending' | 'expired' | 'declined' | 'cancelled' | 'upcoming' | 'live' | 'finished'
+  grade: string
+  subject: string
+  school_a: SchoolSide
+  school_b: SchoolSide
+  starts_at: string
+  ends_at: string
+  questions: number
+  minutes: number
+  my_school_id?: number | null
+  mine?: AttemptState
+  played_so_far?: number
+  summary?: { winner_id: number | null; draw: boolean; schools?: SchoolScore[] }
+  result?: {
+    schools: SchoolScore[]
+    winner_id: number | null
+    draw: boolean
+    top: ContestPupil[]
+    my_rank: number | null
+    my_school_rank: number | null
+    counted: boolean
+    entrants: number
+  }
+  review?: PaperQuestion[]
+}
+
+export interface Duel {
+  id: number
+  phase: 'open' | 'declined' | 'done' | 'expired'
+  i_challenged: boolean
+  grade: string
+  subject: string
+  other: { id: number; name: string; avatar: string }
+  questions: number
+  minutes: number
+  expires_at: string
+  mine: AttemptState
+  they_played: boolean
+  theirs?: AttemptState
+  outcome?: 'won' | 'lost' | 'draw'
+  review?: PaperQuestion[]
+}
+
+export interface CompeteData {
+  contests: Contest[]
+  duels: Duel[]
+  duel_subjects: string[]
+}
+
+export interface PaperStart {
+  questions: PaperQuestion[]
+  seconds_left: number
+  deadline: string
+}
+
 export const api = {
+  compete: (player: PlayerAuth) => call<CompeteData>('GET', '/compete', { player }),
+  contest: (player: PlayerAuth, id: number) => call<Contest>('GET', `/contests/${id}`, { player }),
+  duel: (player: PlayerAuth, id: number) => call<Duel>('GET', `/duels/${id}`, { player }),
+  newDuel: (player: PlayerAuth, friendId: number, subject: string) => call<Duel>('POST', '/duels', { player, body: { friend_id: friendId, subject } }),
+  declineDuel: (player: PlayerAuth, id: number) => call<{ duels: Duel[] }>('POST', `/duels/${id}/decline`, { player }),
+  startPaper: (player: PlayerAuth, kind: 'contests' | 'duels', id: number) => call<PaperStart>('POST', `/${kind}/${id}/start`, { player }),
+  submitPaper: (player: PlayerAuth, kind: 'contests' | 'duels', id: number, picks: (string | null)[]) =>
+    call<{ correct: number }>('POST', `/${kind}/${id}/submit`, { player, body: { picks } }),
   mocks: (player: PlayerAuth) => call<MockHistory>('GET', '/mocks', { player }),
   saveMock: (player: PlayerAuth, m: MockPayload) => call<MockHistory>('POST', '/mocks', { player, body: m }),
   myClasses: (player: PlayerAuth) => call<{ classes: MyClass[] }>('GET', '/my/classes', { player }),

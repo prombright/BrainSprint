@@ -58,6 +58,14 @@ Capacitor app, and the live domain). The website itself is same-origin.
 | GET | `/schools/board` | This week's school ranking (approved schools, top 50), my school's place and its top 10 players (plus me) | |
 | GET | `/boss` | This week's boss, my best damage, how many in my class defeated it, top 10 in my class | |
 | POST | `/boss` | Save boss damage `{damage, played_at?}` | 0–300; counts for the week of `played_at` (default now; within 30 days); best of that week kept; first defeat this week posts a feed item |
+| GET | `/compete` | My school contests (accepted ones for my class's year at my school, last 14 days) with my attempt, my duels, and `duel_subjects` | |
+| GET | `/contests/{id}` | One contest: my attempt; while live, how many of my school have handed in; once finished, both schools' scores, top 10, my places and my paper with answers | Only pupils of the two schools' classes for that year |
+| POST | `/contests/{id}/start` | Start (or resume) my paper: questions **without answers**, `seconds_left`, `deadline` | Only while live; one go; resuming keeps the deadline |
+| POST | `/contests/{id}/submit` | Hand in `{picks: [answer or null, …]}`; returns `{correct, total, seconds}` | Once; up to 2 min after the deadline |
+| POST | `/duels` | Challenge a friend `{friend_id, subject}` (`subject` may be `mixed`); the paper is built now | Friends only; 5 a day; one open duel per pair |
+| GET | `/duels/{id}` | One duel; scores and my paper with answers only once both have played (or it expired) | |
+| POST | `/duels/{id}/start`, `/duels/{id}/submit` | As for contests | Within 48 hours of the challenge |
+| POST | `/duels/{id}/decline` | Say no | Only the challenged friend, before playing |
 | GET | `/mocks` | My mock history (last 20) and readiness (average of last 3) | |
 | POST | `/mocks` | Save a mock `{grade, correct, total, minutes_used, taken_at, topics}` | 10–30 questions, 1–60 minutes, no two within 10 min; 10 XP per correct answer |
 | POST | `/classes/join` | Join a teacher's class `{code}` | Max 3 classes per child |
@@ -90,6 +98,15 @@ the class code.
 | POST | `/teacher/assignments/{id}/delete` | Delete homework | Own classes only |
 | GET | `/teacher/questions` | My question suggestions and their status / review notes | |
 | POST | `/teacher/questions` | Suggest a bank question (same fields as the admin editor) | Saved as a draft; 100 per day |
+| GET | `/teacher/school` | My school (and whether it takes challenges) and, for every class, the subjects with enough questions for a paper | |
+| POST | `/teacher/school` | Choose my school `{school_id}` | Approved schools only |
+| POST | `/teacher/school/open` | `{open: true \| false}`: may other schools challenge us | |
+| GET | `/teacher/schools?q=` | Search approved schools | |
+| GET | `/teacher/contests` | My school's competitions (last 90 days) with their phase; finished ones with both scores | |
+| POST | `/teacher/contests` | Challenge `{school_id, grade, subject, starts_at, window_minutes?}` | 15 min to 30 days ahead; window 15–180 min (default 30); 3 a week per school; one open challenge per pair of schools |
+| POST | `/teacher/contests/{id}/accept` | Accept: the server builds the paper now | Only the challenged school, before the start |
+| POST | `/teacher/contests/{id}/decline`, `/cancel` | Say no / call off | Cancel only before it starts |
+| GET | `/teacher/contests/{id}` | A finished competition: both schools, top 10, all our pupils, and the paper with answers | |
 
 ## Admin (Authorization: Bearer, 12-hour token)
 

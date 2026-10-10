@@ -5,6 +5,7 @@ import { hasQuestions, topicsOf } from '../game/sprint'
 import { bankVersion, loadSavedBanks, refreshBanks } from '../lib/bank'
 import { TeacherError, session, teacherCall, type ClassDetail, type ClassSummary, type Teacher } from './api'
 import QuestionEditor from '../shared/QuestionEditor.vue'
+import Competitions from './Competitions.vue'
 import { emptyDraft, toPayload, type QuestionDraft } from '../shared/questionDraft'
 
 const signedIn = ref(!!session.get())
@@ -160,6 +161,7 @@ const thanks = ref('')
 
 async function openSuggest() {
   suggesting.value = true
+  competing.value = false
   openId.value = null
   suggestion.value = emptyDraft(classes.value[0]?.grade ?? 'P5', 'science')
   suggestions.value = (await run(() => teacherCall<{ questions: Suggestion[] }>('GET', '/teacher/questions')))?.questions ?? []
@@ -176,8 +178,16 @@ async function sendSuggestion() {
 }
 
 watch(openId, (id) => {
-  if (id) suggesting.value = false
+  if (id) suggesting.value = competing.value = false
 })
+
+// ---------- school vs school ----------
+const competing = ref(false)
+function openCompete() {
+  competing.value = true
+  suggesting.value = false
+  openId.value = null
+}
 
 // ---------- helpers ----------
 const nice = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
@@ -207,6 +217,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <li>📊 See each pupil's practice and the class's weak topics</li>
         <li>📝 Set homework on a topic, and see who has done it</li>
         <li>🖨️ Print a report for parents' meetings</li>
+        <li>⚔️ Challenge other schools to a competition the server sets and marks</li>
       </ul>
       <p class="mt-4 text-sm text-ink/60">Free while BrainSprint is being built. You only see pupils who join your class with its code.</p>
     </div>
@@ -268,6 +279,9 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="suggesting ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openSuggest">
         ❓ Suggest questions
       </button>
+      <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="competing ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openCompete">
+        ⚔️ School vs School
+      </button>
       <button class="mt-auto text-left text-sm text-ink/50 underline" @click="signOut">Sign out</button>
     </aside>
 
@@ -275,7 +289,9 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <p v-if="error" class="mb-4 rounded-xl bg-cherry/10 p-3 text-cherry print:hidden">{{ error }}</p>
 
       <!-- suggest questions for the bank -->
-      <section v-if="suggesting" class="space-y-4">
+      <Competitions v-if="competing" />
+
+      <section v-else-if="suggesting" class="space-y-4">
         <div>
           <h1 class="text-3xl font-bold">Suggest questions</h1>
           <p class="text-ink/70">Help build Science, SST and English for every class. A BrainSprint editor checks each question before children see it.</p>
@@ -307,7 +323,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <p class="mt-1 text-ink/70">Click "+ New class", then give your pupils the join code.</p>
       </section>
 
-      <template v-if="detail && !suggesting">
+      <template v-if="detail && !suggesting && !competing">
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 class="text-3xl font-bold">{{ detail.class.name }}</h1>
