@@ -68,7 +68,7 @@ onMounted(() => {
           </button>
           <!-- daily goal ring + streak -->
           <div class="flex flex-col items-center" :title="`Daily goal: ${player.goalDone} of ${DAILY_GOAL} sprints`">
-            <div class="relative grid size-14 place-items-center rounded-full" :style="{ background: `conic-gradient(var(--color-sprint) ${player.goalPct}%, rgb(31 37 71 / 0.1) 0)` }">
+            <div class="relative grid size-14 place-items-center rounded-full" :style="{ background: `conic-gradient(var(--color-sprint) ${player.goalPct}%, color-mix(in oklab, var(--color-ink) 12%, transparent) 0)` }">
               <div class="grid size-11 place-items-center rounded-full bg-white text-lg font-bold">{{ player.goalPct >= 100 ? '✅' : `${player.goalDone}/${DAILY_GOAL}` }}</div>
             </div>
             <span class="mt-1 text-sm font-bold" :class="player.playedToday ? 'text-sprint' : 'text-ink/40'">🔥 {{ player.dayStreak }}</span>

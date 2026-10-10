@@ -1,5 +1,6 @@
 // Downloads approved question-bank questions (Science, SST, English P4–P7 …) and keeps them on the
 // device, so those subjects work offline too. Refreshed in the background when the app opens.
+import { settings } from './settings'
 import { ref } from 'vue'
 import type { Grade, Subject } from '../game/types'
 import { registerBank, type BankQuestion } from '../game/sprint'
@@ -43,10 +44,18 @@ export function loadSavedBanks(grade: Grade) {
 
 /** Ask the server which subjects have questions for this class, and fetch any that changed. */
 export async function refreshBanks(grade: Grade) {
+  // data saver: look for new questions at most once a day
+  const checkedKey = `bsk:bank-checked:${grade}`
   try {
-    const r = await fetch(`${BASE}/questions/coverage`)
+    if (settings.dataSaver && Date.now() - Number(localStorage.getItem(checkedKey) ?? 0) < 864e5) return
+    localStorage.setItem(checkedKey, String(Date.now()))
+  } catch {
+    // storage blocked: just check
+  }
+  try {
+    const r = await fetch(`${BASE}/questions/coverage?grade=${grade}`)
     if (!r.ok) return
-    const { coverage } = (await r.json()) as { coverage: { subject: Subject; grade: Grade; count: number }[] }
+    const { coverage } = (await r.json()) as { coverage: { subject: Subject; grade: Grade; count: number; version?: string }[] }
     const mine = new Set(coverage.filter((c) => c.grade === grade).map((c) => c.subject))
     for (const subject of ['english', 'science', 'sst'] as Subject[]) {
       if (!mine.has(subject)) {
@@ -62,6 +71,8 @@ export async function refreshBanks(grade: Grade) {
         continue
       }
       const saved = read<Saved>(key(subject, grade))
+      // the server says what version it has: already saved means nothing to download (saves data)
+      if (saved && saved.version === coverage.find((c) => c.grade === grade && c.subject === subject)?.version) continue
       const [res, factRes] = await Promise.all([fetch(`${BASE}/questions?subject=${subject}&grade=${grade}`), fetch(`${BASE}/facts?subject=${subject}&grade=${grade}`)])
       if (!res.ok || !factRes.ok) continue
       const bank = (await res.json()) as { version: string; questions: BankQuestion[] }

@@ -31,6 +31,30 @@ const READ_OPTIONS = [
         </span>
         <input v-model="settings.music" type="checkbox" class="size-7 accent-sprint" />
       </label>
+      <label class="flex items-center justify-between gap-3 py-4">
+        <span>
+          <span class="block text-lg font-semibold">📶 Data saver</span>
+          <span class="text-sm text-ink/60">Uses less internet: updates the league and new questions less often. Playing never needs data.</span>
+        </span>
+        <input v-model="settings.dataSaver" type="checkbox" class="size-7 shrink-0 accent-sprint" />
+      </label>
+    </section>
+
+    <section class="rounded-3xl bg-white p-4 shadow-sm">
+      <h2 class="text-lg font-semibold">🌙 Screen</h2>
+      <p class="text-sm text-ink/60">A dark screen is easier on the eyes at night.</p>
+      <div class="mt-2 grid grid-cols-3 gap-2">
+        <button
+          v-for="t in ([['light', '☀️ Light'], ['dark', '🌙 Dark'], ['auto', '📱 Like my phone']] as const)"
+          :key="t[0]"
+          class="rounded-2xl py-3 font-semibold"
+          :class="settings.theme === t[0] ? 'bg-ocean text-white' : 'bg-cream'"
+          :aria-pressed="settings.theme === t[0]"
+          @click="settings.theme = t[0]"
+        >
+          {{ t[1] }}
+        </button>
+      </div>
     </section>
 
     <section class="rounded-3xl bg-white p-4 shadow-sm">

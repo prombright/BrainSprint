@@ -78,7 +78,13 @@ try {
             respond(200, ['sets' => publishedFactSets(oneOf($_GET, 'subject', SUBJECTS), oneOf($_GET, 'grade', GRADES))]);
 
         case $route === 'GET /questions/coverage':
-            respond(200, ['coverage' => bankCoverage()]);
+            // ?grade= adds each subject's content version for that class, so phones download only what changed
+            $cov = bankCoverage();
+            if (in_array($_GET['grade'] ?? '', GRADES, true)) {
+                foreach ($cov as &$c) if ($c['grade'] === $_GET['grade']) $c['version'] = contentVersion($c['subject'], $c['grade']);
+                unset($c);
+            }
+            respond(200, ['coverage' => $cov]);
 
         case $route === 'GET /stats':
             respond(200, publicStats());

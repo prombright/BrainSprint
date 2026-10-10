@@ -1,3 +1,4 @@
+import { refreshEvery } from '../lib/settings'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import type { Grade, Level, Question, SprintResult, Subject } from '../game/types'
@@ -333,13 +334,17 @@ export const usePlayer = defineStore('player', () => {
     return syncing
   }
 
+  let leagueAt = 0
   /** Fetches this week's league table. Returns null when offline; `league` keeps the last table seen. */
   async function loadLeague(): Promise<League | null> {
+    // data saver: a table less than 10 minutes old is good enough
+    if (league.value && Date.now() - leagueAt < refreshEvery(0, 10 * 60_000)) return league.value
     try {
       await sync()
       const a = await ensureRegistered()
       if (!a) return null
       league.value = await api.league(a)
+      leagueAt = Date.now()
       return league.value
     } catch {
       return null
@@ -368,13 +373,17 @@ export const usePlayer = defineStore('player', () => {
     heartbeat()
   }
 
-  /** Heartbeat every 45 s while the app is on screen. */
+  /** Heartbeat every 45 s while the app is on screen (every 5 minutes with data saver). */
+  let lastBeat = 0
   function startPresence() {
     if (beat) return
     heartbeat()
+    lastBeat = Date.now()
     beat = window.setInterval(() => {
-      if (document.visibilityState === 'visible') heartbeat()
-    }, 45_000)
+      if (document.visibilityState !== 'visible' || Date.now() - lastBeat < refreshEvery(44_000, 5 * 60_000)) return
+      lastBeat = Date.now()
+      heartbeat()
+    }, 15_000)
   }
 
   function recordRace(rivalId: number, won: boolean, r: SprintResult) {

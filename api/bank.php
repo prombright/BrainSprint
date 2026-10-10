@@ -69,17 +69,38 @@ const BANK_SAMPLE = 400; // most questions one phone downloads per class + subje
  * more than BANK_SAMPLE, a random BANK_SAMPLE that changes each day (the same sample all day, so
  * phones download it once a day at most). This keeps downloads small however big the bank grows.
  */
-function publishedQuestions(string $subject, string $grade): array
+/** [version, approved count] of a class's bank: changes whenever a question is edited, added or retired (or daily, once sampled). */
+function bankVersionOf(string $subject, string $grade): array
 {
     $total = (int)q("SELECT COUNT(*) FROM questions WHERE subject = ? AND grade = ? AND status = 'approved'", [$subject, $grade])->fetchColumn();
     $changed = (string)q("SELECT COALESCE(MAX(updated_at), '0') FROM questions WHERE subject = ? AND grade = ?", [$subject, $grade])->fetchColumn();
+    return [$total <= BANK_SAMPLE ? "$changed:$total" : "$changed:$total:" . date('Y-m-d'), $total];
+}
+
+function publishedQuestions(string $subject, string $grade): array
+{
+    [$version, $total] = bankVersionOf($subject, $grade);
     if ($total <= BANK_SAMPLE) {
         $rows = q("SELECT * FROM questions WHERE subject = ? AND grade = ? AND status = 'approved' ORDER BY id", [$subject, $grade])->fetchAll();
-        return ['version' => "$changed:$total", 'sampled' => false, 'questions' => array_map('questionOut', $rows)];
+        return ['version' => $version, 'sampled' => false, 'questions' => array_map('questionOut', $rows)];
     }
     $seed = (int)date('Ymd'); // RAND(seed) gives the same order all day
     $rows = q("SELECT * FROM questions WHERE subject = ? AND grade = ? AND status = 'approved' ORDER BY RAND($seed) LIMIT " . BANK_SAMPLE, [$subject, $grade])->fetchAll();
-    return ['version' => "$changed:$total:" . date('Y-m-d'), 'sampled' => true, 'total' => $total, 'questions' => array_map('questionOut', $rows)];
+    return ['version' => $version, 'sampled' => true, 'total' => $total, 'questions' => array_map('questionOut', $rows)];
+}
+
+/**
+ * The version string a phone saves with a class's downloaded content (bank version | fact sets),
+ * built exactly as the app builds it, so the app can skip downloading what it already has.
+ */
+function contentVersion(string $subject, string $grade): string
+{
+    $i = gradeIndex($grade);
+    $sets = array_filter(
+        q("SELECT id, grade_from, grade_to, updated_at FROM fact_sets WHERE subject = ? AND status = 'approved' ORDER BY id", [$subject])->fetchAll(),
+        fn ($s) => gradeIndex($s['grade_from']) <= $i && $i <= gradeIndex($s['grade_to']),
+    );
+    return bankVersionOf($subject, $grade)[0] . '|' . implode(',', array_map(fn ($s) => "{$s['id']}@{$s['updated_at']}", $sets));
 }
 
 /**
