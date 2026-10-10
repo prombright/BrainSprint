@@ -160,16 +160,18 @@ function bossBoard(array $me): array
     ];
 }
 
-function saveBoss(array $me, int $damage): array
+function saveBoss(array $me, int $damage, ?int $playedAt = null): array
 {
+    $week = weekStart($playedAt ?? time());
     $defeated = $damage >= BOSS_HP ? 1 : 0;
-    $before = q('SELECT defeated FROM boss_results WHERE week_start = ? AND player_id = ?', [weekStart(), $me['id']])->fetchColumn();
+    $before = q('SELECT defeated FROM boss_results WHERE week_start = ? AND player_id = ?', [$week, $me['id']])->fetchColumn();
     q(
         'INSERT INTO boss_results (week_start, player_id, grade, damage, defeated) VALUES (?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE damage = GREATEST(damage, VALUES(damage)), defeated = GREATEST(defeated, VALUES(defeated))',
-        [weekStart(), $me['id'], $me['grade'], $damage, $defeated],
+        [$week, $me['id'], $me['grade'], $damage, $defeated],
     );
-    if ($defeated && !$before) {
+    // only this week's boss makes the news (a result from last week, uploaded late, stays quiet)
+    if ($defeated && !$before && $week === weekStart()) {
         $b = thisBoss();
         addEvent((int)$me['id'], 'boss', "defeated {$b['name']} {$b['emoji']} in the Weekly Boss Battle");
     }

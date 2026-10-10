@@ -225,7 +225,7 @@ function finish(endedEarly = false) {
     homeworkTitle: isHomework ? String(route.query.title ?? 'Homework') : undefined,
     boss: isBoss ? { ...boss.value, damage: Math.min(300, score.value), defeated: score.value >= BOSS_HP } : undefined,
   })
-  if (isBoss && player.auth) api.saveBoss(player.auth, Math.min(300, score.value)).catch(() => {})
+  if (isBoss) player.recordBoss(Math.min(300, score.value), new Date().toISOString())
   playFinish()
   router.replace('/result')
 }

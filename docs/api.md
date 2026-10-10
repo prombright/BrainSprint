@@ -57,7 +57,7 @@ Capacitor app, and the live domain). The website itself is same-origin.
 | POST | `/schools/leave` | Leave my school | |
 | GET | `/schools/board` | This week's school ranking (approved schools, top 50), my school's place and its top 10 players (plus me) | |
 | GET | `/boss` | This week's boss, my best damage, how many in my class defeated it, top 10 in my class | |
-| POST | `/boss` | Save boss damage `{damage}` | 0–300; best of the week kept; first defeat posts a feed item |
+| POST | `/boss` | Save boss damage `{damage, played_at?}` | 0–300; counts for the week of `played_at` (default now; within 30 days); best of that week kept; first defeat this week posts a feed item |
 | GET | `/mocks` | My mock history (last 20) and readiness (average of last 3) | |
 | POST | `/mocks` | Save a mock `{grade, correct, total, minutes_used, taken_at, topics}` | 10–30 questions, 1–60 minutes, no two within 10 min; 10 XP per correct answer |
 | POST | `/classes/join` | Join a teacher's class `{code}` | Max 3 classes per child |

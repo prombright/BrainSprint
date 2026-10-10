@@ -429,8 +429,11 @@ try {
             respond(200, bossBoard(requirePlayer()));
 
         case $route === 'POST /boss':
-            // at most 12 questions × 25 points of damage
-            respond(200, saveBoss(requirePlayer(), intIn(body(), 'damage', 0, 300)));
+            // at most 12 questions × 25 points of damage; played_at (optional) for results sent late
+            $d = body();
+            $played = isset($d['played_at']) ? strtotime((string)$d['played_at']) : time();
+            if ($played === false || $played > time() + 300 || $played < time() - 30 * 86400) respond(422, ['error' => 'Invalid played_at']);
+            respond(200, saveBoss(requirePlayer(), intIn($d, 'damage', 0, 300), $played));
 
         // a finished race: a win makes the news
         case $route === 'POST /races':

@@ -230,7 +230,7 @@ export const api = {
   leaveSchool: (player: PlayerAuth) => call<SchoolBoard>('POST', '/schools/leave', { player }),
   schoolBoard: (player: PlayerAuth) => call<SchoolBoard>('GET', '/schools/board', { player }),
   boss: (player: PlayerAuth) => call<BossBoard>('GET', '/boss', { player }),
-  saveBoss: (player: PlayerAuth, damage: number) => call<BossBoard>('POST', '/boss', { player, body: { damage } }),
+  saveBoss: (player: PlayerAuth, damage: number, playedAt?: string) => call<BossBoard>('POST', '/boss', { player, body: { damage, played_at: playedAt } }),
 
   /** Creates this device's player, or (with `player`) updates its name, animal or class. */
   registerPlayer: (p: { device_id: string; name: string; avatar: string; grade: string }, player?: PlayerAuth) =>

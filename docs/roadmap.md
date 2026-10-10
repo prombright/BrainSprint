@@ -15,6 +15,8 @@
 - Admin panel: overview, schools, players, enquiries, feed moderation, questions.
 - Landing page with contact form; release script and a step-by-step deployment guide (`DEPLOY.md`).
 - Test scripts: `check:questions`, `check:practice` and `check:facts`.
+- **Boss and race results join the offline queue** (with sprints and mocks): played offline, they upload on the next
+  sync. A late boss result counts for the week it was played in, and only this week's defeat makes the news.
 - **Fact Engine**: fact sets with patterns, an admin editor with live preview and JSON import, approval, offline
   download; 8 starter sets in `content/fact-sets-starter.json` (as drafts).
 - **Bank downloads by daily random sample** (400 per class + subject).
@@ -32,8 +34,6 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
 - [ ] **Review and approve the starter content**: the 8 fact sets in `content/fact-sets-starter.json` and the 40
   questions in `content/starter-science-sst.csv` are drafts. *Needs:* a qualified teacher's time; then more fact sets
   (each one is a big content win).
-- [ ] **Queue boss and race results offline.** Sprints and mocks are queued when offline, but boss damage and race
-  results are sent once and lost if the phone is offline. *Needs:* adding them to the sync queue.
 - [ ] **AI-drafted questions with review.** Use an AI model to draft bank questions and steps in bulk, which then
   arrive as drafts for human approval ([ADR-009](decisions.md#adr-009-question-bank-with-human-approval)). *Needs:* an
   AI provider account and budget, a prompt aligned to the Uganda syllabus, and reviewers' time.

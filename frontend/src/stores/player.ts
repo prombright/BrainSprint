@@ -50,6 +50,8 @@ interface Saved {
   topics: Record<string, TopicStat> // "maths:P5:fractions" → recent results
   review: ReviewCard[] // missed questions waiting to come back
   pendingMocks: MockPayload[] // mock results waiting to upload
+  pendingBoss: { damage: number; played_at: string }[] // boss fights waiting to upload
+  pendingRaces: { rival_id: number; won: boolean; subject: string; grade: string; level: string }[] // finished races waiting to upload
   mockHistory: MockHistory | null // last copy from the server, for offline viewing
 }
 
@@ -81,6 +83,8 @@ function load(): Saved {
     topics: {},
     review: [],
     pendingMocks: [],
+    pendingBoss: [],
+    pendingRaces: [],
     mockHistory: null,
   }
   try {
@@ -304,12 +308,23 @@ export const usePlayer = defineStore('player', () => {
           s.mockHistory = await api.saveMock(auth.value!, s.pendingMocks[0])
           s.pendingMocks.shift()
         }
+        while (s.pendingBoss.length) {
+          await api.saveBoss(auth.value!, s.pendingBoss[0].damage, s.pendingBoss[0].played_at)
+          s.pendingBoss.shift()
+        }
+        while (s.pendingRaces.length) {
+          await api.raceDone(auth.value!, s.pendingRaces[0])
+          s.pendingRaces.shift()
+        }
         if (!s.summary) s.summary = await api.me(auth.value!)
       } catch (e) {
         // a lost token (e.g. the server was reset): register again next time
         if (e instanceof ApiError && e.status === 401) s.serverToken = null
         // a sprint the server will never accept: drop it rather than block the queue
-        if (e instanceof ApiError && e.status === 422) (s.pending.length ? s.pending : s.pendingMocks).shift()
+        if (e instanceof ApiError && (e.status === 422 || e.status === 404)) {
+          // the first non-empty queue holds the item that was refused
+          ;[s.pending, s.pendingMocks, s.pendingBoss, s.pendingRaces].find((q) => q.length)?.shift()
+        }
         // otherwise offline or API down: keep the queue and try again later
       } finally {
         syncing = null
@@ -362,10 +377,16 @@ export const usePlayer = defineStore('player', () => {
     }, 45_000)
   }
 
-  async function recordRace(rivalId: number, won: boolean, r: SprintResult) {
+  function recordRace(rivalId: number, won: boolean, r: SprintResult) {
     if (won) state.value.raceWins++
-    const a = auth.value
-    if (a) await api.raceDone(a, { rival_id: rivalId, won, subject: r.subject, grade: r.grade, level: r.level }).catch(() => {})
+    state.value.pendingRaces.push({ rival_id: rivalId, won, subject: r.subject, grade: r.grade, level: r.level })
+    // (sent by sync, which recordSprint runs straight after)
+  }
+
+  /** A boss fight's damage, queued so it isn't lost offline. */
+  function recordBoss(damage: number, playedAt: string) {
+    state.value.pendingBoss.push({ damage, played_at: playedAt })
+    sync()
   }
 
   // ---------- PLE mock exams ----------
@@ -457,6 +478,7 @@ export const usePlayer = defineStore('player', () => {
     setActivity,
     startPresence,
     recordRace,
+    recordBoss,
     noteAnswer,
     recordMock,
     loadMocks,
