@@ -670,6 +670,15 @@ class's paper. Until both have handed in, a child sees only *that* their friend 
 answers. Otherwise the first player could pass the answers to the second. If the 48 hours run out first, there is no
 winner.
 
+**Weekly Challenge.** The third use of the engine: one paper per class per Kampala week (`weekly_challenges`),
+built by the first child of that class who opens it, the same for every child in Uganda in that class. Mixed
+subjects where the class has two with enough questions, otherwise the one it has; 20 questions, 15 minutes, one go,
+any time from Monday to Sunday. During the week a child sees only their own score after handing in and how many have
+played; on Monday last week's places, the top 10, the **top schools** (best 10, at least 3, approved schools only) and
+their paper with the answers appear. A paper started late on Sunday can still be handed in just after midnight
+(within its own deadline). Two children opening a new week at the same moment can't make two papers: the first one
+saved wins (`INSERT IGNORE` on the week + class key) and the other is deleted.
+
 **Limits against spam.** Each school can send 3 challenges a week, and two schools can have only one open challenge
 between them at a time. A school can switch challenges off. Each child can start 5 duels a day, with one open duel per
 pair of friends. Duels are only between friends (added by code, in person), and children never message each other.

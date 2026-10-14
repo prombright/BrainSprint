@@ -5,7 +5,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AvatarBadge from '../components/AvatarBadge.vue'
 import TopBar from '../components/TopBar.vue'
-import { api, type CompeteData, type Contest, type Duel, type Friend } from '../lib/api'
+import { api, type CompeteData, type Contest, type Duel, type Friend, type WeeklyData } from '../lib/api'
 import { gradeLabel, subjectLabel, timeOnly, until, when } from '../lib/compete'
 import { usePlayer } from '../stores/player'
 
@@ -31,9 +31,13 @@ async function auth() {
   return player.auth
 }
 
+const weekly = ref<WeeklyData | null>(null)
+
 async function load() {
   try {
-    data.value = await api.compete(await auth())
+    const a = await auth()
+    api.weekly(a).then((w) => (weekly.value = w)).catch(() => {})
+    data.value = await api.compete(a)
     error.value = ''
     if (!data.value.duel_subjects.includes(subject.value)) subject.value = data.value.duel_subjects[0] ?? 'maths'
   } catch (e) {
@@ -128,6 +132,28 @@ onBeforeUnmount(() => clearInterval(tick))
     <p v-if="error && !data" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">📶 {{ error }}</p>
 
     <template v-if="data">
+      <!-- ======== the Weekly Challenge: every child in the class, the same paper ======== -->
+      <section v-if="weekly?.this_week" class="rounded-3xl bg-gradient-to-br from-ocean to-berry p-5 text-white">
+        <h2 class="text-2xl font-bold">🌍 Weekly Challenge</h2>
+        <p class="opacity-90">
+          The same {{ weekly.this_week.questions }} questions for every {{ gradeLabel(weekly.this_week.grade) }} child in Uganda this week. One go, {{ weekly.this_week.minutes }} minutes.
+        </p>
+        <button
+          v-if="weekly.this_week.mine.state === 'not_started' || weekly.this_week.mine.state === 'started'"
+          class="btn-chunky mt-3 w-full bg-white py-3 text-xl text-ink"
+          @click="router.push('/compete/play/weekly/0')"
+        >
+          {{ weekly.this_week.mine.state === 'started' ? 'Continue my paper →' : 'Take this week\'s challenge →' }}
+        </button>
+        <p v-else-if="weekly.this_week.mine.state === 'done'" class="mt-3 rounded-2xl bg-white/15 p-3 font-semibold">
+          ✓ You got {{ weekly.this_week.mine.correct }}/{{ weekly.this_week.mine.total }}. Places and answers come out on Monday.
+        </p>
+        <p class="mt-2 text-sm opacity-80">{{ weekly.this_week.entrants }} {{ weekly.this_week.entrants === 1 ? 'child has' : 'children have' }} played · ends in {{ until(weekly.this_week.ends_at, now) }}</p>
+        <button v-if="weekly.last_week" class="mt-3 w-full rounded-2xl bg-white/15 p-3 text-left font-semibold hover:bg-white/25" @click="router.push('/compete/weekly/0')">
+          🏆 Last week's results<template v-if="weekly.last_week.result?.my_rank">: you came {{ weekly.last_week.result.my_rank }} of {{ weekly.last_week.entrants }}</template> ›
+        </button>
+      </section>
+
       <!-- ======== school against school ======== -->
       <section class="rounded-3xl bg-ink p-5 text-white">
         <h2 class="text-2xl font-bold">🏫 School vs School</h2>

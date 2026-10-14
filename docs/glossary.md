@@ -53,3 +53,5 @@
 | **School vs School** | A competition one school's teacher sets up and another's accepts; one paper, one time window, scored on the best 10 pupils. |
 | **Duel** | A one-to-one competition between two friends on the same server-marked paper. |
 | **Window** | The time a school competition is open; each child also has 15 minutes from when they start. |
+
+| **Weekly Challenge** | One server-marked paper a week for every child in a class across Uganda; places, top schools and answers on Monday. |

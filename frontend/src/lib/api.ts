@@ -293,6 +293,33 @@ export interface CompeteData {
   duel_subjects: string[]
 }
 
+export interface WeeklyWeek {
+  week_start: string
+  grade: string
+  subject: string
+  questions: number
+  minutes: number
+  ends_at: string
+  mine: AttemptState
+  entrants: number
+  result?: {
+    top: (ContestPupil & { me: boolean })[]
+    my_rank: number | null
+    top_schools: { id: number; name: string; district: string; players: number; average_percent: number; average_seconds: number }[]
+    my_school_rank: number | null
+  }
+  review?: PaperQuestion[]
+}
+
+export interface WeeklyData {
+  this_week: WeeklyWeek | null
+  last_week: WeeklyWeek | null
+}
+
+/** Where a paper lives: a school contest or duel (by id), or this week's Weekly Challenge. */
+export type PaperKind = 'contests' | 'duels' | 'weekly'
+const paperPath = (kind: PaperKind, id: number) => (kind === 'weekly' ? '/weekly' : `/${kind}/${id}`)
+
 export interface PaperStart {
   questions: PaperQuestion[]
   seconds_left: number
@@ -305,9 +332,10 @@ export const api = {
   duel: (player: PlayerAuth, id: number) => call<Duel>('GET', `/duels/${id}`, { player }),
   newDuel: (player: PlayerAuth, friendId: number, subject: string) => call<Duel>('POST', '/duels', { player, body: { friend_id: friendId, subject } }),
   declineDuel: (player: PlayerAuth, id: number) => call<{ duels: Duel[] }>('POST', `/duels/${id}/decline`, { player }),
-  startPaper: (player: PlayerAuth, kind: 'contests' | 'duels', id: number) => call<PaperStart>('POST', `/${kind}/${id}/start`, { player }),
-  submitPaper: (player: PlayerAuth, kind: 'contests' | 'duels', id: number, picks: (string | null)[]) =>
-    call<{ correct: number }>('POST', `/${kind}/${id}/submit`, { player, body: { picks } }),
+  weekly: (player: PlayerAuth) => call<WeeklyData>('GET', '/weekly', { player }),
+  startPaper: (player: PlayerAuth, kind: PaperKind, id: number) => call<PaperStart>('POST', `${paperPath(kind, id)}/start`, { player }),
+  submitPaper: (player: PlayerAuth, kind: PaperKind, id: number, picks: (string | null)[]) =>
+    call<{ correct: number }>('POST', `${paperPath(kind, id)}/submit`, { player, body: { picks } }),
   mocks: (player: PlayerAuth) => call<MockHistory>('GET', '/mocks', { player }),
   saveMock: (player: PlayerAuth, m: MockPayload) => call<MockHistory>('POST', '/mocks', { player, body: m }),
   myClasses: (player: PlayerAuth) => call<{ classes: MyClass[] }>('GET', '/my/classes', { player }),

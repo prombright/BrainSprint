@@ -488,6 +488,16 @@ try {
             }
             respond(200, submitAttempt(paperRow((int)$c['paper_id']), $p, body()['picks'] ?? null));
 
+        // the Weekly Challenge: this week's paper for my class, and last week's results
+        case $route === 'GET /weekly':
+            respond(200, weeklyChallenge(requirePlayer()));
+
+        case $route === 'POST /weekly/start':
+            respond(200, startWeekly(requirePlayer()));
+
+        case $route === 'POST /weekly/submit':
+            respond(200, submitWeekly(requirePlayer(), body()['picks'] ?? null));
+
         case $route === 'POST /duels':
             $d = body();
             respond(201, createDuel(requirePlayer(), intIn($d, 'friend_id', 1, PHP_INT_MAX), oneOf($d, 'subject', PAPER_SUBJECTS)));

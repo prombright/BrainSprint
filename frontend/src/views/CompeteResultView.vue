@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AvatarBadge from '../components/AvatarBadge.vue'
 import PaperReview from '../components/PaperReview.vue'
 import TopBar from '../components/TopBar.vue'
-import { api, type Contest, type Duel } from '../lib/api'
+import { api, type Contest, type Duel, type WeeklyData } from '../lib/api'
 import { clock, gradeLabel, subjectLabel, timeOnly, until } from '../lib/compete'
 import { usePlayer } from '../stores/player'
 
@@ -13,6 +13,8 @@ const route = useRoute()
 const router = useRouter()
 const player = usePlayer()
 const isDuel = route.params.kind === 'duels'
+const isWeekly = route.params.kind === 'weekly'
+const weekly = ref<WeeklyData | null>(null)
 const id = Number(route.params.id)
 const contest = ref<Contest | null>(null)
 const duel = ref<Duel | null>(null)
@@ -22,7 +24,8 @@ onMounted(async () => {
   await player.sync()
   if (!player.auth) return void (error.value = 'Connect to the internet to see the results.')
   try {
-    if (isDuel) duel.value = await api.duel(player.auth, id)
+    if (isWeekly) weekly.value = await api.weekly(player.auth)
+    else if (isDuel) duel.value = await api.duel(player.auth, id)
     else contest.value = await api.contest(player.auth, id)
   } catch (e) {
     error.value = (e as Error).message
@@ -45,7 +48,56 @@ function ordinal(n: number) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar :title="isDuel ? '⚔️ Duel' : '🏫 Competition'" back="/compete" />
+    <TopBar :title="isWeekly ? '🌍 This week' : isDuel ? '⚔️ Duel' : '🏫 Competition'" back="/compete" />
+
+    <!-- ======== Weekly Challenge ======== -->
+    <template v-if="weekly">
+      <section v-if="weekly.this_week?.mine.state === 'done'" class="rounded-3xl bg-white p-5 text-center shadow-sm">
+        <p class="text-sm text-ink/60">This week</p>
+        <p class="text-4xl font-bold">{{ weekly.this_week.mine.correct }}/{{ weekly.this_week.mine.total }}</p>
+        <p class="text-ink/70">Handed in ✓ · places and answers come out on Monday ({{ until(weekly.this_week.ends_at) }})</p>
+      </section>
+
+      <template v-if="weekly.last_week?.result">
+        <section class="rounded-3xl bg-gradient-to-br from-ocean to-berry p-6 text-center text-white">
+          <p class="text-sm font-semibold tracking-widest text-sun uppercase">Last week · {{ gradeLabel(weekly.last_week.grade) }} · {{ subjectLabel(weekly.last_week.subject) }}</p>
+          <template v-if="weekly.last_week.mine.state === 'done'">
+            <p class="mt-1 text-5xl font-bold">{{ ordinal(weekly.last_week.result.my_rank ?? 0) }}</p>
+            <p class="text-lg">of {{ weekly.last_week.entrants }} children · {{ weekly.last_week.mine.correct }}/{{ weekly.last_week.mine.total }} in {{ clock(weekly.last_week.mine.seconds ?? 0) }} min</p>
+            <p v-if="weekly.last_week.result.my_school_rank" class="mt-1 opacity-90">Your school came {{ ordinal(weekly.last_week.result.my_school_rank) }} 🏫</p>
+          </template>
+          <p v-else class="mt-1 text-xl">You didn't play last week. This week's challenge is open!</p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm">
+          <h2 class="mb-2 text-xl font-bold">Top 10</h2>
+          <ol class="space-y-1">
+            <li v-for="p in weekly.last_week.result.top" :key="p.id" class="flex items-center gap-3 rounded-2xl px-3 py-1.5" :class="p.me ? 'bg-sun/30' : 'bg-cream'">
+              <span class="w-6 text-center font-bold">{{ p.rank }}</span>
+              <AvatarBadge :avatar="p.avatar" size="sm" />
+              <span class="min-w-0 flex-1 truncate font-semibold">{{ p.name.split(' ')[0] }}</span>
+              <span class="font-bold tabular-nums">{{ p.correct }}/{{ weekly.last_week.questions }}</span>
+              <span class="w-12 text-right text-sm text-ink/60 tabular-nums">{{ clock(p.seconds) }}</span>
+            </li>
+          </ol>
+        </section>
+
+        <section v-if="weekly.last_week.result.top_schools.length" class="rounded-3xl bg-white p-5 shadow-sm">
+          <h2 class="text-xl font-bold">Top schools</h2>
+          <p class="mb-2 text-sm text-ink/60">Average of each school's best 10 (at least 3 must play)</p>
+          <ol class="space-y-1">
+            <li v-for="(s, i) in weekly.last_week.result.top_schools" :key="s.id" class="flex items-center gap-3 rounded-2xl bg-cream px-3 py-2">
+              <span class="w-6 text-center font-bold">{{ i + 1 }}</span>
+              <span class="min-w-0 flex-1"><span class="block truncate font-semibold">{{ s.name }}</span><span class="block text-xs text-ink/60">{{ s.district }} · {{ s.players }} played</span></span>
+              <span class="font-bold tabular-nums">{{ s.average_percent }}%</span>
+            </li>
+          </ol>
+        </section>
+
+        <PaperReview v-if="weekly.last_week.review" :questions="weekly.last_week.review" />
+      </template>
+      <p v-else-if="!weekly.this_week || weekly.this_week.mine.state !== 'done'" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">No results yet. They come out every Monday.</p>
+    </template>
     <p v-if="error" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">{{ error }}</p>
 
     <!-- ======== school contest ======== -->

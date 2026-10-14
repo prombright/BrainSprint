@@ -4,7 +4,7 @@
 // Picks are kept on the device as the child goes, so a refresh or a dropped network loses nothing.
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
-import { api, ApiError, type PaperQuestion } from '../lib/api'
+import { api, ApiError, type PaperKind, type PaperQuestion } from '../lib/api'
 import { clock } from '../lib/compete'
 import { canSpeak, speak, stopSpeaking } from '../lib/speech'
 import { playFinish } from '../lib/sounds'
@@ -14,7 +14,7 @@ import { usePlayer } from '../stores/player'
 const route = useRoute()
 const router = useRouter()
 const player = usePlayer()
-const kind = route.params.kind === 'duels' ? 'duels' : 'contests'
+const kind = (['duels', 'weekly'].includes(String(route.params.kind)) ? route.params.kind : 'contests') as PaperKind
 const id = Number(route.params.id)
 const saveKey = `bsk:paper:${kind}:${id}`
 

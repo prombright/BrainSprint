@@ -557,3 +557,100 @@ function submitDuel(array $me, int $id, mixed $picks): array
     }
     return $out;
 }
+
+// ---------- the Weekly Challenge: one paper per class per week, for every child ----------
+
+const WEEKLY_QUESTIONS = 20;
+const WEEKLY_MINUTES = 15;
+
+/**
+ * This week's paper for a class, built by the first child who asks. Mixed subjects where the class
+ * has two with enough questions, otherwise the one it has. Null when no subject has enough yet.
+ */
+function weeklyPaper(string $grade, string $week, bool $create): ?array
+{
+    $id = q('SELECT paper_id FROM weekly_challenges WHERE week_start = ? AND grade = ?', [$week, $grade])->fetchColumn();
+    if (!$id && $create) {
+        $subjects = paperSubjects($grade, WEEKLY_QUESTIONS);
+        if (!$subjects) return null;
+        $paper = buildPaper(in_array('mixed', $subjects, true) ? 'mixed' : $subjects[0], $grade, WEEKLY_QUESTIONS, WEEKLY_MINUTES);
+        // two children asking at the same moment: the first paper saved wins, the other is thrown away
+        q('INSERT IGNORE INTO weekly_challenges (week_start, grade, paper_id) VALUES (?, ?, ?)', [$week, $grade, $paper]);
+        $id = q('SELECT paper_id FROM weekly_challenges WHERE week_start = ? AND grade = ?', [$week, $grade])->fetchColumn();
+        if ((int)$id !== $paper) q('DELETE FROM papers WHERE id = ?', [$paper]);
+    }
+    return $id ? paperRow((int)$id) : null;
+}
+
+/** Every child's result on a weekly paper (best first) and the school table (average of each school's best 10). */
+function weeklyResult(array $paper): array
+{
+    $total = count($paper['questions']);
+    $rows = q('SELECT a.player_id, a.school_id, a.correct, a.seconds, p.name, p.avatar FROM paper_attempts a JOIN players p ON p.id = a.player_id
+               WHERE a.paper_id = ? AND a.submitted_at IS NOT NULL ORDER BY a.correct DESC, a.seconds ASC, a.submitted_at ASC', [$paper['id']])->fetchAll();
+    $pupils = array_map(fn ($r, $i) => ['rank' => $i + 1, 'id' => (int)$r['player_id'], 'name' => $r['name'], 'avatar' => $r['avatar'],
+        'school_id' => $r['school_id'] ? (int)$r['school_id'] : null, 'correct' => (int)$r['correct'], 'seconds' => (int)$r['seconds']], $rows, array_keys($rows));
+    $bySchool = [];
+    foreach ($pupils as $p) if ($p['school_id']) $bySchool[$p['school_id']][] = $p;
+    $schools = [];
+    foreach ($bySchool as $sid => $list) {
+        $counted = array_slice($list, 0, COUNTED_PUPILS);
+        if (count($counted) < MIN_PUPILS) continue;
+        $s = q("SELECT id, name, district FROM schools WHERE id = ? AND status = 'approved'", [$sid])->fetch();
+        if (!$s) continue; // schools nobody has checked yet stay out of public tables
+        $schools[] = ['id' => (int)$s['id'], 'name' => $s['name'], 'district' => $s['district'], 'players' => count($list),
+            'average_percent' => round(array_sum(array_column($counted, 'correct')) / count($counted) / $total * 100, 1),
+            'average_seconds' => (int)round(array_sum(array_column($counted, 'seconds')) / count($counted))];
+    }
+    usort($schools, fn ($a, $b) => [$b['average_percent'], $a['average_seconds']] <=> [$a['average_percent'], $b['average_seconds']]);
+    return ['total' => $total, 'pupils' => $pupils, 'schools' => $schools];
+}
+
+/** One week as a child sees it. Results, places and answers only once the week is over. */
+function weeklyOut(array $me, string $week, bool $current): ?array
+{
+    $paper = weeklyPaper($me['grade'], $week, $current);
+    if (!$paper) return null;
+    $a = attemptRow((int)$paper['id'], (int)$me['id']);
+    $out = [
+        'week_start' => $week, 'grade' => $paper['grade'], 'subject' => $paper['subject'],
+        'questions' => count($paper['questions']), 'minutes' => (int)$paper['minutes'],
+        'ends_at' => date('c', strtotime("$week +7 days")),
+        'mine' => attemptOut($a, count($paper['questions'])),
+        'entrants' => (int)q('SELECT COUNT(*) FROM paper_attempts WHERE paper_id = ? AND submitted_at IS NOT NULL', [$paper['id']])->fetchColumn(),
+    ];
+    // while the week runs: your own score once handed in, but nobody's answers or places
+    if ($current) return $out;
+    $r = weeklyResult($paper);
+    $mine = array_values(array_filter($r['pupils'], fn ($p) => $p['id'] === (int)$me['id']))[0] ?? null;
+    $schoolAt = $me['school_id'] ? array_search((int)$me['school_id'], array_column($r['schools'], 'id'), true) : false;
+    $out['result'] = [
+        'top' => array_map(fn ($p) => $p + ['me' => $p['id'] === (int)$me['id']], array_slice($r['pupils'], 0, 10)),
+        'my_rank' => $mine['rank'] ?? null,
+        'top_schools' => array_slice($r['schools'], 0, 10),
+        'my_school_rank' => $schoolAt === false ? null : $schoolAt + 1,
+    ];
+    if ($a && $a['submitted_at']) $out['review'] = paperReview($paper, $a);
+    return $out;
+}
+
+function weeklyChallenge(array $me): array
+{
+    return ['this_week' => weeklyOut($me, weekStart(), true), 'last_week' => weeklyOut($me, weekStart(time() - 7 * 86400), false)];
+}
+
+function startWeekly(array $me): array
+{
+    $paper = weeklyPaper($me['grade'], weekStart(), true) ?? respond(422, ['error' => 'There is no Weekly Challenge for your class yet']);
+    return startAttempt($paper, $me, strtotime(weekStart() . ' +7 days'), $me['school_id'] ? (int)$me['school_id'] : null);
+}
+
+function submitWeekly(array $me, mixed $picks): array
+{
+    // usually this week's paper; a paper started late on Sunday night may be handed in just after midnight
+    foreach ([weekStart(), weekStart(time() - 7 * 86400)] as $week) {
+        $paper = weeklyPaper($me['grade'], $week, false);
+        if ($paper && ($a = attemptRow((int)$paper['id'], (int)$me['id'])) && !$a['submitted_at']) return submitAttempt($paper, $me, $picks);
+    }
+    respond(422, ['error' => 'Start the paper first']);
+}

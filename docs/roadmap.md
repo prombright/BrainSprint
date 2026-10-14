@@ -23,6 +23,8 @@
   new questions once a day; switched on automatically when the phone's own data saver is on). For everyone, question
   content is downloaded only when it changed.
 - `npm run build:android-lan`: a test app that talks to this computer over Wi-Fi.
+- **Weekly Challenge**: the same server-marked paper for every child in a class across Uganda each week, with a
+  national top 10 and top schools on Monday. The base for sponsored prizes later.
 - **School vs School competitions and Duels**, built, timed and marked by the server (the
   [Paper Engine](algorithms.md#15-paper-engine-server-marked-competitions)): teachers challenge and accept in the teacher
   portal; children play a timed paper and see their place, their school's result and the answers afterwards; duels
