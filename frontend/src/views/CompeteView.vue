@@ -45,7 +45,7 @@ const duelLine = computed(() => {
     return { text: d.i_challenged ? 'Play your duel!' : `${name} challenged you!`, alert: true, count: waiting.length }
   }
   const finished = duels.find((d) => d.phase === 'done')
-  if (finished) return { text: finished.outcome === 'won' ? `You beat ${finished.other.name.split(' ')[0]}! 🏆` : 'Challenge a friend again', alert: false, count: 0 }
+  if (finished) return { text: finished.outcome === 'won' ? `You beat ${finished.other.name.split(' ')[0]}!` : 'Challenge a friend again', alert: false, count: 0 }
   return { text: 'Challenge a friend', alert: false, count: 0 }
 })
 
@@ -53,8 +53,8 @@ const schoolLine = computed(() => {
   // school vs school and class vs class look the same here
   const cs = [...(data.value?.contests ?? []), ...(data.value?.class_contests ?? [])].sort((a, b) => b.starts_at.localeCompare(a.starts_at))
   const live = cs.find((c) => c.phase === 'live')
-  if (live && (live.mine?.state === 'not_started' || live.mine?.state === 'started')) return { text: '🔴 Live now: play for your school!', alert: true }
-  if (live) return { text: '🔴 Live now · you handed in ✓', alert: false }
+  if (live && (live.mine?.state === 'not_started' || live.mine?.state === 'started')) return { text: 'Live now: play for your school!', alert: true }
+  if (live) return { text: 'Live now · you handed in ✓', alert: false }
   const next = cs.filter((c) => c.phase === 'upcoming').at(-1)
   if (next) return { text: `Next: ${when(next.starts_at)}`, alert: false }
   if (cs.some((c) => c.phase === 'finished')) return { text: 'See your results', alert: false }
@@ -64,7 +64,7 @@ const schoolLine = computed(() => {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="⚔️ Compete" back="/" />
+    <TopBar title="Compete" back="/" />
     <p v-if="error && !data" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">📶 {{ error }}</p>
 
     <template v-if="data">
@@ -77,7 +77,7 @@ const schoolLine = computed(() => {
         <span v-if="weeklyLine.alert" class="absolute top-3 right-3 size-4 rounded-full bg-cherry ring-2 ring-white" aria-label="Waiting for you" />
       </button>
 
-      <button class="btn-chunky relative flex items-center gap-4 bg-gradient-to-br from-sprint to-cherry p-5 text-left text-white" @click="router.push('/compete/duels')">
+      <button class="btn-chunky relative flex items-center gap-4 bg-gradient-to-br from-sprint to-sprint-dark p-5 text-left text-white" @click="router.push('/compete/duels')">
         <span class="text-6xl">⚔️</span>
         <span class="min-w-0 flex-1">
           <span class="block text-2xl">Duels</span>
@@ -95,7 +95,7 @@ const schoolLine = computed(() => {
         <span v-if="schoolLine.alert" class="absolute top-3 right-3 size-4 animate-pulse rounded-full bg-cherry ring-2 ring-white" aria-label="Live now" />
       </button>
 
-      <p class="mt-auto text-center text-sm text-ink/50">Competitions are free and use no ⚡ Brain Power.</p>
+      <p class="mt-auto text-center text-sm text-ink/50">Competitions are free and use no Brain Power.</p>
     </template>
   </main>
 </template>

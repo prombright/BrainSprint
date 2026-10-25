@@ -17,7 +17,7 @@ onMounted(() => eligible.value && player.loadMocks())
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="🎓 PLE Prep" back="/" />
+    <TopBar title="PLE Prep" back="/" />
 
     <section v-if="!eligible" class="rounded-3xl bg-white p-6 text-center shadow-sm">
       <div class="text-6xl">🎓</div>
@@ -40,13 +40,13 @@ onMounted(() => eligible.value && player.loadMocks())
       </section>
 
       <section class="rounded-3xl bg-white p-5 shadow-sm">
-        <h2 class="text-xl font-bold">📝 Maths mock paper</h2>
+        <h2 class="text-xl font-bold">Maths mock paper</h2>
         <ul class="mt-2 space-y-1 text-ink/80">
           <li>⏱️ <b>{{ MOCK_MINUTES }} minutes</b> for <b>{{ MOCK_QUESTIONS }} questions</b> from across the {{ grade }} syllabus, with some revision from the year below.</li>
-          <li>✏️ Have paper and a pencil ready for working.</li>
-          <li>🔕 No answers or hints until you finish, just like the real exam. You can go back and change answers.</li>
-          <li>📊 At the end: your score, each topic, and the working for every question you missed.</li>
-          <li>⚡ Mocks don't use Brain Power.</li>
+          <li>Have paper and a pencil ready for working.</li>
+          <li>No answers or hints until you finish, just like the real exam. You can go back and change answers.</li>
+          <li>At the end: your score, each topic, and the working for every question you missed.</li>
+          <li>Mocks don't use Brain Power.</li>
         </ul>
         <button class="btn-chunky mt-4 w-full bg-sprint py-4 text-2xl text-white sm:w-auto sm:px-10" @click="router.push('/mock/exam')">Start a mock</button>
       </section>

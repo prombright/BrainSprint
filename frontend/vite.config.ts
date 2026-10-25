@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => ({
         name: 'BrainSprint Kids',
         short_name: 'BrainSprint',
         description: 'Fast, fun maths, English, science and SST practice for nursery and primary children.',
-        theme_color: '#ff7a1a',
-        background_color: '#fff8ec',
+        theme_color: '#16a34a',
+        background_color: '#f4f7f5',
         display: 'standalone',
         orientation: 'portrait',
         start_url: './index.html', // open the game, not the landing page

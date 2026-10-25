@@ -97,7 +97,7 @@ the Android build, which already ships every file.
 
 **Works without a server at all.** Questions are generated on the device, Brain Power is computed from timestamps,
 mastery and reviews are local. Without a connection a child can do everything except leagues, friends, schools,
-races, the boss board and parent/teacher features. Fonts are bundled (`@fontsource/fredoka`) for the same reason.
+races, the boss board and parent/teacher features. Fonts are bundled (`@fontsource/lexend`: 400, 600, 700) for the same reason.
 
 ## How the frontend talks to the API
 

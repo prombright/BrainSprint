@@ -69,7 +69,7 @@ async function share() {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="👫 Friends" back="/" />
+    <TopBar title="Friends" back="/" />
 
     <p v-if="error && !data" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">📶 {{ error }}</p>
 
@@ -78,7 +78,7 @@ async function share() {
         <p class="opacity-80">My friend code</p>
         <p class="my-1 font-mono text-5xl font-bold tracking-[0.2em]">{{ data.code }}</p>
         <p class="text-sm opacity-70">Tell it to a friend you know, so they can add you.</p>
-        <button class="btn-chunky mt-3 bg-sun px-6 py-2 text-lg text-ink" @click="share">{{ copied ? 'Copied ✓' : '📤 Share my code' }}</button>
+        <button class="btn-chunky mt-3 bg-sun px-6 py-2 text-lg text-ink" @click="share">{{ copied ? 'Copied ✓' : 'Share my code' }}</button>
       </section>
 
       <form class="rounded-3xl bg-white p-4 shadow-sm" @submit.prevent="add">
@@ -116,7 +116,7 @@ async function share() {
             <button class="px-1 text-ink/30" :aria-label="`Remove ${f.name}`" @click="remove(f.id, f.name)">✕</button>
           </li>
         </ol>
-        <p v-if="data.friends.length" class="mt-2 text-center text-sm text-ink/50">Tap a friend to race them 🏁 · ⚔️ for a duel</p>
+        <p v-if="data.friends.length" class="mt-2 text-center text-sm text-ink/50">Tap a friend to race them 🏁 · for a duel</p>
       </section>
     </template>
 

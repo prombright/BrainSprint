@@ -157,7 +157,7 @@ onBeforeRouteLeave(() => phase.value === 'review' || confirm('Leave the mock? Yo
       <section class="rounded-3xl bg-white p-4 shadow-sm">
         <div class="mb-2 flex items-center justify-between">
           <h2 class="font-bold">All questions</h2>
-          <span class="text-xs text-ink/60"><span class="inline-block size-3 rounded bg-ocean align-middle" /> answered · 🚩 flagged</span>
+          <span class="text-xs text-ink/60"><span class="inline-block size-3 rounded bg-ocean align-middle" /> answered · flagged</span>
         </div>
         <div class="grid grid-cols-6 gap-1.5 sm:grid-cols-10">
           <button
@@ -193,7 +193,7 @@ onBeforeRouteLeave(() => phase.value === 'review' || confirm('Leave the mock? Yo
           <div class="h-3 flex-1 overflow-hidden rounded-full bg-ink/10"><div class="h-full rounded-r-[4px]" :class="t.pct >= 70 ? 'bg-leaf' : t.pct >= 50 ? 'bg-sun' : 'bg-cherry'" :style="{ width: `${t.pct}%` }" /></div>
           <span class="w-12 text-right text-sm font-semibold tabular-nums">{{ t.c }}/{{ t.n }}</span>
         </div>
-        <button class="btn-chunky mt-4 bg-sprint px-6 py-2 text-lg text-white" @click="router.push('/progress')">🎯 Practise my weak spots</button>
+        <button class="btn-chunky mt-4 bg-sprint px-6 py-2 text-lg text-white" @click="router.push('/progress')">Practise my weak spots</button>
       </section>
 
       <section class="rounded-3xl bg-white p-5 shadow-sm">
@@ -208,7 +208,7 @@ onBeforeRouteLeave(() => phase.value === 'review' || confirm('Leave the mock? Yo
               </template>
             </p>
             <details v-if="!correctList[i] && q.steps?.length" class="mt-1 text-sm">
-              <summary class="font-semibold text-ocean">💡 See the working</summary>
+              <summary class="font-semibold text-ocean">See the working</summary>
               <ol class="mt-1 list-decimal space-y-1 pl-5">
                 <li v-for="(st, j) in q.steps" :key="j">{{ st }}</li>
               </ol>

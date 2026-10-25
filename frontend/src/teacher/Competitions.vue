@@ -152,9 +152,9 @@ function outcome(c: Contest) {
   if (c.phase !== 'finished') return { declined: 'Declined', cancelled: 'Called off', expired: 'Not answered in time' }[c.phase as 'declined'] ?? ''
   const s = c.summary
   if (!s) return ''
-  if (s.draw) return '🤝 Draw'
+  if (s.draw) return 'Draw'
   if (s.winner_id === null) return 'No result (fewer than 3 pupils)'
-  return s.winner_id === school.value?.id ? '🏆 We won' : `${otherSchool(c).name} won`
+  return s.winner_id === school.value?.id ? 'We won' : `${otherSchool(c).name} won`
 }
 const printNow = () => window.print()
 // the questions our pupils found hardest (at least 2 pupils answered)
@@ -186,7 +186,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
       <ul class="mt-2 divide-y divide-ink/5">
         <li v-for="s in found" :key="s.id"><button class="w-full py-2 text-left font-semibold hover:text-ocean" @click="chooseSchool(s)">{{ s.name }} <span class="font-normal text-ink/60">· {{ s.district }}</span></button></li>
       </ul>
-      <p class="mt-2 text-sm text-ink/60">Only checked schools are listed. If yours is missing, have a pupil add it in the app (🏫 My School); it appears here once BrainSprint has checked it.</p>
+      <p class="mt-2 text-sm text-ink/60">Only checked schools are listed. If yours is missing, have a pupil add it in the app (My School); it appears here once BrainSprint has checked it.</p>
     </div>
 
     <template v-if="school">
@@ -213,7 +213,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
       </div>
 
       <!-- new challenge -->
-      <button v-if="!challenging" class="btn-chunky bg-sprint px-6 py-3 text-lg text-white" @click="challenging = true">⚔️ Challenge a school</button>
+      <button v-if="!challenging" class="btn-chunky bg-sprint px-6 py-3 text-lg text-white" @click="challenging = true">Challenge a school</button>
       <form v-else class="space-y-3 rounded-3xl bg-white p-5 shadow-sm" @submit.prevent="sendChallenge">
         <h2 class="text-lg font-bold">Challenge a school</h2>
         <div>
@@ -271,7 +271,7 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
         <ul class="divide-y divide-ink/5">
           <li v-for="c in active" :key="c.id" class="flex flex-wrap items-center gap-3 py-2">
             <span class="rounded-full px-2 py-0.5 text-xs font-semibold" :class="c.phase === 'live' ? 'bg-cherry text-white' : c.phase === 'pending' ? 'bg-ink/10' : 'bg-leaf/15 text-leaf'">
-              {{ c.phase === 'live' ? '🔴 Live' : c.phase === 'pending' ? 'Waiting for reply' : '✓ Accepted' }}
+              {{ c.phase === 'live' ? 'Live' : c.phase === 'pending' ? 'Waiting for reply' : '✓ Accepted' }}
             </span>
             <span class="min-w-0 flex-1">
               <b>vs {{ otherSchool(c).name }}</b> · {{ gradeLabel(c.grade) }} {{ subjectLabel(c.subject) }}
@@ -314,13 +314,13 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
             <p class="text-ink/60">{{ gradeLabel(detail.grade) }} · {{ subjectLabel(detail.subject) }} · {{ when(detail.starts_at) }}</p>
           </div>
           <div class="flex gap-2 print:hidden">
-            <button class="btn-chunky bg-cream px-4 py-2 whitespace-nowrap" @click="printNow">🖨️ Print</button>
+            <button class="btn-chunky bg-cream px-4 py-2 whitespace-nowrap" @click="printNow">Print</button>
             <button class="btn-chunky bg-cream px-4 py-2" aria-label="Close" @click="detail = null">✕</button>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div v-for="s in detail.result.schools" :key="s.id" class="rounded-2xl p-4" :class="s.id === detail.result.winner_id ? 'bg-sun/40' : 'bg-cream'">
-            <p class="font-semibold">{{ s.id === detail.result.winner_id ? '🏆 ' : '' }}{{ s.name }}</p>
+            <p class="font-semibold">{{ s.name }}</p>
             <p class="text-3xl font-bold tabular-nums">{{ s.valid ? `${s.average_percent}%` : '–' }}</p>
             <p class="text-sm text-ink/60">{{ s.players }} played · best {{ s.counted }} counted{{ s.valid ? '' : ' · needed 3' }}</p>
           </div>

@@ -40,10 +40,10 @@ function demoActivate() {
 
 <template>
   <main class="flex flex-1 flex-col">
-    <TopBar title="🎟️ Sprint Pass" back="/" />
+    <TopBar title="Sprint Pass" back="/" />
 
     <section v-if="player.hasPass" class="mb-4 rounded-3xl bg-leaf/15 p-4 text-center font-semibold text-leaf">
-      ✅ Your pass is active until {{ new Date(player.state.pass!.expiresAt).toLocaleString() }}
+      Your pass is active until {{ new Date(player.state.pass!.expiresAt).toLocaleString() }}
     </section>
     <section v-else-if="!player.canPlay" class="mb-4 rounded-3xl bg-white p-5 text-center shadow-sm">
       <div class="text-5xl">😴</div>

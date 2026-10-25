@@ -11,13 +11,13 @@ import { GRADES, SUBJECTS } from '../game/types'
 
 type Tab = 'overview' | 'questions' | 'facts' | 'schools' | 'players' | 'leads' | 'feed'
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'overview', label: '📊 Overview' },
-  { id: 'questions', label: '❓ Questions' },
-  { id: 'facts', label: '🧩 Fact tables' },
-  { id: 'schools', label: '🏫 Schools' },
-  { id: 'players', label: '🧒 Players' },
-  { id: 'leads', label: '📨 Enquiries' },
-  { id: 'feed', label: '📰 Feed' },
+  { id: 'overview', label: 'Overview' },
+  { id: 'questions', label: 'Questions' },
+  { id: 'facts', label: 'Fact tables' },
+  { id: 'schools', label: 'Schools' },
+  { id: 'players', label: 'Players' },
+  { id: 'leads', label: 'Enquiries' },
+  { id: 'feed', label: 'Feed' },
 ]
 
 const signedIn = ref(!!session.get())
@@ -265,7 +265,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
 
   <div v-else class="mx-auto max-w-6xl p-4 md:p-8">
     <header class="mb-5 flex flex-wrap items-center justify-between gap-3">
-      <h1 class="text-2xl font-bold">⚡ BrainSprint Admin</h1>
+      <h1 class="text-2xl font-bold">BrainSprint Admin</h1>
       <div class="flex items-center gap-3">
         <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="load">↻ Refresh</button>
         <ThemeSwitch />
@@ -374,7 +374,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
           <p class="font-bold">{{ s.name }} <span class="font-normal text-ink/60">· {{ s.district }}</span></p>
           <p class="text-sm text-ink/60">{{ s.members }} players · added {{ when(s.created_at) }}{{ s.creator ? ` by ${s.creator}` : '' }}</p>
         </div>
-        <button class="rounded-xl bg-cream px-3 py-1.5 font-semibold" @click="editSchool(s)">✏️ Edit</button>
+        <button class="rounded-xl bg-cream px-3 py-1.5 font-semibold" @click="editSchool(s)">Edit</button>
         <button v-if="s.status !== 'approved'" class="rounded-xl bg-leaf px-3 py-1.5 font-semibold text-white" @click="setSchool(s, 'approved')">✓ Approve</button>
         <button v-if="s.status !== 'hidden'" class="rounded-xl bg-cherry/10 px-3 py-1.5 font-semibold text-cherry" @click="setSchool(s, 'hidden')">Hide</button>
       </div>
@@ -383,7 +383,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
     <!-- players -->
     <section v-if="tab === 'players'">
       <input v-model="playerSearch" placeholder="Search by name or player number" class="mb-3 w-full rounded-xl border-2 border-ink/10 bg-white px-3 py-2 outline-none focus:border-ocean" />
-      <p class="mb-3 text-sm text-ink/60">Names are public in leagues and the feed. Rename any that aren't suitable; ⚠️ marks names the word filter flags.</p>
+      <p class="mb-3 text-sm text-ink/60">Names are public in leagues and the feed. Rename any that aren't suitable; marks names the word filter flags.</p>
       <div class="overflow-x-auto rounded-2xl bg-white shadow-sm">
         <table class="w-full text-left text-sm">
           <thead class="bg-cream text-ink/60"><tr><th class="p-3">Player</th><th class="p-3">Class</th><th class="p-3">School</th><th class="p-3 text-right">XP</th><th class="p-3">Last seen</th><th class="p-3"></th></tr></thead>
@@ -443,7 +443,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
           <label class="flex items-center gap-1 text-sm font-semibold"><input v-model="bankFilter.teacher" type="checkbox" class="accent-ocean" /> From teachers</label>
           <input v-model="bankFilter.q" placeholder="Search" class="min-w-32 flex-1 rounded-xl border-2 border-ink/10 bg-white px-3 py-1.5" />
           <button class="rounded-xl bg-ocean px-3 py-1.5 font-semibold text-white" @click="editing = { id: null, draft: emptyDraft(bankFilter.grade || 'P5', bankFilter.subject || 'science') }">+ New question</button>
-          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">⬆ Import CSV<input type="file" accept=".csv,text/csv" class="sr-only" @change="importCsv" /></label>
+          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">Import CSV<input type="file" accept=".csv,text/csv" class="sr-only" @change="importCsv" /></label>
         </div>
 
         <div v-if="importResult" class="rounded-2xl bg-white p-4 shadow-sm">
@@ -484,7 +484,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
               <span v-else-if="item.source"> · {{ item.source }}</span>
             </p>
             <div class="flex flex-wrap gap-2">
-              <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editing = { id: item.id, draft: fromSaved(item) }">✏️ Edit</button>
+              <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editing = { id: item.id, draft: fromSaved(item) }">Edit</button>
               <button v-if="item.status !== 'approved'" class="rounded-lg bg-leaf px-2 py-1 text-sm font-semibold text-white" @click="setQuestionStatus(item, 'approved')">✓ Approve</button>
               <button v-if="item.status === 'draft' && item.teacher" class="rounded-lg bg-sun/50 px-2 py-1 text-sm font-semibold" @click="sendBack(item)">↩ Send back</button>
               <button v-if="item.status !== 'retired'" class="rounded-lg bg-cherry/10 px-2 py-1 text-sm font-semibold text-cherry" @click="setQuestionStatus(item, 'retired')">Retire</button>
@@ -513,7 +513,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
         </div>
         <div class="flex flex-wrap gap-2">
           <button class="rounded-xl bg-ocean px-3 py-1.5 font-semibold text-white" @click="editFacts(null)">+ New fact table</button>
-          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">⬆ Import JSON<input type="file" accept=".json,application/json" class="sr-only" @change="importFacts" /></label>
+          <label class="cursor-pointer rounded-xl bg-white px-3 py-1.5 font-semibold shadow-sm hover:bg-cream">Import JSON<input type="file" accept=".json,application/json" class="sr-only" @change="importFacts" /></label>
         </div>
         <div v-if="factImport" class="rounded-2xl bg-white p-4 shadow-sm">
           <p class="font-semibold">Import: {{ factImport.created }} added as drafts{{ factImport.skipped ? `, ${factImport.skipped} already here` : '' }}{{ factImport.errors.length ? `, ${factImport.errors.length} with problems` : '' }}.</p>
@@ -525,7 +525,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
             <p class="font-bold">{{ f.name }} <span class="ml-1 rounded-full px-2 py-0.5 text-xs font-semibold" :class="f.status === 'approved' ? 'bg-leaf/15 text-leaf' : f.status === 'retired' ? 'bg-ink/10 text-ink/60' : 'bg-sun/50'">{{ f.status === 'draft' ? 'to review' : f.status }}</span></p>
             <p class="text-sm text-ink/60">{{ subjectName(f.subject) }} · {{ f.grade_from }}–{{ f.grade_to }} · {{ f.row_count }} facts × {{ f.templates.length }} patterns · {{ f.columns.join(' · ') }}</p>
           </div>
-          <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editFacts(f.id)">✏️ Edit & preview</button>
+          <button class="rounded-lg bg-cream px-2 py-1 text-sm font-semibold" @click="editFacts(f.id)">Edit & preview</button>
           <button v-if="f.status !== 'approved'" class="rounded-lg bg-leaf px-2 py-1 text-sm font-semibold text-white" @click="setFactStatus(f.id, 'approved')">✓ Approve</button>
           <button v-if="f.status !== 'retired'" class="rounded-lg bg-cherry/10 px-2 py-1 text-sm font-semibold text-cherry" @click="setFactStatus(f.id, 'retired')">Retire</button>
         </article>

@@ -56,7 +56,7 @@ function chooseAvatar(a: string) {
         <p v-if="nextTitle" class="mt-1 text-sm text-ink/60">Reach level {{ nextTitle.from }} to become {{ nextTitle.emoji }} {{ nextTitle.name }}</p>
       </div>
 
-      <button class="mt-4 rounded-xl bg-cream px-4 py-2 font-semibold" @click="router.push('/welcome')">✏️ Change name or class</button>
+      <button class="mt-4 rounded-xl bg-cream px-4 py-2 font-semibold" @click="router.push('/welcome')">Change name or class</button>
     </section>
 
     <nav class="overflow-hidden rounded-3xl bg-white shadow-sm md:hidden" aria-label="More">
@@ -108,7 +108,7 @@ function chooseAvatar(a: string) {
           @click="chooseAvatar(a.emoji)"
         >
           <span :class="player.level.level < a.level ? 'opacity-30 grayscale' : ''">{{ a.emoji }}</span>
-          <span v-if="player.level.level < a.level" class="absolute bottom-0.5 rounded-full bg-ink px-1.5 text-[0.6rem] font-bold text-white">🔒 Lv {{ a.level }}</span>
+          <span v-if="player.level.level < a.level" class="absolute bottom-0.5 rounded-full bg-ink px-1.5 text-[0.6rem] font-bold text-white">Lv {{ a.level }}</span>
         </button>
       </div>
       <p class="mt-2 text-sm text-ink/60">Level up to unlock the special animals.</p>

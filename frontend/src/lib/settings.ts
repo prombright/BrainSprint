@@ -38,7 +38,7 @@ const darkQuery = typeof window !== 'undefined' && window.matchMedia ? window.ma
 function applyTheme() {
   const dark = settings.theme === 'dark' || (settings.theme === 'auto' && !!darkQuery?.matches)
   document.documentElement.classList.toggle('dark', dark)
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#10142b' : '#ff7a1a')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0d0b' : '#16a34a')
 }
 if (typeof document !== 'undefined') {
   applyTheme()

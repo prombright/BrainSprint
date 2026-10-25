@@ -77,7 +77,7 @@ function start() {
         </div>
       </fieldset>
 
-      <button type="submit" class="btn-chunky mt-auto bg-sprint py-4 text-3xl text-white" :disabled="!ready">{{ editing ? 'Save ✓' : "Let's go! 🚀" }}</button>
+      <button type="submit" class="btn-chunky mt-auto bg-sprint py-4 text-3xl text-white" :disabled="!ready">{{ editing ? 'Save ✓' : "Let's go!" }}</button>
     </form>
   </main>
 </template>

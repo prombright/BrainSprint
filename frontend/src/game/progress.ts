@@ -12,12 +12,12 @@ export function levelFromXp(xp: number) {
 }
 
 export const TITLES = [
-  { from: 1, name: 'Seedling', emoji: '🌱', ring: '#22b35e' },
-  { from: 3, name: 'Explorer', emoji: '🧭', ring: '#2f8cff' },
-  { from: 5, name: 'Thinker', emoji: '💡', ring: '#ffc93c' },
-  { from: 8, name: 'Scholar', emoji: '📚', ring: '#8b5cf6' },
-  { from: 12, name: 'Genius', emoji: '🧠', ring: '#ff7a1a' },
-  { from: 17, name: 'Legend', emoji: '🏆', ring: '#ef4444' },
+  { from: 1, name: 'Seedling', emoji: '🌱', ring: '#16a34a' },
+  { from: 3, name: 'Explorer', emoji: '🧭', ring: '#15803d' },
+  { from: 5, name: 'Thinker', emoji: '💡', ring: '#4d7c0f' },
+  { from: 8, name: 'Scholar', emoji: '📚', ring: '#0f766e' },
+  { from: 12, name: 'Genius', emoji: '🧠', ring: '#ca8a04' },
+  { from: 17, name: 'Legend', emoji: '🏆', ring: '#a16207' },
 ]
 
 export const titleFor = (level: number) => [...TITLES].reverse().find((t) => level >= t.from) ?? TITLES[0]

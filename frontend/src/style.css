@@ -1,17 +1,19 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'Fredoka', ui-rounded, system-ui, sans-serif;
+  /* Lexend: designed to make reading easier, which suits children learning to read */
+  --font-sans: 'Lexend', ui-sans-serif, system-ui, sans-serif;
 
-  --color-sprint: #ff7a1a; /* brand orange */
-  --color-sprint-dark: #e05f00;
-  --color-ocean: #2f8cff;
-  --color-leaf: #22b35e;
-  --color-sun: #ffc93c;
-  --color-berry: #8b5cf6;
-  --color-cherry: #ef4444;
-  --color-ink: #1f2547;
-  --color-cream: #fff8ec;
+  /* Brand: green, white and black. Red (wrong / alerts) and yellow (stars, coins) keep their meaning. */
+  --color-sprint: #16a34a; /* brand green: main buttons, highlights */
+  --color-sprint-dark: #15803d;
+  --color-ocean: #166534; /* deep green: selected answers, links, second buttons */
+  --color-leaf: #16a34a; /* right answers */
+  --color-sun: #fbbf24; /* stars and coins */
+  --color-berry: #0b2416; /* near-black green: ends of dark gradients */
+  --color-cherry: #dc2626; /* wrong answers, alerts */
+  --color-ink: #0f1411; /* text and dark cards: black */
+  --color-cream: #f4f7f5; /* the page behind white cards */
 }
 
 /* mouse users: show what's clickable */
@@ -83,23 +85,37 @@ body {
 /* screen only: printed reports stay light */
 @media screen {
   :root.dark {
-    --color-ink: #e8ebff;
-    --color-cream: #10142b;
+    --color-ink: #ecf3ee;
+    --color-cream: #0a0d0b;
+    /* brighter greens read better on black */
+    --color-sprint: #22c55e;
+    --color-ocean: #4ade80;
+    --color-leaf: #22c55e;
     color-scheme: dark;
   }
   .dark .bg-white,
   .dark .bg-white\/95 {
-    background-color: #1d2347;
+    background-color: #151b17;
   }
   .dark .bg-white\/95 {
-    background-color: rgb(29 35 71 / 0.95);
+    background-color: rgb(21 27 23 / 0.95);
+  }
+  /* green buttons keep dark-enough text contrast: white on the brighter green is fine */
+  .dark .bg-ocean {
+    background-color: #166534;
+  }
+  .dark .bg-sprint {
+    background-color: #15803d;
+  }
+  .dark .from-sprint {
+    --tw-gradient-from: #15803d;
   }
   /* the dark "hero" cards stay dark (their text is white, which doesn't change) */
   .dark .bg-ink {
-    background-color: #070a1d;
+    background-color: #000;
   }
   .dark .from-ink {
-    --tw-gradient-from: #070a1d;
+    --tw-gradient-from: #000;
   }
   /* overlays behind pop-ups stay dark */
   .dark .bg-ink\/50,
@@ -109,6 +125,6 @@ body {
   /* yellow stays yellow, so its text stays dark */
   .dark .bg-sun,
   .dark .bg-sun * {
-    color: #1f2547;
+    color: #0f1411;
   }
 }

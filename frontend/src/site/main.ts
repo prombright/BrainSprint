@@ -1,7 +1,7 @@
 // The public landing page: live numbers and the contact form. No framework needed.
-import '@fontsource/fredoka/latin-400.css'
-import '@fontsource/fredoka/latin-600.css'
-import '@fontsource/fredoka/latin-700.css'
+import '@fontsource/lexend/latin-400.css'
+import '@fontsource/lexend/latin-600.css'
+import '@fontsource/lexend/latin-700.css'
 import '../style.css'
 
 const API = import.meta.env.VITE_API_URL ?? '/brainsprint/api'

@@ -6,9 +6,9 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const ORANGE = '#ff7a1a'
-const INK = '#1f2547'
-const CREAM = '#fff8ec'
+const ORANGE = '#16a34a' // brand green (name kept for the code below)
+const INK = '#0f1411'
+const CREAM = '#f4f7f5'
 
 const bolt = (stroke = 3) =>
   `<path d="M36 6 L16 36 H30 L26 58 L48 26 H34 Z" fill="#fff" stroke="${INK}" stroke-width="${stroke}" stroke-linejoin="round"/>`

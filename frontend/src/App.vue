@@ -50,12 +50,12 @@ onMounted(() => {
 .page-enter-active,
 .page-leave-active {
   transition:
-    opacity 160ms ease,
-    transform 160ms ease;
+    opacity 100ms ease,
+    transform 100ms ease;
 }
 .page-enter-from {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(6px);
 }
 .page-leave-to {
   opacity: 0;

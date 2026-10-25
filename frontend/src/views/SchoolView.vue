@@ -64,7 +64,7 @@ const leave = () => confirm('Leave this school?') && run(async () => api.leaveSc
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="🏫 My School" back="/" />
+    <TopBar title="My School" back="/" />
     <p v-if="error" class="rounded-2xl bg-cherry/10 p-3 text-cherry">{{ error }}</p>
 
     <!-- choose a school -->
@@ -126,7 +126,7 @@ const leave = () => confirm('Leave this school?') && run(async () => api.leaveSc
 
     </div>
     <section v-if="board?.board.length" class="rounded-3xl bg-white p-4 shadow-sm">
-      <h3 class="mb-2 text-lg font-bold">🏆 School rankings this week</h3>
+      <h3 class="mb-2 text-lg font-bold">School rankings this week</h3>
       <ol class="space-y-1.5">
         <li
           v-for="s in board.board"

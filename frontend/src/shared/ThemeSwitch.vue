@@ -5,7 +5,7 @@ import { computed } from 'vue'
 import { settings } from '../lib/settings'
 
 const ORDER = ['light', 'dark', 'auto'] as const
-const LABEL = { light: '☀️ Light', dark: '🌙 Dark', auto: '💻 Like my device' }
+const LABEL = { light: 'Light', dark: 'Dark', auto: 'Like my device' }
 const label = computed(() => LABEL[settings.theme])
 const next = () => (settings.theme = ORDER[(ORDER.indexOf(settings.theme) + 1) % ORDER.length])
 </script>

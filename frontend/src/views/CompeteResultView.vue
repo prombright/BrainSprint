@@ -39,17 +39,17 @@ const className = (cid: number) => classContest.value?.classes.find((c) => c.id 
 const classHeadline = computed(() => {
   const r = classContest.value?.result
   if (!r) return ''
-  if (r.draw) return '🤝 A draw!'
+  if (r.draw) return 'A draw!'
   if (r.winner_id === null) return 'No winner: a class needs at least 3 pupils to count'
-  return r.winner_id === classContest.value!.my_class_id ? '🏆 Your class won!' : `${className(r.winner_id)} won`
+  return r.winner_id === classContest.value!.my_class_id ? 'Your class won!' : `${className(r.winner_id)} won`
 })
 const schoolName = (sid: number) => contest.value?.result?.schools.find((s) => s.id === sid)?.name ?? ''
 const headline = computed(() => {
   const r = contest.value?.result
   if (!r) return ''
-  if (r.draw) return '🤝 A draw!'
+  if (r.draw) return 'A draw!'
   if (r.winner_id === null) return 'No winner: a school needs at least 3 pupils to count'
-  return r.winner_id === contest.value!.my_school_id ? '🏆 Your school won!' : `${schoolName(r.winner_id)} won`
+  return r.winner_id === contest.value!.my_school_id ? 'Your school won!' : `${schoolName(r.winner_id)} won`
 })
 function ordinal(n: number) {
   const teen = n % 100 >= 11 && n % 100 <= 13
@@ -59,7 +59,7 @@ function ordinal(n: number) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar :title="isWeekly ? '🌍 Weekly' : isDuel ? '⚔️ Duel' : isClass ? '🏫 Class contest' : '🏫 Competition'" :back="isWeekly ? '/compete' : isDuel ? '/compete/duels' : '/compete/schools'" />
+    <TopBar :title="isWeekly ? 'Weekly' : isDuel ? 'Duel' : isClass ? 'Class contest' : 'Competition'" :back="isWeekly ? '/compete' : isDuel ? '/compete/duels' : '/compete/schools'" />
 
     <!-- ======== Weekly Challenge ======== -->
     <template v-if="weekly">
@@ -231,7 +231,7 @@ function ordinal(n: number) {
       <section class="rounded-3xl bg-ink p-6 text-center text-white">
         <p class="text-sm font-semibold tracking-widest text-sun uppercase">{{ gradeLabel(duel.grade) }} · {{ subjectLabel(duel.subject) }}</p>
         <p class="mt-1 text-3xl font-bold">
-          <template v-if="duel.phase === 'done'">{{ duel.outcome === 'won' ? '🏆 You won!' : duel.outcome === 'lost' ? `${duel.other.name.split(' ')[0]} won this time` : '🤝 A draw!' }}</template>
+          <template v-if="duel.phase === 'done'">{{ duel.outcome === 'won' ? 'You won!' : duel.outcome === 'lost' ? `${duel.other.name.split(' ')[0]} won this time` : 'A draw!' }}</template>
           <template v-else-if="duel.phase === 'expired'">{{ duel.other.name.split(' ')[0] }} didn't play in time</template>
           <template v-else>Waiting for {{ duel.other.name.split(' ')[0] }}…</template>
         </p>
@@ -250,7 +250,7 @@ function ordinal(n: number) {
         <p v-if="duel.phase === 'open'" class="mt-3 text-sm opacity-80">You'll see both scores and the answers when your friend has played ({{ until(duel.expires_at) }} left).</p>
       </section>
       <PaperReview v-if="duel.review" :questions="duel.review" />
-      <button class="btn-chunky bg-sprint py-3 text-lg text-white" @click="router.push(`/compete/duels?duel=${duel.other.id}`)">⚔️ Duel {{ duel.other.name.split(' ')[0] }} again</button>
+      <button class="btn-chunky bg-sprint py-3 text-lg text-white" @click="router.push(`/compete/duels?duel=${duel.other.id}`)">Duel {{ duel.other.name.split(' ')[0] }} again</button>
     </template>
   </main>
 </template>

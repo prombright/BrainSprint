@@ -14,7 +14,7 @@ if (!r) router.replace('/')
 
 const cheer = computed(() => {
   if (!r) return ''
-  return ['Keep practising! 💪', 'Good try! 👍', 'Well done! 🎉', 'Amazing! 🌟'][r.stars]
+  return ['Keep practising!', 'Good try!', 'Well done!', 'Amazing!'][r.stars]
 })
 const missed = computed(() => r?.answers.filter((a) => !a.correct) ?? [])
 const levelLabel = LEVELS.find((l) => l.id === r?.level)?.label
@@ -63,7 +63,7 @@ function again(level = r?.level) {
       <div class="text-6xl">{{ r.boss.defeated ? '🏆' : r.boss.emoji }}</div>
       <h2 class="mt-1 text-2xl font-bold">{{ r.boss.defeated ? `You defeated ${r.boss.name}!` : `${capFirst(r.boss.name)} survived… this time` }}</h2>
       <p class="text-lg">⚔️ {{ r.boss.damage }} damage{{ r.boss.defeated ? '' : ` · ${Math.max(0, BOSS_HP - r.boss.damage)} HP left` }}</p>
-      <button class="btn-chunky mt-3 w-full bg-white py-3 text-xl text-ink" @click="router.push(player.canPlay ? '/boss/fight' : '/power')">⚔️ Fight again</button>
+      <button class="btn-chunky mt-3 w-full bg-white py-3 text-xl text-ink" @click="router.push(player.canPlay ? '/boss/fight' : '/power')">Fight again</button>
     </section>
 
     <section
@@ -76,16 +76,16 @@ function again(level = r?.level) {
         {{ r.race.outcome === 'won' ? `You beat ${r.race.rivalName}!` : r.race.outcome === 'draw' ? `A draw with ${r.race.rivalName}!` : `${r.race.rivalName} won this time` }}
       </h2>
       <p class="text-lg">You {{ r.score }} · {{ r.race.rivalName }} {{ r.race.rivalScore }}</p>
-      <button class="btn-chunky mt-3 w-full bg-white py-3 text-xl text-ink" @click="raceAgain">🏁 Race {{ r.race.rivalName }} again</button>
+      <button class="btn-chunky mt-3 w-full bg-white py-3 text-xl text-ink" @click="raceAgain">Race {{ r.race.rivalName }} again</button>
     </section>
 
     <section v-if="r.mode === 'homework'" class="rounded-3xl bg-leaf/15 p-4 font-semibold text-leaf">
-      📝 Homework done! Your teacher can see your result ({{ r.correct }}/{{ r.total }}).
+      Homework done! Your teacher can see your result ({{ r.correct }}/{{ r.total }}).
       <button class="mt-2 block w-full rounded-xl bg-white py-2 text-ink" @click="router.push('/class')">Back to My Class</button>
     </section>
 
     <section v-if="r.endedEarly" class="rounded-3xl bg-ocean/10 p-4 font-semibold text-ocean">
-      🔋 Your Brain Power ran out, so this sprint ended early. It refills by itself. Come back soon!
+      Your Brain Power ran out, so this sprint ended early. It refills by itself. Come back soon!
     </section>
 
     <section v-if="r.newBadges.length" class="rounded-3xl bg-sun/40 p-4">
@@ -114,7 +114,7 @@ function again(level = r?.level) {
           </span>
           <span class="shrink-0 text-xl font-bold text-leaf">{{ a.question.answer }}</span>
           <details v-if="a.question.steps?.length" class="basis-full text-sm text-ink/80">
-            <summary class="cursor-pointer font-semibold text-ocean">💡 See the steps</summary>
+            <summary class="cursor-pointer font-semibold text-ocean">See the steps</summary>
             <ol class="mt-1 list-decimal space-y-1 pl-5">
               <li v-for="(st, j) in a.question.steps" :key="j">{{ st }}</li>
             </ol>
@@ -127,8 +127,8 @@ function again(level = r?.level) {
       <button v-if="nextLevel" class="btn-chunky bg-leaf py-4 text-2xl text-white" @click="again(nextLevel.id)">
         Try {{ nextLevel.label }} {{ nextLevel.emoji }}
       </button>
-      <button class="btn-chunky bg-sprint py-4 text-2xl text-white" @click="again()">Play again 🔁</button>
-      <button class="btn-chunky bg-white py-3 text-xl" @click="router.push('/')">Home 🏠</button>
+      <button class="btn-chunky bg-sprint py-4 text-2xl text-white" @click="again()">Play again</button>
+      <button class="btn-chunky bg-white py-3 text-xl" @click="router.push('/')">Home</button>
     </div>
   </main>
 </template>

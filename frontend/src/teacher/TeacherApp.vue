@@ -245,12 +245,12 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <p class="text-sm font-semibold tracking-widest text-ocean uppercase">BrainSprint for Teachers</p>
       <h1 class="mt-2 text-4xl font-bold">See which topics your class needs help with.</h1>
       <ul class="mt-4 space-y-2 text-lg text-ink/80">
-        <li>🏫 Create a class and give pupils a join code</li>
-        <li>📊 See each pupil's practice and the class's weak topics</li>
-        <li>📝 Set homework on a topic, and see who has done it</li>
-        <li>🖨️ Print a report for parents' meetings</li>
-        <li>⚔️ Challenge other schools to a competition the server sets and marks</li>
-        <li>⬇️ Download class results for Excel, and see the whole school at a glance</li>
+        <li>Create a class and give pupils a join code</li>
+        <li>See each pupil's practice and the class's weak topics</li>
+        <li>Set homework on a topic, and see who has done it</li>
+        <li>Print a report for parents' meetings</li>
+        <li>Challenge other schools to a competition the server sets and marks</li>
+        <li>Download class results for Excel, and see the whole school at a glance</li>
       </ul>
       <p class="mt-4 text-sm text-ink/60">Free while BrainSprint is being built. You only see pupils who join your class with its code.</p>
     </div>
@@ -273,7 +273,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
     <div>
       <p class="text-3xl opacity-80">Join <b>{{ detail.class.name }}</b> on BrainSprint</p>
       <p class="my-8 font-mono text-[18vw] leading-none font-bold tracking-[0.15em] text-sun">{{ detail.class.code }}</p>
-      <p class="text-2xl opacity-80">Open BrainSprint → 📝 My Class → type the code</p>
+      <p class="text-2xl opacity-80">Open BrainSprint → My Class → type the code</p>
       <p class="mt-10 text-sm opacity-50">Click anywhere to go back</p>
     </div>
   </div>
@@ -295,7 +295,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
           @click="openId = c.id"
         >
           <span>{{ c.name }}</span>
-          <span class="text-sm opacity-70">{{ c.pupils }} 🧒</span>
+          <span class="text-sm opacity-70">{{ c.pupils }} pupils</span>
         </button>
       </nav>
       <button v-if="!addingClass" class="rounded-2xl border-2 border-dashed border-ink/20 px-3 py-2.5 font-semibold text-ink/70 hover:bg-white" @click="addingClass = true">+ New class</button>
@@ -310,13 +310,13 @@ const average = (a: ClassDetail['assignments'][number]) => {
         </div>
       </form>
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="suggesting ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openSuggest">
-        ❓ Suggest questions
+        Suggest questions
       </button>
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="competing ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openCompete">
-        ⚔️ Competitions
+        Competitions
       </button>
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="wholeSchool ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openWholeSchool">
-        🏫 Whole school
+        Whole school
       </button>
       <div class="mt-auto flex flex-wrap items-center gap-3">
         <ThemeSwitch />
@@ -372,15 +372,15 @@ const average = (a: ClassDetail['assignments'][number]) => {
           </div>
           <div class="flex flex-wrap gap-2 print:hidden">
             <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="refresh">↻ Refresh</button>
-            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.pupils.length" @click="downloadPupils">⬇️ Pupils (Excel)</button>
-            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.topics.length" @click="downloadTopics">⬇️ Topics (Excel)</button>
-            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="printReport">🖨️ Print report</button>
+            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.pupils.length" @click="downloadPupils">Pupils (Excel)</button>
+            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" :disabled="!detail.topics.length" @click="downloadTopics">Topics (Excel)</button>
+            <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="printReport">Print report</button>
           </div>
         </header>
 
         <nav class="mb-4 flex gap-1 overflow-x-auto rounded-2xl bg-white p-1 shadow-sm print:hidden" aria-label="Class sections">
           <button
-            v-for="t in ([['pupils', '🧒 Pupils'], ['topics', '📊 Topics'], ['homework', '📝 Homework'], ['code', '🔑 Join code']] as const)"
+            v-for="t in ([['pupils', 'Pupils'], ['topics', 'Topics'], ['homework', 'Homework'], ['code', 'Join code']] as const)"
             :key="t[0]"
             class="shrink-0 rounded-xl px-4 py-2 font-semibold"
             :class="tab === t[0] ? 'bg-ink text-white' : 'text-ink/70 hover:bg-cream'"
@@ -393,7 +393,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <!-- pupils -->
         <section v-show="tab === 'pupils'" class="print:!block">
           <h2 class="mb-2 hidden text-xl font-bold print:block">Pupils this week</h2>
-          <p v-if="!detail.pupils.length" class="rounded-2xl bg-white p-6 text-center text-ink/60 shadow-sm">No pupils yet. Share the join code from the 🔑 tab.</p>
+          <p v-if="!detail.pupils.length" class="rounded-2xl bg-white p-6 text-center text-ink/60 shadow-sm">No pupils yet. Share the join code from the tab.</p>
           <div v-else class="overflow-x-auto rounded-2xl bg-white shadow-sm">
             <table class="w-full text-left text-sm">
               <thead class="bg-cream text-ink/60">
@@ -483,7 +483,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         <section v-show="tab === 'code'" class="rounded-3xl bg-white p-8 text-center shadow-sm print:hidden">
           <p class="text-lg text-ink/70">Pupils open BrainSprint → 📝 <b>My Class</b> → type this code:</p>
           <p class="my-4 font-mono text-7xl font-bold tracking-[0.2em] text-sprint-dark">{{ detail.class.code }}</p>
-          <button class="btn-chunky bg-ink px-6 py-3 text-lg text-white" @click="projector = true">📽️ Show full screen for the class</button>
+          <button class="btn-chunky bg-ink px-6 py-3 text-lg text-white" @click="projector = true">Show full screen for the class</button>
           <p class="mt-6 text-sm text-ink/60">Only pupils who join with this code appear in your class. You can remove anyone from the Pupils tab.</p>
           <button class="mt-6 text-sm text-cherry underline" @click="deleteClass">Delete this class</button>
         </section>

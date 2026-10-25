@@ -553,9 +553,9 @@ function submitDuel(array $me, int $id, mixed $picks): array
     $out = duelOut($d, $me, true);
     // the second hand-in decides it: a win makes the news
     if (($out['outcome'] ?? null) === 'won') {
-        addEvent((int)$me['id'], 'duel_win', "beat {$out['other']['name']} in a " . gradeName($d['grade']) . ' ' . (SUBJECT_NAMES[$d['subject']] ?? 'mixed') . ' duel ⚔️');
+        addEvent((int)$me['id'], 'duel_win', "beat {$out['other']['name']} in a " . gradeName($d['grade']) . ' ' . (SUBJECT_NAMES[$d['subject']] ?? 'mixed') . ' duel');
     } elseif (($out['outcome'] ?? null) === 'lost') {
-        addEvent($out['other']['id'], 'duel_win', "beat {$me['name']} in a " . gradeName($d['grade']) . ' ' . (SUBJECT_NAMES[$d['subject']] ?? 'mixed') . ' duel ⚔️');
+        addEvent($out['other']['id'], 'duel_win', "beat {$me['name']} in a " . gradeName($d['grade']) . ' ' . (SUBJECT_NAMES[$d['subject']] ?? 'mixed') . ' duel');
     }
     return $out;
 }

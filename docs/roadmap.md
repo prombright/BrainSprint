@@ -27,6 +27,8 @@
 - `npm run build:android-lan`: a test app that talks to this computer over Wi-Fi.
 - **Weekly Challenge**: the same server-marked paper for every child in a class across Uganda each week, with a
   national top 10 and top schools on Monday. The base for sponsored prizes later.
+- **New look**: green, white and black everywhere, the Lexend font, emojis only as pictures, shorter waits
+  ([ADR-025](decisions.md#adr-025-green-white-and-black-lexend-emojis-only-as-pictures)).
 - **Dark mode on the teacher and admin websites** too (a ☀️/🌙/💻 switch); printed reports always stay light.
 - Teachers' "Last played" now shows the last sprint actually played (it showed when the app was last opened).
 - **Class vs class** inside a school: 2–6 classes of one year, set up by any teacher there, scored like schools;

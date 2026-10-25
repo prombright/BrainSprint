@@ -58,7 +58,7 @@ function race(level: Level) {
           <p class="font-semibold" :style="{ color: title!.ring }">{{ title!.emoji }} Level {{ lvl!.level }} {{ title!.name }}</p>
           <p class="text-ink/60">{{ card.grade === 'TOP' ? 'Top Class' : card.grade }} · {{ tierBadge(card.tier).emoji }} {{ card.tier_name }} League</p>
           <p v-if="card.online" class="mt-2 rounded-full bg-leaf/15 px-3 py-1 text-sm font-semibold text-leaf">
-            🟢 Playing now{{ card.activity ? `: ${activityLabel(card.activity)}` : '' }}
+            Playing now{{ card.activity ? `: ${activityLabel(card.activity)}` : '' }}
           </p>
         </div>
 
@@ -70,7 +70,7 @@ function race(level: Level) {
         </div>
 
         <template v-if="!isMe">
-          <button v-if="!choosing" class="btn-chunky mt-5 w-full bg-sprint py-4 text-2xl text-white" @click="choosing = true">🏁 Race {{ card.name.split(' ')[0] }}</button>
+          <button v-if="!choosing" class="btn-chunky mt-5 w-full bg-sprint py-4 text-2xl text-white" @click="choosing = true">Race {{ card.name.split(' ')[0] }}</button>
           <div v-else class="mt-5">
             <div v-if="raceSubjects.length > 1" class="mb-3 grid grid-cols-2 gap-2">
               <button

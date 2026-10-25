@@ -178,7 +178,7 @@ function answer(choice: string | null) {
   }
   // a wrong answer with a worked solution waits for the child to read it
   if (!correct && current.value.steps?.length) showSteps.value = true
-  else window.setTimeout(next, correct ? 900 : 2000)
+  else window.setTimeout(next, correct ? 600 : 1600) // a wrong answer stays up longer so the right one is seen
 }
 
 function readSteps() {
@@ -279,7 +279,7 @@ onMounted(() => {
       clearInterval(tick)
       startQuestion()
     }
-  }, 700)
+  }, 450) // a quick 3-2-1: long enough to get ready, short enough not to wait
 })
 
 // laptops: keys 1–4 (or A–D) answer, Enter / Space moves on from the steps
@@ -391,7 +391,7 @@ onBeforeUnmount(() => {
           🔥 {{ streak }} in a row
         </span>
         <span v-if="current.review" class="absolute top-3 left-1/2 -translate-x-1/2 rounded-full bg-berry/15 px-3 py-1 text-sm font-semibold text-berry" title="You missed this one before">
-          🔁 Try again
+          Try again
         </span>
         <button
           v-if="canSpeak()"
@@ -423,7 +423,7 @@ onBeforeUnmount(() => {
       <!-- worked solution -->
       <div v-if="showSteps && current.steps" class="animate-pop mt-4 rounded-3xl border-4 border-ocean/20 bg-white p-4">
         <div class="mb-2 flex items-center justify-between">
-          <h2 class="text-xl font-bold text-ocean">💡 How to solve it</h2>
+          <h2 class="text-xl font-bold text-ocean">How to solve it</h2>
           <button v-if="canSpeak()" class="grid size-10 place-items-center rounded-full bg-ocean/10 text-xl" aria-label="Read the steps aloud" @click="readSteps">🔊</button>
         </div>
         <ol class="max-h-56 space-y-2 overflow-y-auto text-left text-lg">

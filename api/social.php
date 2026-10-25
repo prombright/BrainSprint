@@ -21,9 +21,9 @@ function addEvent(int $playerId, string $kind, string $detail): void
 function sprintEvent(int $playerId, array $s): void
 {
     $where = gradeName($s['grade']) . ' ' . (SUBJECT_NAMES[$s['subject']] ?? $s['subject']);
-    if ($s['total'] >= 10 && $s['correct'] === $s['total']) addEvent($playerId, 'perfect', "got every answer right in $where 💯");
-    elseif ($s['score'] >= 200) addEvent($playerId, 'big_score', "scored {$s['score']} points in $where 🚀");
-    elseif ($s['best_streak'] >= 8) addEvent($playerId, 'streak', "answered {$s['best_streak']} in a row in $where 🔥");
+    if ($s['total'] >= 10 && $s['correct'] === $s['total']) addEvent($playerId, 'perfect', "got every answer right in $where");
+    elseif ($s['score'] >= 200) addEvent($playerId, 'big_score', "scored {$s['score']} points in $where");
+    elseif ($s['best_streak'] >= 8) addEvent($playerId, 'streak', "answered {$s['best_streak']} in a row in $where");
 }
 
 function touchPresence(array $p, ?string $activity, int $dayStreak, int $badges): void

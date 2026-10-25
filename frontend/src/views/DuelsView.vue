@@ -81,7 +81,7 @@ const first = (name: string) => name.split(' ')[0]
 function line(d: Duel) {
   const name = first(d.other.name)
   if (d.phase === 'declined') return d.i_challenged ? `${name} said no this time` : 'You said no'
-  if (d.phase === 'done') return d.outcome === 'won' ? '🏆 You won!' : d.outcome === 'lost' ? `${name} won this time` : '🤝 A draw!'
+  if (d.phase === 'done') return d.outcome === 'won' ? 'You won!' : d.outcome === 'lost' ? `${name} won this time` : 'A draw!'
   if (d.phase === 'expired') return d.mine.state === 'done' ? `${name} didn't play in time` : 'Time ran out before you played'
   if (d.mine.state === 'done') return `Waiting for ${name}… (${until(d.expires_at, now.value)} left)`
   if (d.mine.state === 'started') return 'Finish your paper!'
@@ -102,11 +102,11 @@ onBeforeUnmount(() => clearInterval(tick))
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="⚔️ Duels" back="/compete" />
+    <TopBar title="Duels" back="/compete" />
     <p v-if="error && !duels" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">📶 {{ error }}</p>
 
     <template v-if="duels">
-      <button v-if="!picking" class="btn-chunky bg-sprint py-4 text-xl text-white" @click="openPicker">⚔️ Challenge a friend</button>
+      <button v-if="!picking" class="btn-chunky bg-sprint py-4 text-xl text-white" @click="openPicker">Challenge a friend</button>
 
       <form v-else class="rounded-3xl bg-white p-4 shadow-sm" @submit.prevent="challenge">
         <p class="mb-2 text-lg font-semibold">Who?</p>

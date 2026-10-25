@@ -39,15 +39,15 @@ const myClass = (c: ClassContest) => c.classes.find((x) => x.id === c.my_class_i
 const others = (c: ClassContest) => c.classes.filter((x) => x.id !== c.my_class_id).map((x) => x.name).join(', ')
 function classOutcome(c: ClassContest) {
   if (!c.summary) return ''
-  if (c.summary.draw) return '🤝 A draw!'
+  if (c.summary.draw) return 'A draw!'
   if (c.summary.winner_id === null) return 'Not enough pupils played'
-  return c.summary.winner_id === c.my_class_id ? '🏆 Your class won!' : `${c.classes.find((x) => x.id === c.summary!.winner_id)?.name} won`
+  return c.summary.winner_id === c.my_class_id ? 'Your class won!' : `${c.classes.find((x) => x.id === c.summary!.winner_id)?.name} won`
 }
 function outcome(c: Contest) {
   if (!c.summary) return ''
-  if (c.summary.draw) return '🤝 A draw!'
+  if (c.summary.draw) return 'A draw!'
   if (c.summary.winner_id === null) return 'Not enough pupils played'
-  return c.summary.winner_id === c.my_school_id ? '🏆 Your school won!' : `${them(c).name} won`
+  return c.summary.winner_id === c.my_school_id ? 'Your school won!' : `${them(c).name} won`
 }
 
 onMounted(() => {
@@ -63,7 +63,7 @@ onBeforeUnmount(() => clearInterval(tick))
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="🏫 School contests" back="/compete" />
+    <TopBar title="School contests" back="/compete" />
     <p v-if="error && !contests" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">📶 {{ error }}</p>
 
     <template v-if="contests">

@@ -27,7 +27,7 @@ async function join() {
     if (!player.auth) throw new Error('Connect to the internet to join a class')
     const r = await api.joinClass(player.auth, code.value)
     player.classes = r.classes
-    message.value = `🎉 You joined ${r.joined.name} (${r.joined.teacher})!`
+    message.value = `You joined ${r.joined.name} (${r.joined.teacher})!`
     code.value = ''
   } catch (e) {
     error.value = (e as Error).message
@@ -55,7 +55,7 @@ function play(h: Homework) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="🏫 My Class" back="/" />
+    <TopBar title="My Class" back="/" />
 
     <form class="rounded-3xl bg-white p-4 shadow-sm" @submit.prevent="join">
       <label for="class-code" class="mb-2 block text-lg font-semibold">Join a class</label>
@@ -86,8 +86,8 @@ function play(h: Homework) {
         <button class="text-sm text-ink/40 underline" @click="leave(c.id, c.name)">Leave</button>
       </div>
 
-      <h3 class="mt-3 mb-2 font-semibold">📝 Homework</h3>
-      <p v-if="!c.homework.length" class="text-ink/60">No homework right now. 🎉</p>
+      <h3 class="mt-3 mb-2 font-semibold">Homework</h3>
+      <p v-if="!c.homework.length" class="text-ink/60">No homework right now.</p>
       <ul class="space-y-2">
         <li v-for="h in c.homework" :key="h.id" class="flex items-center gap-3 rounded-2xl p-3" :class="h.done ? 'bg-leaf/10' : 'bg-cream'">
           <span class="text-2xl">{{ h.done ? '✅' : '📝' }}</span>

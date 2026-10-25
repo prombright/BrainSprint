@@ -68,13 +68,13 @@ function play(level: Level) {
           <span class="block text-2xl">{{ l.label }}</span>
           <span v-if="l.open" class="text-sm font-normal text-ink/60">{{ l.seconds }} seconds a question</span>
           <span v-else class="text-sm font-normal text-ink/60">
-            Get {{ STARS_TO_UNLOCK }} ⭐ on {{ levels[i - 1].label }} to open
+            Get {{ STARS_TO_UNLOCK }} stars on {{ levels[i - 1].label }} to open
           </span>
         </span>
         <StarRow :stars="l.stars" />
       </button>
     </div>
 
-    <p class="mt-auto pt-6 text-center text-ink/60">Answer fast to earn bonus points ⚡</p>
+    <p class="mt-auto pt-6 text-center text-ink/60">Answer fast to earn bonus points</p>
   </main>
 </template>

@@ -564,7 +564,7 @@ try {
             $rival = playerCard(intIn($d, 'rival_id', 1, PHP_INT_MAX)) ?? respond(404, ['error' => 'Player not found']);
             if (!empty($d['won'])) {
                 $where = gradeName(oneOf($d, 'grade', GRADES)) . ' ' . SUBJECT_NAMES[oneOf($d, 'subject', SUBJECTS)];
-                addEvent((int)$p['id'], 'race_win', "beat {$rival['name']} in a $where race 🏁");
+                addEvent((int)$p['id'], 'race_win', "beat {$rival['name']} in a $where race");
             }
             respond(200, ['ok' => true]);
 

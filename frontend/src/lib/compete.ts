@@ -3,7 +3,7 @@ import { GRADES, SUBJECTS } from '../game/types'
 
 export const subjectLabel = (s: string) => {
   const found = SUBJECTS.find((x) => x.id === s)
-  return found ? `${found.emoji} ${found.label}` : '🎲 Mixed'
+  return found ? found.label : 'Mixed'
 }
 export const gradeLabel = (g: string) => GRADES.find((x) => x.id === g)?.label ?? g
 

@@ -26,10 +26,10 @@ const untried = computed(() => {
 })
 
 const LOOK: Record<TopicLevel, { label: string; bar: string; chip: string }> = {
-  weak: { label: '🎯 Needs practice', bar: 'bg-cherry', chip: 'bg-cherry/10 text-cherry' },
-  ok: { label: '🙂 Getting there', bar: 'bg-sun', chip: 'bg-sun/40 text-ink' },
-  strong: { label: '💪 Strong', bar: 'bg-leaf', chip: 'bg-leaf/15 text-leaf' },
-  new: { label: '🌱 Just started', bar: 'bg-ocean', chip: 'bg-ocean/10 text-ocean' },
+  weak: { label: 'Needs practice', bar: 'bg-cherry', chip: 'bg-cherry/10 text-cherry' },
+  ok: { label: 'Getting there', bar: 'bg-sun', chip: 'bg-sun/40 text-ink' },
+  strong: { label: 'Strong', bar: 'bg-leaf', chip: 'bg-leaf/15 text-leaf' },
+  new: { label: 'Just started', bar: 'bg-ocean', chip: 'bg-ocean/10 text-ocean' },
 }
 const nice = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
@@ -40,7 +40,7 @@ function practise(topic?: string) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="🎯 My Progress" back="/" />
+    <TopBar title="My Progress" back="/" />
 
     <div v-if="subjects.length > 1" class="flex gap-2">
       <button
@@ -67,7 +67,7 @@ function practise(topic?: string) {
             <template v-else-if="topics.length">No weak spots right now. A practice sprint keeps your strong topics strong.</template>
             <template v-else>Play a few sprints and we'll work out what you should practise.</template>
           </p>
-          <button class="btn-chunky mt-4 w-full bg-white py-3 text-xl text-ink sm:w-auto sm:px-8" @click="practise()">🎯 Practise my weak spots</button>
+          <button class="btn-chunky mt-4 w-full bg-white py-3 text-xl text-ink sm:w-auto sm:px-8" @click="practise()">Practise my weak spots</button>
         </section>
 
         <!-- every topic -->
@@ -103,7 +103,7 @@ function practise(topic?: string) {
         </section>
 
         <section class="rounded-3xl bg-white p-4 shadow-sm">
-          <h2 class="text-lg font-bold">🔁 Try-again box</h2>
+          <h2 class="text-lg font-bold">Try-again box</h2>
           <p class="mt-1 text-sm text-ink/70">
             Questions you get wrong come back after 1 day, then 3, 7 and 14 days, until you've learnt them.
             {{ player.state.review.filter((c) => c.subject === subject).length }} waiting, {{ due.length }} ready now.
@@ -111,7 +111,7 @@ function practise(topic?: string) {
         </section>
 
         <section v-if="untried.length" class="rounded-3xl bg-white p-4 shadow-sm">
-          <h2 class="text-lg font-bold">🌱 Not tried yet</h2>
+          <h2 class="text-lg font-bold">Not tried yet</h2>
           <div class="mt-2 flex flex-wrap gap-2">
             <button v-for="t in untried" :key="t" class="rounded-full bg-cream px-3 py-1 text-sm font-semibold hover:bg-sun/40" @click="practise(t)">{{ nice(t) }}</button>
           </div>

@@ -12,7 +12,7 @@ export async function setupNative(router: Router) {
   ])
 
   StatusBar.setStyle({ style: Style.Light }).catch(() => {})
-  StatusBar.setBackgroundColor({ color: '#fff8ec' }).catch(() => {})
+  StatusBar.setBackgroundColor({ color: '#f4f7f5' }).catch(() => {})
 
   // Android back button: go back a screen; on the home screen, close the app.
   App.addListener('backButton', () => {

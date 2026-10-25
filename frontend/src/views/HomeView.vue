@@ -28,9 +28,9 @@ const due = computed(() => (player.profile ? player.dueReview('maths', player.pr
 
 const TILE_COLOURS: Record<string, string> = {
   maths: 'bg-sprint',
-  english: 'bg-ocean',
-  science: 'bg-leaf',
-  sst: 'bg-berry',
+  english: 'bg-ink',
+  science: 'bg-ocean',
+  sst: 'bg-white !text-ink ring-2 ring-sprint',
 }
 
 onMounted(() => {
@@ -48,7 +48,7 @@ onMounted(() => {
       <BrandLogo />
       <div class="flex items-center gap-2">
         <PowerPill />
-        <div class="flex items-center gap-1 rounded-full bg-sun px-3 py-1.5 text-lg font-bold shadow-[0_3px_0_rgb(0_0_0/0.15)]">
+        <div class="flex items-center gap-1 rounded-full bg-sun px-3 py-1.5 text-lg font-bold whitespace-nowrap shadow-[0_3px_0_rgb(0_0_0/0.15)]">
           🪙 {{ player.state.totalPoints.toLocaleString() }}
         </div>
       </div>
@@ -77,7 +77,7 @@ onMounted(() => {
         </section>
 
         <p v-if="!player.playedToday && player.dayStreak > 0" class="-mt-2 rounded-2xl bg-sprint/10 px-4 py-2 text-center font-semibold text-sprint-dark">
-          🔥 Play a sprint today to keep your {{ player.dayStreak }}-day streak!
+          Play a sprint today to keep your {{ player.dayStreak }}-day streak!
         </p>
 
         <!-- homework from a teacher -->
@@ -150,7 +150,7 @@ onMounted(() => {
             <span class="animate-float text-5xl">{{ boss.emoji }}</span>
             <span class="text-lg leading-tight md:text-lg">Boss Battle</span>
           </button>
-          <button class="btn-chunky relative flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
+          <button class="btn-chunky relative flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-sprint-dark py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
             <span class="text-5xl">⚔️</span>
             <span class="text-lg leading-tight md:text-lg">Compete</span>
             <span

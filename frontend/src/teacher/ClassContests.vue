@@ -115,7 +115,7 @@ function outcome(c: ClassContest) {
   if (c.phase === 'cancelled') return 'Called off'
   const s = c.summary
   if (!s) return ''
-  if (s.draw) return '🤝 Draw'
+  if (s.draw) return 'Draw'
   if (s.winner_id === null) return 'No result (fewer than 3 pupils)'
   return `🏆 ${s.classes.find((x) => x.id === s.winner_id)?.name} won`
 }
@@ -131,7 +131,7 @@ const printNow = () => window.print()
     </div>
     <p v-if="error" class="rounded-xl bg-cherry/10 p-3 text-cherry">{{ error }}</p>
 
-    <button v-if="!making" class="btn-chunky bg-ocean px-6 py-3 text-lg text-white" @click="making = true">🏫 Set up a class contest</button>
+    <button v-if="!making" class="btn-chunky bg-ocean px-6 py-3 text-lg text-white" @click="making = true">Set up a class contest</button>
     <form v-else class="space-y-3 rounded-3xl bg-white p-5 shadow-sm" @submit.prevent="create">
       <div class="grid gap-3 sm:grid-cols-2">
         <label><span class="mb-1 block font-semibold">Year</span>
@@ -187,7 +187,7 @@ const printNow = () => window.print()
       <h3 class="mb-2 text-lg font-bold">Coming up</h3>
       <ul class="divide-y divide-ink/5">
         <li v-for="c in active" :key="c.id" class="flex flex-wrap items-center gap-3 py-2">
-          <span class="rounded-full px-2 py-0.5 text-xs font-semibold" :class="c.phase === 'live' ? 'bg-cherry text-white' : 'bg-leaf/15 text-leaf'">{{ c.phase === 'live' ? '🔴 Live' : '✓ Set' }}</span>
+          <span class="rounded-full px-2 py-0.5 text-xs font-semibold" :class="c.phase === 'live' ? 'bg-cherry text-white' : 'bg-leaf/15 text-leaf'">{{ c.phase === 'live' ? 'Live' : '✓ Set' }}</span>
           <span class="min-w-0 flex-1">
             <b>{{ names(c) }}</b> · {{ subjectLabel(c.subject) }}
             <span class="block text-sm text-ink/60">{{ when(c.starts_at) }} to {{ timeOnly(c.ends_at) }}</span>
@@ -219,7 +219,7 @@ const printNow = () => window.print()
             <p class="text-ink/60">{{ gradeLabel(detail.grade) }} · {{ subjectLabel(detail.subject) }} · {{ when(detail.starts_at) }}</p>
           </div>
           <div class="flex gap-2 print:hidden">
-            <button class="btn-chunky bg-cream px-4 py-2 whitespace-nowrap" @click="printNow">🖨️ Print</button>
+            <button class="btn-chunky bg-cream px-4 py-2 whitespace-nowrap" @click="printNow">Print</button>
             <button class="btn-chunky bg-cream px-4 py-2" aria-label="Close" @click="detail = null">✕</button>
           </div>
         </div>

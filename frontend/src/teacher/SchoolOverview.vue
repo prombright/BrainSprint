@@ -57,8 +57,8 @@ function download() {
         <p class="text-ink/70">Every class at {{ data?.school?.name ?? 'your school' }} on BrainSprint. Class teachers see their own pupils by name; here you see the classes.</p>
       </div>
       <div v-if="data?.classes.length" class="flex gap-2 print:hidden">
-        <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="download">⬇️ Download (Excel)</button>
-        <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="printNow">🖨️ Print</button>
+        <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="download">Download (Excel)</button>
+        <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="printNow">Print</button>
       </div>
     </div>
     <p v-if="error" class="rounded-xl bg-cherry/10 p-3 text-cherry">{{ error }}</p>
@@ -92,7 +92,7 @@ function download() {
             </tr>
           </tbody>
         </table>
-        <p v-if="!data.classes.length" class="text-ink/60">No classes yet. Each teacher creates their classes and chooses this school under ⚔️ School vs School.</p>
+        <p v-if="!data.classes.length" class="text-ink/60">No classes yet. Each teacher creates their classes and chooses this school under School vs School.</p>
       </div>
       <p class="text-sm text-ink/60">Teachers appear here once they have chosen this school. "Accuracy" is this week's correct answers out of all answered; topics count when at least 2 pupils have practised them.</p>
     </template>

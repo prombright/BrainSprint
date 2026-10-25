@@ -58,7 +58,7 @@ const ago = (iso: string) => {
 
 <template>
   <main class="flex flex-1 flex-col">
-    <TopBar title="👨‍👩‍👧 Grown-ups" back="/" />
+    <TopBar title="Grown-ups" back="/" />
 
     <!-- signed out -->
     <section v-if="!parent.token" class="rounded-3xl bg-white p-5 shadow-sm">
@@ -149,14 +149,14 @@ const ago = (iso: string) => {
 
         <div v-if="c.topics.weak.length || c.topics.strong.length" class="mt-4 grid gap-3 sm:grid-cols-2">
           <div class="rounded-2xl bg-cherry/5 p-3">
-            <h3 class="font-bold text-cherry">🎯 Needs practice</h3>
+            <h3 class="font-bold text-cherry">Needs practice</h3>
             <p v-if="!c.topics.weak.length" class="text-sm text-ink/60">Nothing worrying right now.</p>
             <p v-for="t in c.topics.weak" :key="t.subject + t.topic" class="text-sm">
               <b>{{ t.topic.charAt(0).toUpperCase() + t.topic.slice(1) }}</b> · {{ subjectLabel(t.subject) }}: {{ t.mastery }}% right lately
             </p>
           </div>
           <div class="rounded-2xl bg-leaf/10 p-3">
-            <h3 class="font-bold text-leaf">💪 Strong at</h3>
+            <h3 class="font-bold text-leaf">Strong at</h3>
             <p v-if="!c.topics.strong.length" class="text-sm text-ink/60">Still building up.</p>
             <p v-for="t in c.topics.strong" :key="t.subject + t.topic" class="text-sm">
               <b>{{ t.topic.charAt(0).toUpperCase() + t.topic.slice(1) }}</b> · {{ subjectLabel(t.subject) }}: {{ t.mastery }}%

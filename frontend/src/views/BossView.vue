@@ -30,7 +30,7 @@ onMounted(async () => {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar title="⚔️ Weekly Boss" back="/" />
+    <TopBar title="Weekly Boss" back="/" />
 
     <section class="overflow-hidden rounded-3xl bg-gradient-to-b from-ink to-berry p-5 text-center text-white">
       <div class="animate-float text-8xl">{{ boss.emoji }}</div>
@@ -44,15 +44,15 @@ onMounted(async () => {
     <section class="rounded-3xl bg-white p-4 shadow-sm">
       <h3 class="text-lg font-bold">How to win</h3>
       <ul class="mt-1 space-y-1 text-ink/80">
-        <li>⚔️ Every point you score hits the boss. Answer fast for big hits!</li>
-        <li>❤️ You have {{ BOSS_HEARTS }} hearts. A wrong answer loses one.</li>
+        <li>Every point you score hits the boss. Answer fast for big hits!</li>
+        <li>You have {{ BOSS_HEARTS }} hearts. A wrong answer loses one.</li>
         <li>🧠 {{ BOSS_QUESTIONS }} tough questions from {{ grade }} Hard and Pro.</li>
-        <li>🏅 Beat it to earn the Boss Slayer badge and a spot in the news.</li>
+        <li>Beat it to earn the Boss Slayer badge and a spot in the news.</li>
       </ul>
       <p v-if="data?.mine" class="mt-3 rounded-2xl p-3 text-center font-semibold" :class="data.mine.defeated ? 'bg-leaf/15 text-leaf' : 'bg-sun/40'">
-        {{ data.mine.defeated ? `✅ You beat ${boss.name} this week! Best hit: ${data.mine.damage}` : `Your best this week: ${data.mine.damage} of ${BOSS_HP} damage` }}
+        {{ data.mine.defeated ? `You beat ${boss.name} this week! Best hit: ${data.mine.damage}` : `Your best this week: ${data.mine.damage} of ${BOSS_HP} damage` }}
       </p>
-      <button class="btn-chunky mt-4 w-full bg-cherry py-4 text-3xl text-white" @click="router.push('/boss/fight')">⚔️ Fight!</button>
+      <button class="btn-chunky mt-4 w-full bg-cherry py-4 text-3xl text-white" @click="router.push('/boss/fight')">Fight!</button>
     </section>
 
     <section v-if="data?.top.length" class="rounded-3xl bg-white p-4 shadow-sm">

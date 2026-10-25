@@ -20,7 +20,7 @@ defineProps<{ questions: PaperQuestion[] }>()
           </template>
         </p>
         <details v-if="q.picked !== q.answer && q.steps?.length" class="mt-1 text-sm">
-          <summary class="font-semibold text-ocean">💡 See the working</summary>
+          <summary class="font-semibold text-ocean">See the working</summary>
           <ol class="mt-1 list-decimal space-y-1 pl-5">
             <li v-for="(st, j) in q.steps" :key="j">{{ st }}</li>
           </ol>

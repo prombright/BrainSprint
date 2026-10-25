@@ -52,7 +52,7 @@ function ensureMembership(array $player): array
             $group = $pdo->lastInsertId();
         }
         q('INSERT INTO league_members (week_start, player_id, group_id) VALUES (?, ?, ?)', [$week, $player['id'], $group]);
-        if ($movement > 0) addEvent((int)$player['id'], 'promoted', 'moved up to the ' . TIERS[$tier] . ' League 🎉');
+        if ($movement > 0) addEvent((int)$player['id'], 'promoted', 'moved up to the ' . TIERS[$tier] . ' League');
         q('UPDATE league_groups SET size = size + 1 WHERE id = ?', [$group]);
         $pdo->commit();
         return ['group_id' => (int)$group, 'tier' => $tier, 'movement' => $movement];

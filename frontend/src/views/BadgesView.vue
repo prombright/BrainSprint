@@ -8,7 +8,7 @@ const player = usePlayer()
 
 <template>
   <main class="flex flex-1 flex-col">
-    <TopBar title="🏅 My Badges" back="/" />
+    <TopBar title="My Badges" back="/" />
     <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
       <div
         v-for="b in BADGES"

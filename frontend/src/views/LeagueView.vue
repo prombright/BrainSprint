@@ -35,7 +35,7 @@ function zone(rank: number) {
 
 <template>
   <main class="flex flex-1 flex-col">
-    <TopBar title="🏆 My League" back="/" />
+    <TopBar title="My League" back="/" />
 
     <div v-if="loading && !league" class="grid flex-1 place-items-center text-xl text-ink/60">Loading your league…</div>
 
@@ -51,12 +51,12 @@ function zone(rank: number) {
         <h2 class="text-3xl font-bold">{{ league.tier_name }} League</h2>
         <p class="text-ink/60">{{ player.profile?.grade === 'TOP' ? 'Top Class' : player.profile?.grade }} · {{ ends }} left this week</p>
         <p v-if="offline" class="mt-1 text-sm text-cherry">Offline: showing the last table we saw</p>
-        <p v-if="league.movement > 0" class="animate-pop mt-3 rounded-2xl bg-leaf/15 p-2 font-bold text-leaf">🎉 You moved up to {{ league.tier_name }}!</p>
+        <p v-if="league.movement > 0" class="animate-pop mt-3 rounded-2xl bg-leaf/15 p-2 font-bold text-leaf">You moved up to {{ league.tier_name }}!</p>
         <p v-else-if="league.movement < 0" class="mt-3 rounded-2xl bg-sun/40 p-2 font-semibold">You're in {{ league.tier_name }} this week. Win your way back up!</p>
         <p class="mt-3 text-sm text-ink/70">
-          <span v-if="league.promote">Top {{ league.promote }} move up 🟢</span>
+          <span v-if="league.promote">Top {{ league.promote }} move up</span>
           <span v-if="league.promote && league.demote"> · </span>
-          <span v-if="league.demote">Bottom {{ league.demote }} move down 🔴</span>
+          <span v-if="league.demote">Bottom {{ league.demote }} move down</span>
         </p>
       </section>
 
@@ -79,7 +79,7 @@ function zone(rank: number) {
           <span class="text-lg font-bold tabular-nums">{{ m.xp.toLocaleString() }} <span class="text-sm font-medium opacity-70">XP</span></span>
         </li>
       </ol>
-      <p class="pb-4 text-center text-sm text-ink/50">Tap a player to see their card or race them 🏁</p>
+      <p class="pb-4 text-center text-sm text-ink/50">Tap a player to see their card or race them</p>
     </template>
 
     <PlayerCardModal v-if="openId" :player-id="openId" @close="openId = null" />

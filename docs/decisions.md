@@ -398,3 +398,23 @@ questions once a day.
 they are fine slightly out of date.
 
 **Consequences.** With data saver on, "playing now" and league places can be a few minutes old.
+
+## ADR-025: Green, white and black; Lexend; emojis only as pictures
+
+**Context.** The first look was orange with many emojis in titles and buttons, and the Fredoka font. The owner's
+brand colours are green, white and black, and the screens felt busy and slow.
+
+**Decision.** The theme tokens in `frontend/src/style.css` now carry the brand: green for main buttons and
+highlights, near-black for text and dark cards, a light background with white cards. Red still means wrong or
+urgent and yellow still means stars and coins, because children read those as meanings. The font is **Lexend**,
+designed to make reading easier, in three weights. Emojis stay only where they are pictures (subject tiles, avatars,
+badges, the Boss, the menu icons, icon + number counters); emojis in front of words or at the end of sentences were
+removed. Waits were shortened: the 3-2-1 before a sprint (1.35 s), the pause after a right answer (0.6 s) and page
+changes (0.1 s).
+
+**Why.** One brand everywhere (game, teacher and admin sites, icons, splash screen), calmer screens, text that is
+easier for young readers, and less waiting between taps.
+
+**Consequences.** New screens should use the tokens (`bg-sprint`, `bg-ink`, `text-ocean` …), not new colours, and
+should not put emojis in front of words. The four subject tiles are green, black, deep green and white with a green
+edge, so they still look different from one another.
