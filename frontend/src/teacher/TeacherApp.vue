@@ -6,6 +6,7 @@ import { bankVersion, loadSavedBanks, refreshBanks } from '../lib/bank'
 import { TeacherError, session, teacherCall, type ClassDetail, type ClassSummary, type Teacher } from './api'
 import QuestionEditor from '../shared/QuestionEditor.vue'
 import Competitions from './Competitions.vue'
+import ThemeSwitch from '../shared/ThemeSwitch.vue'
 import SchoolOverview from './SchoolOverview.vue'
 import { downloadCsv } from '../shared/csv'
 import { emptyDraft, toPayload, type QuestionDraft } from '../shared/questionDraft'
@@ -205,9 +206,9 @@ function downloadPupils() {
   const d = detail.value!
   const hw = [...d.assignments].reverse() // oldest first, like a mark book
   downloadCsv(`${d.class.name} - pupils.csv`, [
-    ['Pupil', 'Sprints this week', 'Accuracy this week %', 'Total XP', 'Weak topics', 'PLE readiness %', 'Last seen', ...hw.map((a) => `${a.title} (due ${a.due_on})`)],
+    ['Pupil', 'Sprints this week', 'Accuracy this week %', 'Total XP', 'Weak topics', 'PLE readiness %', 'Last played', ...hw.map((a) => `${a.title} (due ${a.due_on})`)],
     ...d.pupils.map((p) => [
-      p.name, p.week_sprints, p.week_accuracy, p.xp_total, p.weak.join('; '), p.mock_readiness, p.last_seen_at ?? '',
+      p.name, p.week_sprints, p.week_accuracy, p.xp_total, p.weak.join('; '), p.mock_readiness, p.last_played_at ?? '',
       ...hw.map((a) => (a.results[p.id] ? `${a.results[p.id].correct}/${a.results[p.id].total}` : '')),
     ]),
   ])
@@ -317,7 +318,10 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="wholeSchool ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openWholeSchool">
         🏫 Whole school
       </button>
-      <button class="mt-auto text-left text-sm text-ink/50 underline" @click="signOut">Sign out</button>
+      <div class="mt-auto flex flex-wrap items-center gap-3">
+        <ThemeSwitch />
+        <button class="text-left text-sm text-ink/50 underline" @click="signOut">Sign out</button>
+      </div>
     </aside>
 
     <main class="min-w-0">
@@ -402,7 +406,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
                   <td class="p-3 text-right tabular-nums">{{ p.week_accuracy === null ? '–' : `${p.week_accuracy}%` }}</td>
                   <td class="p-3">{{ p.weak.map(nice).join(', ') || '–' }}</td>
                   <td v-if="['P6', 'P7'].includes(detail.class.grade)" class="p-3 text-right tabular-nums">{{ p.mock_readiness === null ? '–' : `${p.mock_readiness}%` }}</td>
-                  <td class="p-3">{{ seen(p.last_seen_at) }}</td>
+                  <td class="p-3">{{ seen(p.last_played_at) }}</td>
                   <td class="p-3 text-right print:hidden"><button class="text-xs text-ink/40 underline" @click="removePupil(p.id, p.name)">Remove</button></td>
                 </tr>
               </tbody>

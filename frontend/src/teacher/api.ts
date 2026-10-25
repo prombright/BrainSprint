@@ -57,7 +57,7 @@ export interface ClassSummary {
 
 export interface ClassDetail {
   class: { id: number; name: string; grade: string; code: string }
-  pupils: { id: number; name: string; avatar: string; xp_total: number; last_seen_at: string | null; week_sprints: number; week_accuracy: number | null; weak: string[]; mock_readiness: number | null }[]
+  pupils: { id: number; name: string; avatar: string; xp_total: number; last_played_at: string | null; week_sprints: number; week_accuracy: number | null; weak: string[]; mock_readiness: number | null }[]
   topics: { subject: string; topic: string; pupils: number; mastery: number; struggling: number }[]
   assignments: { id: number; title: string; subject: string; level: string | null; topic: string | null; due_on: string; results: Record<string, { correct: number; total: number }> }[]
 }

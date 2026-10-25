@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { AdminError, adminCall, session, type AdminPlayer, type AdminSchool, type BankItem, type BankList, type FeedEvent, type Lead, type Overview } from './api'
 import QuestionEditor from '../shared/QuestionEditor.vue'
+import ThemeSwitch from '../shared/ThemeSwitch.vue'
 import { emptyDraft, fromSaved, toPayload, type QuestionDraft } from '../shared/questionDraft'
 import { csvToQuestions } from '../shared/csv'
 import FactSetEditor from './FactSetEditor.vue'
@@ -267,6 +268,7 @@ const waLink = (phone: string) => `https://wa.me/${phone}`
       <h1 class="text-2xl font-bold">⚡ BrainSprint Admin</h1>
       <div class="flex items-center gap-3">
         <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="load">↻ Refresh</button>
+        <ThemeSwitch />
         <button class="rounded-xl bg-white px-3 py-2 font-semibold shadow-sm hover:bg-cream" @click="logout">Sign out</button>
       </div>
     </header>

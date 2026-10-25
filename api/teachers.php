@@ -83,7 +83,8 @@ function classDetail(array $class): array
 {
     $week = weekStart();
     $pupils = q(
-        'SELECT p.id, p.name, p.avatar, p.xp_total, p.last_seen_at,
+        'SELECT p.id, p.name, p.avatar, p.xp_total,
+                (SELECT MAX(s.played_at) FROM sprints s WHERE s.player_id = p.id) AS last_played_at,
                 (SELECT COUNT(*) FROM sprints s WHERE s.player_id = p.id AND s.played_at >= ?) AS week_sprints,
                 (SELECT COALESCE(SUM(s.correct), 0) FROM sprints s WHERE s.player_id = p.id AND s.played_at >= ?) AS week_correct,
                 (SELECT COALESCE(SUM(s.total), 0) FROM sprints s WHERE s.player_id = p.id AND s.played_at >= ?) AS week_answered
@@ -114,7 +115,7 @@ function classDetail(array $class): array
         'class' => ['id' => (int)$class['id'], 'name' => $class['name'], 'grade' => $class['grade'], 'code' => $class['code']],
         'pupils' => array_map(fn ($p) => [
             'id' => (int)$p['id'], 'name' => $p['name'], 'avatar' => $p['avatar'], 'xp_total' => (int)$p['xp_total'],
-            'last_seen_at' => $p['last_seen_at'], 'week_sprints' => (int)$p['week_sprints'],
+            'last_played_at' => $p['last_played_at'], 'week_sprints' => (int)$p['week_sprints'],
             'week_accuracy' => $p['week_answered'] ? (int)round($p['week_correct'] / $p['week_answered'] * 100) : null,
             'weak' => array_map(fn ($t) => $t['topic'], weakAndStrong((int)$p['id'])['weak']),
             'mock_readiness' => mockHistory((int)$p['id'])['readiness'],

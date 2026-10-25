@@ -96,7 +96,7 @@ the class code.
 | POST | `/teachers/logout` | Delete this token | |
 | GET | `/teacher/classes` | Teacher profile and classes with pupil counts | |
 | POST | `/teacher/classes` | Create a class `{name, grade}`; a join code is generated | Max 20 classes |
-| GET | `/teacher/classes/{id}` | Class detail: pupils (this week's sprints and accuracy, weak topics, mock readiness, last seen), the class's topics weakest-first (with how many pupils struggle), homework and results | |
+| GET | `/teacher/classes/{id}` | Class detail: pupils (this week's sprints and accuracy, weak topics, mock readiness, `last_played_at` = their latest sprint), the class's topics weakest-first (with how many pupils struggle), homework and results | |
 | POST | `/teacher/classes/{id}/delete` | Delete a class (and its homework) | |
 | POST | `/teacher/classes/{id}/remove` | Remove a pupil `{player_id}` | |
 | POST | `/teacher/classes/{id}/assignments` | Set homework `{title, subject, level \| topic, due_on}` | Exactly one of level or topic; due today or later |

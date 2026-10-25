@@ -27,6 +27,8 @@
 - `npm run build:android-lan`: a test app that talks to this computer over Wi-Fi.
 - **Weekly Challenge**: the same server-marked paper for every child in a class across Uganda each week, with a
   national top 10 and top schools on Monday. The base for sponsored prizes later.
+- **Dark mode on the teacher and admin websites** too (a ☀️/🌙/💻 switch); printed reports always stay light.
+- Teachers' "Last played" now shows the last sprint actually played (it showed when the app was last opened).
 - **Class vs class** inside a school: 2–6 classes of one year, set up by any teacher there, scored like schools;
   children find it under School contests.
 - **Science and SST in competitions**: the server makes fact-set questions with the same rules as the app, so any
@@ -79,7 +81,6 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
   right and the most common wrong answer. Doing the same for everyday play means recording every answer (today only
   per-topic totals are kept). *Needs:* a short retention period and a summary job (see
   [data model](data-model.md#plan-to-scale)), and a privacy review.
-- [ ] **Dark mode for the teacher and admin pages** (the children's game has it). *Needs:* design time only.
 - [ ] **Smaller items from the documentation review.**
   - Topic mastery on the server approximates "the last 20 answers" (it scales old counts), while the device keeps the
     exact last 20, so the two can differ slightly. The 85% "strong" line is also hard-coded in PHP.
