@@ -27,7 +27,7 @@ Every number below is a constant in the code. When you change one, change this p
 
 ## 1. Template Engine (procedural question generation)
 
-**What it is.** Maths (Top Class to P7) and English (Top Class to P3) questions are not stored
+**What it is.** Maths and English (Top Class to P7) questions are not stored
 anywhere. Each question is *built on the device* by a small function called a **template**. A
 template picks random numbers (or random words from a hand-picked list), writes the question text,
 computes the right answer, makes believable wrong choices and, for most of them, writes the worked
@@ -141,6 +141,15 @@ Top Class levels show `⚠` by design: "count up to 5 mangoes" only has so many 
 It does not test bank questions (they come from the server); `cleanQuestion` in `api/bank.php` checks those.
 
 ---
+
+**English P4–P7** (`english-upper.ts`) uses the same idea for upper-primary grammar: plurals (with each spelling
+rule), past tense and past participles (60 irregular verbs, 21 regular ones grouped by how -ed is spelt), comparing
+(-er/-est, more/most, good/better/best), adverbs, masculine and feminine, young ones of animals, collective nouns,
+contractions, the apostrophe for owning (the boy's, the boys', the children's), alphabetical order, question tags,
+nouns and adjectives made from other words, and one word for many. Every question has exactly one right choice:
+wrong choices break the rule ("goed", "biger", "do'nt"), and where a broken form could be a real word ("seed",
+"goodly", "beauteous"), the wrong choices are written by hand. Words that could also be right are kept out of the
+wrong choices (a swarm or a colony of bees; a crowd of pupils). Each question explains its rule.
 
 ## 2. Sprint assembly
 
@@ -465,7 +474,7 @@ real pace and accuracy.
 
 ## 10. The question bank in the game
 
-Subjects that can't be generated (Science, SST, English P4–P7) come from the **question bank**: questions written
+Subjects that can't be generated (Science and SST) come from the **question bank**: questions written
 by people, stored in the `questions` table, and only sent to children once **approved** (see
 [decision 9](decisions.md#adr-009-question-bank-with-human-approval)).
 
@@ -491,7 +500,7 @@ by people, stored in the `questions` table, and only sent to children once **app
 sprints, practice, homework, mastery and the try-again box all work with it unchanged.
 
 - A class + subject opens once it has at least **4** approved questions (`BANK_MIN`).
-- Generated plans always win: a bank never replaces Maths or English Top–P3.
+- Generated plans always win: a bank never replaces Maths or English (so bank English questions are not used in sprints).
 - **Borrowing levels:** each level has one "template" that picks a random question from a pool. While a level has
   fewer than **10** of its own questions, the pool is *all* of the class's questions in that subject, so a small bank
   still gives full sprints on every level.
@@ -627,7 +636,7 @@ and does the marking. Nobody sees an answer until the competition is over.
 **Step 1: the Paper Pool (at release time).** The server is plain PHP and cannot run the TypeScript generators. So
 `npm run pool` (also run by `npm run release`) runs the [Template Engine](#1-template-engine-procedural-question-generation)
 on the computer and saves **300 different questions per level** for every generated subject and class (Maths
-Top–P7, English Top–P3): 14,400 questions, about 3 MB, in `api/pool/<subject>-<grade>.json`. Every question is checked
+and English Top–P7): 19,200 questions, about 4 MB, in `api/pool/<subject>-<grade>.json`. Every question is checked
 on the way (answer among the choices, no repeated choices). The folder is not reachable from the web (`.htaccess` only
 exposes `index.php`) and is not stored in git, because each release makes it fresh. Approved **bank** questions are
 added to a class's pool from the database at paper time, and so are the questions of the class's approved

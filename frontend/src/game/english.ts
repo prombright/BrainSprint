@@ -2,6 +2,7 @@
 // Word lists are hand-picked; questions are mixed from them at random.
 import type { Make, Plan } from './sprint.ts'
 import { pick, randInt, shuffle } from './random.ts'
+import { ENGLISH_UPPER_PLAN } from './english-upper.ts'
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const VOWELS = ['a', 'e', 'i', 'o', 'u']
@@ -359,6 +360,8 @@ const verbForm = (tenses: ('every day' | 'yesterday' | 'now')[]): Make => () => 
 // ---------- what each class + level practises ----------
 
 export const ENGLISH_PLAN: Plan = {
+  // P4–P7: upper-primary grammar (english-upper.ts)
+  ...ENGLISH_UPPER_PLAN,
   TOP: {
     simple: [letterFind(true, true)],
     medium: [caseMatch(), letterFind(false, true)],

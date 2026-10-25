@@ -2,7 +2,7 @@
 
 ## Done
 
-- Maths for Top Class to P7 and English for Top Class to P3, generated on the device, with worked steps for P4–P7
+- Maths and English for Top Class to P7, generated on the device (English P4–P7: upper-primary grammar), with worked steps for P4–P7
   and for P1–P3 word problems, missing numbers, money, fractions and Roman numerals.
 - Four levels per class, stars, level unlocking, read-aloud, sounds and music, keyboard play on laptops.
 - Scoring, Brain Power, player levels and titles, avatars, badges, day streak and daily goal.
@@ -77,7 +77,9 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
   listing (Families policy, data-safety form, privacy policy), and a **release keystore** kept safe with backups in two
   places: whoever holds it controls app updates forever, and losing it means the app can never be updated. Set
   `VITE_API_URL` in `frontend/.env.android` to the live API first.
-- [ ] **English P4–P7 content**, and bigger English word lists for Top Class–P3 (English levels have tens to hundreds of
+- [ ] **Bank English alongside generated English.** Generated subjects ignore bank questions, so English questions written in
+  the admin panel or suggested by teachers are not used. *Needs:* a decision to mix them (e.g. a share of each sprint).
+- [ ] **Bigger English word lists** for every class (English levels have tens to hundreds of
   different questions, not thousands). *Needs:* writers and reviewers, through the bank or the Fact Engine.
 - [ ] **Per-answer analytics for everyday sprints.** Competition papers already show, per question, how many got it
   right and the most common wrong answer. Doing the same for everyday play means recording every answer (today only

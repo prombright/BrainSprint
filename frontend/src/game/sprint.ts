@@ -45,7 +45,7 @@ const fromBank = (b: BankQuestion): Omit<Question, 'key'> => ({
 /**
  * Makes a class's downloaded content playable like any other level: written bank questions plus
  * questions the Fact Engine makes from approved fact sets. While a level has fewer than 10 bank
- * questions it borrows from the class's other levels. Generated subjects (Maths, English Top–P3)
+ * questions it borrows from the class's other levels. Generated subjects (Maths, English)
  * are never replaced.
  */
 export function registerBank(subject: Subject, grade: Grade, questions: BankQuestion[], factSets: FactSet[] = []) {

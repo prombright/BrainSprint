@@ -29,7 +29,7 @@
 | **Mock** | A 30-question, 45-minute PLE-style Maths paper for P6 and P7, marked at the end. |
 | **Readiness** | Average percentage of the last 3 mocks, shown with a band (Excellent / Good / Getting there / Needs work). Not a UNEB grade. |
 | **PLE / UNEB** | Primary Leaving Examination, set by the Uganda National Examinations Board at the end of P7. |
-| **Bank / question bank** | Human-written questions in the `questions` table (Science, SST, English P4–P7), statuses draft → approved → retired. Only approved ones reach children. |
+| **Bank / question bank** | Human-written questions in the `questions` table (Science and SST), statuses draft → approved → retired. Only approved ones reach children. |
 | **Coverage** | How many approved bank questions exist per subject and class. A subject opens for a class at 4. |
 | **Fact Engine** | The generator that turns fact sets into questions on the device (`game/facts.ts`). |
 | **Fact set** | A small table of checked facts (e.g. organ · job · system) plus question patterns; approved like a question. |

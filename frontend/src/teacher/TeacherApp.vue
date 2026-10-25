@@ -335,10 +335,10 @@ const average = (a: ClassDetail['assignments'][number]) => {
       <section v-else-if="suggesting" class="space-y-4">
         <div>
           <h1 class="text-3xl font-bold">Suggest questions</h1>
-          <p class="text-ink/70">Help build Science, SST and English for every class. A BrainSprint editor checks each question before children see it.</p>
+          <p class="text-ink/70">Help build Science and SST for every class (Maths and English are made by the app). A BrainSprint editor checks each question before children see it.</p>
         </div>
         <div class="rounded-3xl bg-white p-5 shadow-sm">
-          <QuestionEditor v-model="suggestion" :busy="busy" save-label="Send for checking" :subjects="['english', 'science', 'sst']" @save="sendSuggestion" @cancel="suggesting = false" />
+          <QuestionEditor v-model="suggestion" :busy="busy" save-label="Send for checking" :subjects="['science', 'sst']" @save="sendSuggestion" @cancel="suggesting = false" />
           <p v-if="thanks" class="mt-3 font-semibold text-leaf">{{ thanks }}</p>
         </div>
         <div v-if="suggestions.length" class="rounded-3xl bg-white p-5 shadow-sm">

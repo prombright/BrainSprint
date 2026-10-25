@@ -30,7 +30,7 @@ entry that replaces the old one rather than rewriting history.
 **Context.** Children play many short sprints a day. A fixed list of questions runs out, and every question in it
 must be written, typed, checked and downloaded. Many target phones are cheap, with little storage and expensive data.
 
-**Decision.** Maths (Top Class to P7) and early English (Top Class to P3) are generated on the device from templates
+**Decision.** Maths and English (Top Class to P7) are generated on the device from templates
 with random numbers or random picks from word lists. See [Template Engine](algorithms.md#1-template-engine-procedural-question-generation).
 
 **Why.** Practically endless variety (thousands of different questions per level), nothing to store or download,

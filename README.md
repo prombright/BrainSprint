@@ -14,7 +14,7 @@ Fast, fun academic practice for nursery and primary children. Answer quickly, ea
 
 ```
 frontend/   Vue 3 + TypeScript + Tailwind app
-  src/game/   question engines (maths.ts Top–P3, maths-upper.ts P4–P7, english.ts), scoring, badges; no UI code
+  src/game/   question engines (maths.ts Top–P3, maths-upper.ts P4–P7, english.ts Top–P3, english-upper.ts P4–P7), scoring, badges; no UI code
   scripts/    check-questions.ts (tests every engine), make-icons.mjs
   src/stores/ player progress, saved on the device and synced to the API
   src/views/  screens
@@ -224,9 +224,9 @@ Child requests send `X-Player-Id` and `X-Player-Token`; parent requests send `Au
   changed and are only marked at the end, with working for every miss. Readiness = average of the last 3.
   Mocks give XP but don't use Brain Power.
 
-## The question bank (Science, SST, English P4–P7)
+## The question bank (Science and SST)
 
-Maths and English Top–P3 are generated in the app. Everything else comes from the **question bank**:
+Maths and English (all classes) are generated in the app. Everything else comes from the **question bank**:
 questions written by people and **checked before children see them**.
 
 - **Admin panel → Questions**: write questions with a live preview, edit, approve, retire, send a
