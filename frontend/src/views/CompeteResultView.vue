@@ -48,11 +48,25 @@ function ordinal(n: number) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar :title="isWeekly ? '🌍 This week' : isDuel ? '⚔️ Duel' : '🏫 Competition'" back="/compete" />
+    <TopBar :title="isWeekly ? '🌍 Weekly' : isDuel ? '⚔️ Duel' : '🏫 Competition'" :back="isWeekly ? '/compete' : isDuel ? '/compete/duels' : '/compete/schools'" />
 
     <!-- ======== Weekly Challenge ======== -->
     <template v-if="weekly">
-      <section v-if="weekly.this_week?.mine.state === 'done'" class="rounded-3xl bg-white p-5 text-center shadow-sm">
+      <!-- this week: play, or what you got -->
+      <section v-if="weekly.this_week && weekly.this_week.mine.state !== 'done'" class="rounded-3xl bg-gradient-to-br from-ocean to-berry p-5 text-white">
+        <p class="text-sm font-semibold tracking-widest text-sun uppercase">This week · {{ gradeLabel(weekly.this_week.grade) }} · {{ subjectLabel(weekly.this_week.subject) }}</p>
+        <p class="mt-1 text-lg">Every {{ gradeLabel(weekly.this_week.grade) }} child in Uganda gets these {{ weekly.this_week.questions }} questions. One go, {{ weekly.this_week.minutes }} minutes.</p>
+        <button
+          v-if="weekly.this_week.mine.state === 'not_started' || weekly.this_week.mine.state === 'started'"
+          class="btn-chunky mt-3 w-full bg-white py-4 text-xl text-ink"
+          @click="router.push('/compete/play/weekly/0')"
+        >
+          {{ weekly.this_week.mine.state === 'started' ? 'Continue my paper →' : 'Start →' }}
+        </button>
+        <p v-else class="mt-3 opacity-90">Your time for this week's paper is up.</p>
+        <p class="mt-2 text-sm opacity-80">{{ weekly.this_week.entrants }} played so far · ends in {{ until(weekly.this_week.ends_at) }}</p>
+      </section>
+      <section v-else-if="weekly.this_week?.mine.state === 'done'" class="rounded-3xl bg-white p-5 text-center shadow-sm">
         <p class="text-sm text-ink/60">This week</p>
         <p class="text-4xl font-bold">{{ weekly.this_week.mine.correct }}/{{ weekly.this_week.mine.total }}</p>
         <p class="text-ink/70">Handed in ✓ · places and answers come out on Monday ({{ until(weekly.this_week.ends_at) }})</p>
@@ -96,7 +110,7 @@ function ordinal(n: number) {
 
         <PaperReview v-if="weekly.last_week.review" :questions="weekly.last_week.review" />
       </template>
-      <p v-else-if="!weekly.this_week || weekly.this_week.mine.state !== 'done'" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">No results yet. They come out every Monday.</p>
+      <p v-else-if="!weekly.this_week" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">The Weekly Challenge isn't ready for your class yet.</p>
     </template>
     <p v-if="error" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">{{ error }}</p>
 
@@ -179,7 +193,7 @@ function ordinal(n: number) {
         <p v-if="duel.phase === 'open'" class="mt-3 text-sm opacity-80">You'll see both scores and the answers when your friend has played ({{ until(duel.expires_at) }} left).</p>
       </section>
       <PaperReview v-if="duel.review" :questions="duel.review" />
-      <button class="btn-chunky bg-sprint py-3 text-lg text-white" @click="router.push(`/compete?duel=${duel.other.id}`)">⚔️ Duel {{ duel.other.name.split(' ')[0] }} again</button>
+      <button class="btn-chunky bg-sprint py-3 text-lg text-white" @click="router.push(`/compete/duels?duel=${duel.other.id}`)">⚔️ Duel {{ duel.other.name.split(' ')[0] }} again</button>
     </template>
   </main>
 </template>

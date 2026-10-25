@@ -112,7 +112,7 @@ async function share() {
               </span>
             </button>
             <span class="font-bold tabular-nums">{{ f.week_xp.toLocaleString() }} <span class="text-xs font-medium text-ink/50">XP</span></span>
-            <button class="rounded-full bg-sprint/10 px-2 py-1 text-sm font-semibold text-sprint" :aria-label="`Challenge ${f.name} to a duel`" @click="router.push(`/compete?duel=${f.id}`)">⚔️</button>
+            <button class="rounded-full bg-sprint/10 px-2 py-1 text-sm font-semibold text-sprint" :aria-label="`Challenge ${f.name} to a duel`" @click="router.push(`/compete/duels?duel=${f.id}`)">⚔️</button>
             <button class="px-1 text-ink/30" :aria-label="`Remove ${f.name}`" @click="remove(f.id, f.name)">✕</button>
           </li>
         </ol>

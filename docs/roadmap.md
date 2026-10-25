@@ -16,7 +16,9 @@
 - Landing page with contact form; release script and a step-by-step deployment guide (`DEPLOY.md`).
 - Test scripts: `check:questions`, `check:practice` and `check:facts`.
 - **Simpler phone screens for children**: Home shows only the subjects a child can play and three big buttons (Boss,
-  Compete, Practise); everything else is in a menu on the Me tab, the live feed is on the League tab.
+  Compete, Practise); everything else is in a menu on the Me tab, the live feed is on the League tab. Compete is a
+  menu of three big buttons (Weekly Challenge, Duels, School vs School), each with its own page and a red dot when
+  something is waiting.
 - **Teachers**: class results and topics download for Excel (CSV); a **whole-school view** for any teacher of the
   school (class figures only, no pupil names); per-question results for competition papers.
 - **Dark screen** (light / dark / like my phone) and **data saver** (league every 10 minutes, presence every 5,
