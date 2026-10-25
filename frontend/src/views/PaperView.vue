@@ -161,7 +161,8 @@ onBeforeRouteLeave(() => status.value !== 'exam' || confirm('Leave the paper? Yo
         </div>
         <p v-if="current.visual && current.visual.length <= 12" class="mb-2 text-4xl">{{ current.visual }}</p>
         <p v-if="current.big" class="mb-2 text-4xl font-medium text-ocean">{{ current.big }}</p>
-        <p class="text-2xl leading-snug font-bold md:text-3xl">{{ current.prompt }}</p>
+        <p v-if="current.passage" class="mb-3 rounded-2xl bg-cream p-4 text-lg leading-relaxed">{{ current.passage }}</p>
+        <p class="leading-snug font-bold" :class="current.passage ? 'text-xl' : 'text-2xl md:text-3xl'">{{ current.prompt }}</p>
       </section>
 
       <div class="grid gap-3 sm:grid-cols-2">

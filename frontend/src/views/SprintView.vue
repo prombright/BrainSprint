@@ -406,7 +406,9 @@ onBeforeUnmount(() => {
           <span v-for="(p, i) in pictures" :key="i">{{ p }}</span>
         </div>
         <p v-if="current.big" class="mb-3 font-medium tracking-wide text-ocean" :class="current.big.length <= 2 ? 'text-8xl' : 'text-5xl'">{{ current.big }}</p>
-        <p class="font-bold" :class="current.prompt.length > 40 ? 'text-2xl leading-snug' : current.prompt.length > 20 ? 'text-3xl leading-tight' : 'text-5xl'">
+        <!-- reading comprehension: the story, then a smaller question -->
+        <p v-if="current.passage" class="mt-10 mb-4 rounded-2xl bg-cream p-4 text-left text-lg leading-relaxed font-normal">{{ current.passage }}</p>
+        <p class="font-bold" :class="current.passage ? 'text-xl leading-snug' : current.prompt.length > 40 ? 'text-2xl leading-snug' : current.prompt.length > 20 ? 'text-3xl leading-tight' : 'text-5xl'">
           {{ current.prompt }}
         </p>
 

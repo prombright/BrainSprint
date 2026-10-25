@@ -32,6 +32,7 @@ for (const subject of ['maths', 'english'] as const) {
           speak: q.speak,
           ...(q.visual ? { visual: q.visual } : {}),
           ...(q.big ? { big: q.big } : {}),
+          ...(q.passage ? { passage: q.passage } : {}),
           choices: q.choices,
           answer: q.answer,
           ...(q.steps?.length ? { steps: q.steps } : {}),

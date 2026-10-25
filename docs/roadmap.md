@@ -33,6 +33,9 @@
 - Teachers' "Last played" now shows the last sprint actually played (it showed when the app was last opened).
 - **Class vs class** inside a school: 2–6 classes of one year, set up by any teacher there, scored like schools;
   children find it under School contests.
+- **Endless, richer questions**: English in sentences (tens of thousands of verb questions), reading comprehension
+  stories, and two free question types for every fact table (correctly matched pairs; what these have in common).
+  English P3–P7 levels now make thousands of different questions each.
 - **Science and SST in competitions**: the server makes fact-set questions with the same rules as the app, so any
   subject with enough approved content can be a competition paper.
 - **School vs School competitions and Duels**, built, timed and marked by the server (the

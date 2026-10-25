@@ -9,6 +9,8 @@ export interface Question {
   speak: string // what the read-aloud voice says
   visual?: string // emoji picture shown above the prompt
   big?: string // a letter or word shown very large (e.g. "A", "c _ t")
+  passage?: string // a short story shown above the question (reading comprehension)
+  variant?: string // tells apart questions with the same wording (e.g. different pairs to match); not shown
   choices: string[]
   answer: string
   extraSeconds?: number // longer questions (word problems) get more time

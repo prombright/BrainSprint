@@ -10,6 +10,7 @@ defineProps<{ questions: PaperQuestion[] }>()
     <h2 class="mb-3 text-xl font-bold">Go through your paper</h2>
     <ol class="space-y-3">
       <li v-for="(q, i) in questions" :key="i" class="rounded-2xl p-3" :class="q.picked === q.answer ? 'bg-leaf/10' : 'bg-cherry/5'">
+        <p v-if="q.passage" class="mb-1 text-sm text-ink/70 italic">{{ q.passage }}</p>
         <p class="font-semibold">
           {{ i + 1 }}. <span v-if="q.visual && q.visual.length <= 12">{{ q.visual }} </span>{{ q.prompt }} <span v-if="q.big" class="text-ocean">{{ q.big }}</span>
         </p>

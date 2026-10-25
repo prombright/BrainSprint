@@ -151,6 +151,22 @@ wrong choices break the rule ("goed", "biger", "do'nt"), and where a broken form
 "goodly", "beauteous"), the wrong choices are written by hand. Words that could also be right are kept out of the
 wrong choices (a swarm or a colony of bees; a crowd of pupils). Each question explains its rule.
 
+**English in sentences** (`english-sentences.ts`, P2–P7): choose the right verb form inside a real sentence. 33
+verbs (every form: base, -s, past, -ing, past participle) × 26 kinds of person (Amina, he, the children, I, you …) ×
+sentence endings × eight patterns (every day, yesterday, now, tomorrow, did not, has/have, the helping verb is/are/am,
+and Does/Do questions) give tens of thousands of different questions, each right by the rules of agreement and tense.
+
+**Reading comprehension** (`english-stories.ts`, P3–P7): the app writes a short story (a trip to the market, a sports
+day, a child's home and farm, a school trip) from lists of Ugandan names, towns, foods, crops and places, and asks one
+question whose answer is in the text (who, what, where, when, how many). Wrong choices are the same kind of thing,
+including names and numbers from elsewhere in the story, so the child has to read rather than guess. The story is
+stored in the question's `passage` and shown above it, with extra reading time (about a second per 12 letters, up to
+45 s). Because the story is part of the question's fingerprint (`questionKey`), different stories with the same
+question are different questions.
+
+With these, English P3–P7 levels make thousands of different questions each (Top Class–P2 stay smaller: letters
+and first words are a short list by nature).
+
 ## 2. Sprint assembly
 
 A **sprint** is 10 questions (`QUESTIONS_PER_SPRINT`) from one subject, class and level.
@@ -620,6 +636,18 @@ always a choice, no choice repeats, no gap is left unfilled, and no wrong choice
 play, and mixed into every level of that class + subject alongside written questions (`registerBank` in
 `sprint.ts`). A set covers a range of classes (`grade_from`–`grade_to`). The topic name is the set name (e.g.
 "body organs"), so practice, homework and teacher reports work with fact questions unchanged.
+
+**Two question types every table gets for free** (at Hard and Pro, about 4 in 10 questions; the server makes them
+for papers too):
+
+- **Which is correctly matched?** Four pairs from one pattern's two columns (e.g. disease — carrier), exactly one
+  true. Each wrong pair is checked against every row, so it can never accidentally be true. Mixing four facts at a
+  time, a table of 10 facts makes thousands of different questions. Different pairs with the same wording are told
+  apart by a hidden `variant`.
+- **What do these have in common?** Made from a NOT pattern: "Each of these is part of the ___ system: heart,
+  arteries, veins." The three listed share the answer and never share a wrong choice.
+
+`npm run check:facts` tests both: exactly one true pair, and the right shared group.
 
 **Why this design:** an algorithm can do arithmetic but cannot invent facts. Here people decide what is true, once per
 fact, and the algorithm multiplies that checked work into hundreds of questions with no risk of a made-up fact.

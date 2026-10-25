@@ -179,9 +179,12 @@ function factPoolQuestions(string $subject, string $grade): array
     $out = [];
     foreach (publishedFactSets($subject, $grade) as $set) {
         $rows = array_map(fn ($r) => array_combine($set['columns'], $r), $set['rows']);
+        // matched pairs mix four facts at a time, so a few dozen per table give papers plenty of variety
+        for ($k = 0; $k < 24; $k++) if ($q = factMatchedPair($set, $rows)) $out[] = $q;
         foreach ($set['templates'] as $t) {
             if (!empty($t['not'])) {
                 for ($k = 0; $k < 6; $k++) if ($q = factNotQuestion($set, $rows, $t)) $out[] = $q;
+                for ($k = 0; $k < 6; $k++) if ($q = factCommonGroup($set, $rows, $t)) $out[] = $q;
                 continue;
             }
             preg_match_all('/\{([a-z_]+)\}/', $t['ask'], $m);
@@ -223,4 +226,74 @@ function factNotQuestion(array $set, array $rows, array $t): ?array
     $three = array_values($three);
     shuffle($three);
     return factBuilt($set, $odd, factSentence(factFill($t['ask'], $inGroup[0])), $odd[$t['answer']], array_slice($three, 0, 3), $t['level']);
+}
+
+/** "Which is correctly matched?": four pairs, exactly one true (same rules as matchedPair in facts.ts). */
+function factMatchedPair(array $set, array $rows): ?array
+{
+    $pairs = [];
+    foreach ($set['templates'] as $t) {
+        if (!empty($t['not'])) continue;
+        preg_match_all('/\{([a-z_]+)\}/', $t['ask'], $m);
+        if (count($m[1]) === 1) $pairs[] = [$m[1][0], $t['answer']];
+    }
+    if (!$pairs || count($rows) < 4) return null;
+    [$a, $b] = $pairs[array_rand($pairs)];
+    $right = $rows[array_rand($rows)];
+    $isTrue = function (string $x, string $y) use ($rows, $a, $b): bool {
+        foreach ($rows as $r) if (mb_strtolower($r[$a]) === mb_strtolower($x) && mb_strtolower($r[$b]) === mb_strtolower($y)) return true;
+        return false;
+    };
+    $answer = "{$right[$a]} — {$right[$b]}";
+    $options = [$answer];
+    $usedA = [mb_strtolower($right[$a]) => true];
+    $order = $rows;
+    shuffle($order);
+    foreach ($order as $o) {
+        if (count($options) === 4) break;
+        if (isset($usedA[mb_strtolower($o[$a])])) continue;
+        $ys = array_column($rows, $b);
+        shuffle($ys);
+        $y = null;
+        foreach ($ys as $v) if (!$isTrue($o[$a], $v)) { $y = $v; break; }
+        if ($y === null) continue;
+        $usedA[mb_strtolower($o[$a])] = true;
+        $options[] = "{$o[$a]} — $y";
+    }
+    if (count($options) < 3) return null;
+    $label = fn ($c) => str_replace('_', ' ', $c);
+    $sorted = $options;
+    sort($sorted);
+    $steps = ["The true pair: $answer."];
+    if ($set['explain']) $steps[] = factSentence(factFill($set['explain'], $right));
+    return ['level' => 'pro', 'topic' => mb_strtolower($set['name']), 'prompt' => "Which is correctly matched? ({$label($a)} — {$label($b)})",
+        'speak' => 'Which is correctly matched? ' . implode('. ', $options) . '.', 'choices' => $options, 'answer' => $answer,
+        'variant' => implode('|', $sorted), 'steps' => $steps];
+}
+
+/** "Each of these is part of the ___ system: heart, lungs, kidneys" from a NOT pattern (as commonGroup in facts.ts). */
+function factCommonGroup(array $set, array $rows, array $t): ?array
+{
+    $group = $t['not'];
+    $stem = preg_replace('/^Which of these( [a-z]+)? is NOT /i', 'Each of these$1 is ', $t['ask']);
+    if ($stem === $t['ask'] || !str_contains($stem, '{' . $group . '}') || preg_match_all('/\{([a-z_]+)\}/', $stem) !== 1) return null;
+    $groups = [];
+    foreach ($rows as $r) $groups[mb_strtolower($r[$group])][] = $r;
+    $big = array_values(array_filter($groups, fn ($g) => count(array_unique(array_map(fn ($r) => mb_strtolower($r[$t['answer']]), $g))) >= 3));
+    if (!$big || count($groups) < 2) return null;
+    $inGroup = $big[array_rand($big)];
+    $three = [];
+    foreach ($inGroup as $r) $three[mb_strtolower($r[$t['answer']])] = $r[$t['answer']];
+    $three = array_values($three);
+    shuffle($three);
+    $three = array_slice($three, 0, 3);
+    $answer = $inGroup[0][$group];
+    $list = implode(', ', $three);
+    $prompt = factSentence(rtrim(str_replace('{' . $group . '}', '___', $stem), '?')) . ": $list.";
+    $wrong = [];
+    foreach ($groups as $g) if (mb_strtolower($g[0][$group]) !== mb_strtolower($answer)) $wrong[] = $g[0][$group];
+    shuffle($wrong);
+    $label = str_replace('_', ' ', $group);
+    return ['level' => 'hard', 'topic' => mb_strtolower($set['name']), 'prompt' => $prompt, 'speak' => str_replace('___', 'blank', $prompt),
+        'choices' => array_merge([$answer], array_slice($wrong, 0, 3)), 'answer' => $answer, 'steps' => ["$list: each one's $label is $answer."]];
 }

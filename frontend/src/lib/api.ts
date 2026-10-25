@@ -224,6 +224,7 @@ export interface PaperQuestion {
   speak: string
   visual?: string
   big?: string
+  passage?: string // a story to read first
   choices: string[]
   answer?: string // only once the results are out
   steps?: string[]

@@ -6,6 +6,8 @@ import type { Make, Plan } from './sprint.ts'
 import type { Level } from './types.ts'
 import { pick, shuffle } from './random.ts'
 import { NAMES } from './mathskit.ts'
+import { verbSentence } from './english-sentences.ts'
+import { comprehension } from './english-stories.ts'
 
 /** The answer plus up to three different wrong choices (never the answer itself), shuffled. */
 function choices(answer: string, wrong: string[], n = 3): string[] {
@@ -499,27 +501,27 @@ const oneWord = (which: 'person' | 'all'): Make => () => {
 const plan = (l: Record<Level, Make[]>) => l
 export const ENGLISH_UPPER_PLAN: Plan = {
   P4: plan({
-    simple: [plural(['regular', 'es', 'ies']), gender(), young()],
-    medium: [pastTense('common'), plural(['ys', 'irregular', 'same']), young()],
-    hard: [comparing(['er', 'double', 'e']), contraction(), gender()],
-    pro: [alphabetical(false), possession('one'), comparing(['ier'])],
+    simple: [plural(['regular', 'es', 'ies']), gender(), young(), verbSentence(['every day', 'now', 'helper'])],
+    medium: [pastTense('common'), plural(['ys', 'irregular', 'same']), young(), verbSentence(['yesterday', 'tomorrow']), comprehension(['farm', 'market'])],
+    hard: [comparing(['er', 'double', 'e']), contraction(), gender(), verbSentence(['did not', 'question'])],
+    pro: [alphabetical(false), possession('one'), comparing(['ier']), comprehension(['market', 'sports'])],
   }),
   P5: plan({
-    simple: [comparing(['er', 'double', 'ier', 'e']), collective(), plural(['regular', 'es', 'ies', 'ys'])],
-    medium: [pastTense('all'), adverb(), comparing(['more'])],
-    hard: [possession('all'), plural(['ves', 'oes', 'os', 'irregular']), contraction()],
-    pro: [pastParticiple(), gender(), alphabetical(false)],
+    simple: [comparing(['er', 'double', 'ier', 'e']), collective(), plural(['regular', 'es', 'ies', 'ys']), verbSentence(['every day', 'yesterday', 'now'])],
+    medium: [pastTense('all'), adverb(), comparing(['more']), comprehension(['market', 'farm', 'sports'])],
+    hard: [possession('all'), plural(['ves', 'oes', 'os', 'irregular']), contraction(), verbSentence(['did not', 'question', 'helper'])],
+    pro: [pastParticiple(), gender(), alphabetical(false), comprehension(['market', 'farm', 'sports', 'trip']), verbSentence(['has'])],
   }),
   P6: plan({
-    simple: [collective(), young(), gender(), adverb()],
-    medium: [questionTag('easy'), pastParticiple(), comparing(['more', 'irregular'])],
-    hard: [wordFormation('nouns'), oneWord('person'), possession('all')],
-    pro: [questionTag('all'), alphabetical(true), plural(['ves', 'oes', 'os', 'compound'])],
+    simple: [collective(), young(), gender(), adverb(), verbSentence(['yesterday', 'tomorrow', 'did not'])],
+    medium: [questionTag('easy'), pastParticiple(), comparing(['more', 'irregular']), comprehension(['market', 'farm', 'sports', 'trip'])],
+    hard: [wordFormation('nouns'), oneWord('person'), possession('all'), verbSentence(['has', 'question'])],
+    pro: [questionTag('all'), alphabetical(true), plural(['ves', 'oes', 'os', 'compound']), comprehension(['market', 'farm', 'sports', 'trip'])],
   }),
   P7: plan({
-    simple: [pastParticiple(), contraction(), collective()],
-    medium: [wordFormation('all'), comparing(['more', 'irregular', 'ier'])],
-    hard: [questionTag('all'), oneWord('all')],
-    pro: [alphabetical(true), possession('all'), plural(['compound', 'irregular', 'ves']), wordFormation('all')],
+    simple: [pastParticiple(), contraction(), collective(), verbSentence(['every day', 'yesterday', 'now', 'tomorrow', 'did not', 'has', 'helper', 'question'])],
+    medium: [wordFormation('all'), comparing(['more', 'irregular', 'ier']), comprehension(['market', 'farm', 'sports', 'trip'])],
+    hard: [questionTag('all'), oneWord('all'), verbSentence(['has', 'did not', 'question'])],
+    pro: [alphabetical(true), possession('all'), plural(['compound', 'irregular', 'ves']), wordFormation('all'), comprehension(['sports', 'trip'])],
   }),
 }

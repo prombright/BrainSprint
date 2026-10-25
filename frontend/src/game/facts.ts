@@ -98,9 +98,80 @@ function build(set: FactSet, row: Row, prompt: string, answer: string, wrong: st
   }
 }
 
+// ---------- two question types every set gets for free ----------
+
+const label = (c: string) => c.replace(/_/g, ' ')
+
+/**
+ * "Which is correctly matched? (disease — carrier)": four pairs from the table, exactly one true.
+ * Each wrong pair is checked against every row, so it can never accidentally be true.
+ */
+export function matchedPair(set: FactSet, rows: Row[] = asRows(set)): Omit<Question, 'key'> | null {
+  const pairs = set.templates.filter((t) => !t.not && gapsOf(t.ask).length === 1).map((t) => [gapsOf(t.ask)[0], t.answer] as const)
+  if (!pairs.length || rows.length < 4) return null
+  const [a, b] = pick(pairs)
+  const right = pick(rows)
+  const isTrue = (x: string, y: string) => rows.some((r) => r[a].toLowerCase() === x.toLowerCase() && r[b].toLowerCase() === y.toLowerCase())
+  const answer = `${right[a]} — ${right[b]}`
+  const options = [answer]
+  const usedA = new Set([right[a].toLowerCase()])
+  for (const o of shuffle(rows)) {
+    if (options.length === 4) break
+    if (usedA.has(o[a].toLowerCase())) continue
+    const y = shuffle(rows).map((r) => r[b]).find((v) => !isTrue(o[a], v))
+    if (!y) continue
+    usedA.add(o[a].toLowerCase())
+    options.push(`${o[a]} — ${y}`)
+  }
+  if (options.length < 3) return null
+  const prompt = `Which is correctly matched? (${label(a)} — ${label(b)})`
+  return {
+    topic: set.name.toLowerCase(),
+    prompt,
+    speak: `Which is correctly matched? ${options.join('. ')}.`,
+    choices: shuffle(options),
+    answer,
+    variant: [...options].sort().join('|'),
+    steps: [`The true pair: ${answer}.`, ...(set.explain ? [sentence(fill(set.explain, right))] : [])],
+    extraSeconds: 10,
+  }
+}
+
+/** "Each of these is part of the ___ system: heart, lungs, kidneys" made from a NOT pattern. */
+export function commonGroup(set: FactSet, t: FactTemplate, rows: Row[] = asRows(set)): Omit<Question, 'key'> | null {
+  const group = t.not!
+  const stem = t.ask.replace(/^Which of these( [a-z]+)? is NOT /i, 'Each of these$1 is ')
+  if (stem === t.ask || !stem.includes(`{${group}}`) || gapsOf(stem).length !== 1) return null
+  const groups = new Map<string, Row[]>()
+  for (const r of rows) groups.set(r[group].toLowerCase(), [...(groups.get(r[group].toLowerCase()) ?? []), r])
+  const big = [...groups.values()].filter((g) => new Set(g.map((r) => r[t.answer].toLowerCase())).size >= 3)
+  if (!big.length || groups.size < 2) return null
+  const inGroup = pick(big)
+  const three = shuffle([...new Map(inGroup.map((r) => [r[t.answer].toLowerCase(), r[t.answer]])).values()]).slice(0, 3)
+  const answer = inGroup[0][group]
+  const list = three.join(', ')
+  const prompt = `${sentence(stem.replace(`{${group}}`, '___').replace(/\?$/, ''))}: ${list}.`
+  const wrong = [...new Set([...groups.values()].map((g) => g[0][group]).filter((v) => v.toLowerCase() !== answer.toLowerCase()))]
+  return {
+    topic: set.name.toLowerCase(),
+    prompt,
+    speak: prompt.replace('___', 'blank'),
+    choices: shuffle([answer, ...shuffle(wrong).slice(0, 3)]),
+    answer,
+    steps: [`${list}: each one's ${label(group)} is ${answer}.`],
+    extraSeconds: 6,
+  }
+}
+
 /** One question from a set at a level (or from any of its patterns if none match the level). */
 export function factQuestion(set: FactSet, level?: Level): Omit<Question, 'key'> | null {
   const rows = asRows(set)
+  // at Hard and Pro, the two free types join the set's own patterns
+  if ((!level || level === 'hard' || level === 'pro') && Math.random() < 0.4) {
+    const nots = set.templates.filter((t) => t.not)
+    const q = nots.length && Math.random() < 0.5 ? commonGroup(set, pick(nots), rows) : matchedPair(set, rows)
+    if (q) return q
+  }
   const patterns = set.templates.filter((t) => !level || t.level === level)
   const usable = patterns.length ? patterns : set.templates
   for (let tries = 0; tries < 20; tries++) {

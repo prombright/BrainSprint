@@ -3,7 +3,7 @@
 // always one of the choices, choices are all different, no {gap} is left unfilled, and no wrong
 // choice could also be right. Then it counts how many different questions each set makes.
 import { readFileSync } from 'node:fs'
-import { ambiguous, allFactQuestions, checkFactSet, factQuestion, gapsOf, type FactSet } from '../src/game/facts.ts'
+import { ambiguous, allFactQuestions, checkFactSet, commonGroup, factQuestion, gapsOf, matchedPair, type FactSet } from '../src/game/facts.ts'
 
 const file = process.argv[2] ?? new URL('../../content/fact-sets-starter.json', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1')
 const sets = (JSON.parse(readFileSync(file, 'utf8')) as Omit<FactSet, 'id'>[]).map((s, i) => ({ ...s, id: i + 1 }) as FactSet)
@@ -54,9 +54,39 @@ for (const set of sets) {
       if (wrongButRight.length) fail(`${set.name}: "${wrongButRight[0]}" is also right for: ${q.prompt}`)
     }
   }
+  // the two free types
+  let pairsMade = 0
+  let commonMade = 0
+  const pairKeys = new Set<string>()
+  for (let i = 0; i < 500; i++) {
+    const q = matchedPair(set)
+    if (!q) break
+    pairsMade++
+    pairKeys.add(q.variant!)
+    const [a, b] = q.prompt.replace(/^.*\(/, '').replace(/\)$/, '').split(' — ').map((x) => x.replace(/ /g, '_'))
+    const trueOnes = q.choices.filter((c) => {
+      const [x, y] = c.split(' — ')
+      return rows.some((r) => r[a]?.toLowerCase() === x.toLowerCase() && r[b]?.toLowerCase() === y.toLowerCase())
+    })
+    if (trueOnes.length !== 1 || trueOnes[0] !== q.answer) fail(`${set.name}: matched pairs must have exactly one true pair: ${q.choices.join(' | ')}`)
+  }
+  for (const t of set.templates.filter((x) => x.not)) {
+    for (let i = 0; i < 200; i++) {
+      const q = commonGroup(set, t)
+      if (!q) break
+      commonMade++
+      const listed = q.prompt.slice(q.prompt.lastIndexOf(': ') + 2, -1).split(', ').map((x) => x.toLowerCase())
+      const groupOf = (v: string) => new Set(rows.filter((r) => r[t.answer].toLowerCase() === v).map((r) => r[t.not!].toLowerCase()))
+      for (const c of q.choices) {
+        const all3 = listed.every((v) => groupOf(v).has(c.toLowerCase()))
+        if (c === q.answer && !all3) fail(`${set.name}: "${c}" is not shared by ${listed.join(', ')}`)
+        if (c !== q.answer && all3) fail(`${set.name}: wrong choice "${c}" is also shared by ${listed.join(', ')}`)
+      }
+    }
+  }
   const all = allFactQuestions(set)
   const unfair = all.filter((x) => !x.fair).length
-  console.log(`✓ ${set.name.padEnd(22)} ${set.rows.length} facts × ${set.templates.length} patterns → ${seen.size} different questions (${unfair} skipped as ambiguous)`)
+  console.log(`✓ ${set.name.padEnd(26)} ${String(set.rows.length).padStart(2)} facts × ${set.templates.length} patterns → ${String(seen.size).padStart(4)} different · matched pairs: ${pairsMade ? `${pairKeys.size}+ sets` : 'none'}${commonMade ? ' · have in common: yes' : ''} (${unfair} skipped as ambiguous)`)
 }
 
 console.log(failed ? `\n${failed} FAILED` : '\nAll fact checks pass')

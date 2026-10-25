@@ -3,6 +3,8 @@
 import type { Make, Plan } from './sprint.ts'
 import { pick, randInt, shuffle } from './random.ts'
 import { ENGLISH_UPPER_PLAN } from './english-upper.ts'
+import { verbSentence } from './english-sentences.ts'
+import { comprehension } from './english-stories.ts'
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const VOWELS = ['a', 'e', 'i', 'o', 'u']
@@ -376,14 +378,14 @@ export const ENGLISH_PLAN: Plan = {
   },
   P2: {
     simple: [missingLetter(5), pictureWord(PICTURES)],
-    medium: [rhyme(), plural(['regular'])],
+    medium: [rhyme(), plural(['regular']), verbSentence(['every day'])],
     hard: [opposite('easy'), aOrAn(), plural(['regular', 'es'])],
-    pro: [isAre(), verbForm(['every day']), spelling(SPELLING_EASY)],
+    pro: [isAre(), verbForm(['every day']), spelling(SPELLING_EASY), verbSentence(['every day', 'now'])],
   },
   P3: {
-    simple: [opposite('easy'), plural(['regular', 'es', 'ies'])],
-    medium: [verbForm(['every day', 'yesterday', 'now']), isAre(), aOrAn()],
-    hard: [spelling(SPELLING_EASY), plural(['ies', 'irregular']), opposite('hard')],
-    pro: [verbForm(['yesterday', 'now']), spelling(SPELLING_HARD), opposite('all')],
+    simple: [opposite('easy'), plural(['regular', 'es', 'ies']), verbSentence(['every day', 'now'])],
+    medium: [verbForm(['every day', 'yesterday', 'now']), isAre(), aOrAn(), verbSentence(['every day', 'yesterday', 'now'])],
+    hard: [spelling(SPELLING_EASY), plural(['ies', 'irregular']), opposite('hard'), comprehension(['farm'])],
+    pro: [verbForm(['yesterday', 'now']), spelling(SPELLING_HARD), opposite('all'), comprehension(['farm', 'market']), verbSentence(['yesterday', 'tomorrow', 'helper'])],
   },
 }
