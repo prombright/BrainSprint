@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AvatarBadge from '../components/AvatarBadge.vue'
 import PaperReview from '../components/PaperReview.vue'
 import TopBar from '../components/TopBar.vue'
-import { api, type Contest, type Duel, type WeeklyData } from '../lib/api'
+import { api, type ClassContest, type Contest, type Duel, type WeeklyData } from '../lib/api'
 import { clock, gradeLabel, subjectLabel, timeOnly, until } from '../lib/compete'
 import { usePlayer } from '../stores/player'
 
@@ -14,6 +14,8 @@ const router = useRouter()
 const player = usePlayer()
 const isDuel = route.params.kind === 'duels'
 const isWeekly = route.params.kind === 'weekly'
+const isClass = route.params.kind === 'class-contests'
+const classContest = ref<ClassContest | null>(null)
 const weekly = ref<WeeklyData | null>(null)
 const id = Number(route.params.id)
 const contest = ref<Contest | null>(null)
@@ -25,6 +27,7 @@ onMounted(async () => {
   if (!player.auth) return void (error.value = 'Connect to the internet to see the results.')
   try {
     if (isWeekly) weekly.value = await api.weekly(player.auth)
+    else if (isClass) classContest.value = await api.classContest(player.auth, id)
     else if (isDuel) duel.value = await api.duel(player.auth, id)
     else contest.value = await api.contest(player.auth, id)
   } catch (e) {
@@ -32,6 +35,14 @@ onMounted(async () => {
   }
 })
 
+const className = (cid: number) => classContest.value?.classes.find((c) => c.id === cid)?.name ?? ''
+const classHeadline = computed(() => {
+  const r = classContest.value?.result
+  if (!r) return ''
+  if (r.draw) return '🤝 A draw!'
+  if (r.winner_id === null) return 'No winner: a class needs at least 3 pupils to count'
+  return r.winner_id === classContest.value!.my_class_id ? '🏆 Your class won!' : `${className(r.winner_id)} won`
+})
 const schoolName = (sid: number) => contest.value?.result?.schools.find((s) => s.id === sid)?.name ?? ''
 const headline = computed(() => {
   const r = contest.value?.result
@@ -48,7 +59,7 @@ function ordinal(n: number) {
 
 <template>
   <main class="flex flex-1 flex-col gap-4">
-    <TopBar :title="isWeekly ? '🌍 Weekly' : isDuel ? '⚔️ Duel' : '🏫 Competition'" :back="isWeekly ? '/compete' : isDuel ? '/compete/duels' : '/compete/schools'" />
+    <TopBar :title="isWeekly ? '🌍 Weekly' : isDuel ? '⚔️ Duel' : isClass ? '🏫 Class contest' : '🏫 Competition'" :back="isWeekly ? '/compete' : isDuel ? '/compete/duels' : '/compete/schools'" />
 
     <!-- ======== Weekly Challenge ======== -->
     <template v-if="weekly">
@@ -113,6 +124,52 @@ function ordinal(n: number) {
       <p v-else-if="!weekly.this_week" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">The Weekly Challenge isn't ready for your class yet.</p>
     </template>
     <p v-if="error" class="rounded-3xl bg-white p-6 text-center text-ink/70 shadow-sm">{{ error }}</p>
+
+    <!-- ======== class vs class ======== -->
+    <template v-if="classContest">
+      <section v-if="classContest.phase !== 'finished'" class="rounded-3xl bg-white p-6 text-center shadow-sm">
+        <p class="text-5xl">⏳</p>
+        <p class="mt-2 text-xl font-bold">{{ classContest.mine.state === 'done' ? 'Handed in ✓' : 'Not finished yet' }}</p>
+        <p class="text-ink/70">Results and answers come out when it ends at {{ timeOnly(classContest.ends_at) }} ({{ until(classContest.ends_at) }}).</p>
+      </section>
+
+      <template v-else-if="classContest.result">
+        <section class="rounded-3xl bg-ink p-6 text-center text-white">
+          <p class="text-sm font-semibold tracking-widest text-sun uppercase">{{ gradeLabel(classContest.grade) }} · {{ subjectLabel(classContest.subject) }}</p>
+          <p class="mt-1 text-3xl font-bold">{{ classHeadline }}</p>
+          <ol class="mt-4 space-y-2 text-left">
+            <li v-for="(c, i) in classContest.result.classes" :key="c.id" class="flex items-center gap-3 rounded-2xl p-3" :class="c.id === classContest.result.winner_id ? 'bg-sun text-ink' : 'bg-white/10'">
+              <span class="w-6 text-center font-bold">{{ i + 1 }}</span>
+              <span class="min-w-0 flex-1"><span class="block truncate font-semibold">{{ c.name }}</span><span class="block text-xs opacity-80">{{ c.players }} played · best {{ c.counted }} counted</span></span>
+              <span class="text-2xl font-bold tabular-nums">{{ c.valid ? `${c.average_percent}%` : '–' }}</span>
+            </li>
+          </ol>
+        </section>
+
+        <section v-if="classContest.mine.state === 'done'" class="rounded-3xl bg-white p-5 text-center shadow-sm">
+          <p class="text-sm text-ink/60">You</p>
+          <p class="text-4xl font-bold">{{ classContest.mine.correct }}/{{ classContest.mine.total }}</p>
+          <p class="mt-1 font-semibold">{{ ordinal(classContest.result.my_rank ?? 0) }} of {{ classContest.result.entrants }} · {{ ordinal(classContest.result.my_class_rank ?? 0) }} in your class</p>
+          <p class="text-sm" :class="classContest.result.counted ? 'text-leaf' : 'text-ink/60'">
+            {{ classContest.result.counted ? '✓ Your score counted for your class' : 'The best 10 in your class counted this time. Keep practising!' }}
+          </p>
+        </section>
+
+        <section class="rounded-3xl bg-white p-5 shadow-sm">
+          <h2 class="mb-2 text-xl font-bold">Top pupils</h2>
+          <ol class="space-y-1">
+            <li v-for="p in classContest.result.top" :key="p.id" class="flex items-center gap-3 rounded-2xl px-3 py-1.5" :class="p.me ? 'bg-sun/30' : 'bg-cream'">
+              <span class="w-6 text-center font-bold">{{ p.rank }}</span>
+              <AvatarBadge :avatar="p.avatar" size="sm" />
+              <span class="min-w-0 flex-1"><span class="block truncate font-semibold">{{ p.name.split(' ')[0] }}</span><span class="block truncate text-xs text-ink/60">{{ className(p.class_id) }}</span></span>
+              <span class="font-bold tabular-nums">{{ p.correct }}/{{ classContest.questions }}</span>
+            </li>
+          </ol>
+        </section>
+
+        <PaperReview v-if="classContest.review" :questions="classContest.review" />
+      </template>
+    </template>
 
     <!-- ======== school contest ======== -->
     <template v-if="contest">

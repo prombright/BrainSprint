@@ -682,6 +682,13 @@ their paper with the answers appear. A paper started late on Sunday can still be
 (within its own deadline). Two children opening a new week at the same moment can't make two papers: the first one
 saved wins (`INSERT IGNORE` on the week + class key) and the other is deleted.
 
+**Class vs class.** The fourth use (`api/classcontests.php`): two to six classes of the same year at one school,
+set up by any teacher of that school with no accept step. The paper is built when it is set up. Pupils play for
+the first of their classes that is in it (`paper_attempts.class_id`). Classes are scored like schools (best 10, at
+least 3), ranked by average then speed. A teacher of one of the classes, or whoever set it up, can call it off before
+it starts. A school can set up 5 a week. Teachers see every class's score but only their own pupils' names
+([ADR-023](decisions.md#adr-023-the-whole-school-view-shows-classes-not-pupils)).
+
 **Limits against spam.** Each school can send 3 challenges a week, and two schools can have only one open challenge
 between them at a time. A school can switch challenges off. Each child can start 5 duels a day, with one open duel per
 pair of friends. Duels are only between friends (added by code, in person), and children never message each other.

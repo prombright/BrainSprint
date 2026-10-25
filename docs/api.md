@@ -63,6 +63,8 @@ Capacitor app, and the live domain). The website itself is same-origin.
 | POST | `/contests/{id}/start` | Start (or resume) my paper: questions **without answers**, `seconds_left`, `deadline` | Only while live; one go; resuming keeps the deadline |
 | POST | `/contests/{id}/submit` | Hand in `{picks: [answer or null, …]}`; returns `{correct, total, seconds}` | Once; up to 2 min after the deadline |
 | GET | `/compete/waiting` | How many competitions wait for me: duels I haven't played, live school contests I can play, and this week's paper; `total` is the number on Home's Compete button | Light: builds nothing, works out no results |
+| GET | `/class-contests/{id}` | One class contest: my attempt; once finished the classes ranked, top 10, my places and my paper with answers | Only pupils of the classes in it |
+| POST | `/class-contests/{id}/start`, `/submit` | As for school contests | Only while live; one go |
 | GET | `/weekly` | This week's Weekly Challenge for my class (built on first request) with my attempt and how many have played; last week's with my place, top 10, top schools and my paper with answers | |
 | POST | `/weekly/start`, `/weekly/submit` | As for contests | One go a week; open Monday to Sunday |
 | POST | `/duels` | Challenge a friend `{friend_id, subject}` (`subject` may be `mixed`); the paper is built now | Friends only; 5 a day; one open duel per pair |
@@ -103,6 +105,10 @@ the class code.
 | POST | `/teacher/questions` | Suggest a bank question (same fields as the admin editor) | Saved as a draft; 100 per day |
 | GET | `/teacher/school` | My school (and whether it takes challenges) and, for every class, the subjects with enough questions for a paper | |
 | POST | `/teacher/school` | Choose my school `{school_id}` | Approved schools only |
+| GET | `/teacher/class-contests?grade=` | My school's class contests (last 90 days; finished ones with every class's score, `can_cancel` for mine), and with `grade` the school's classes of that year to choose from | |
+| POST | `/teacher/class-contests` | Set one up `{grade, class_ids[2–6], subject, starts_at, window_minutes?}`; the paper is built now | Classes of that year at my school; 5 minutes to 30 days ahead; 5 a week per school |
+| GET | `/teacher/class-contests/{id}` | A finished one: every class's score, my own pupils by name, the paper with answers | |
+| POST | `/teacher/class-contests/{id}/cancel` | Call it off | Before it starts; whoever set it up or a teacher of one of the classes |
 | GET | `/teacher/school/overview` | Whole school: every class of every teacher of my school, with pupils, how many played this week, sprints, accuracy and the 3 weakest topics | **No pupil names**; any teacher of the school |
 | POST | `/teacher/school/open` | `{open: true \| false}`: may other schools challenge us | |
 | GET | `/teacher/schools?q=` | Search approved schools | |

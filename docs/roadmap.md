@@ -27,6 +27,8 @@
 - `npm run build:android-lan`: a test app that talks to this computer over Wi-Fi.
 - **Weekly Challenge**: the same server-marked paper for every child in a class across Uganda each week, with a
   national top 10 and top schools on Monday. The base for sponsored prizes later.
+- **Class vs class** inside a school: 2–6 classes of one year, set up by any teacher there, scored like schools;
+  children find it under School contests.
 - **Science and SST in competitions**: the server makes fact-set questions with the same rules as the app, so any
   subject with enough approved content can be a competition paper.
 - **School vs School competitions and Duels**, built, timed and marked by the server (the
@@ -60,7 +62,7 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
   that supports Luganda (and later other languages), a decision on which languages first, and native speakers to check.
 - [ ] **Sponsored prizes for competitions.** School vs School works (free entry, server-marked); prizes need a
   sponsor and the legal check in [ADR-003](decisions.md#adr-003-a-safe-economy-brain-power-points-never-bought-sponsored-prizes).
-  Possible next steps on the same engine: class-vs-class inside a school.
+  Class vs class inside a school is done too.
 - [ ] **MTN MoMo / Airtel Money payments.** For Sprint Passes and school licences, then switch on `PAYWALL_ENABLED`.
   The pass screen, parent check and the `payments` / `subscriptions` tables exist. *Needs:* merchant accounts with MTN
   and Airtel (or an aggregator), API keys, final prices, and server-side checking of passes.

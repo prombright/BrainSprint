@@ -5,6 +5,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { GRADES } from '../game/types'
 import { gradeLabel, subjectLabel, timeOnly, when } from '../lib/compete'
 import { teacherCall } from './api'
+import ClassContests from './ClassContests.vue'
 
 interface SchoolLite { id: number; name: string; district: string; open_to_challenges?: boolean }
 interface SchoolScore extends SchoolLite { players: number; counted: number; valid: boolean; average_percent: number; average_seconds: number }
@@ -299,6 +300,9 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
       </div>
 
       <p v-if="loaded && !contests.length" class="text-ink/60">No competitions yet. Challenge a nearby school to get started!</p>
+
+      <hr class="my-8 border-ink/10" />
+      <ClassContests :subjects="subjects" />
     </template>
 
     <!-- one result in full -->

@@ -50,7 +50,8 @@ const duelLine = computed(() => {
 })
 
 const schoolLine = computed(() => {
-  const cs = data.value?.contests ?? []
+  // school vs school and class vs class look the same here
+  const cs = [...(data.value?.contests ?? []), ...(data.value?.class_contests ?? [])].sort((a, b) => b.starts_at.localeCompare(a.starts_at))
   const live = cs.find((c) => c.phase === 'live')
   if (live && (live.mine?.state === 'not_started' || live.mine?.state === 'started')) return { text: '🔴 Live now: play for your school!', alert: true }
   if (live) return { text: '🔴 Live now · you handed in ✓', alert: false }
@@ -88,7 +89,7 @@ const schoolLine = computed(() => {
       <button class="btn-chunky relative flex items-center gap-4 bg-ink p-5 text-left text-white" @click="router.push('/compete/schools')">
         <span class="text-6xl">🏫</span>
         <span class="min-w-0 flex-1">
-          <span class="block text-2xl">School vs School</span>
+          <span class="block text-2xl">School contests</span>
           <span class="block font-normal opacity-90">{{ schoolLine.text }}</span>
         </span>
         <span v-if="schoolLine.alert" class="absolute top-3 right-3 size-4 animate-pulse rounded-full bg-cherry ring-2 ring-white" aria-label="Live now" />

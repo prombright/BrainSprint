@@ -14,7 +14,7 @@ import { usePlayer } from '../stores/player'
 const route = useRoute()
 const router = useRouter()
 const player = usePlayer()
-const kind = (['duels', 'weekly'].includes(String(route.params.kind)) ? route.params.kind : 'contests') as PaperKind
+const kind = (['duels', 'weekly', 'class-contests'].includes(String(route.params.kind)) ? route.params.kind : 'contests') as PaperKind
 const id = Number(route.params.id)
 const saveKey = `bsk:paper:${kind}:${id}`
 

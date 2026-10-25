@@ -54,3 +54,4 @@
 | **Duel** | A one-to-one competition between two friends on the same server-marked paper. |
 | **Window** | The time a school competition is open; each child also has 15 minutes from when they start. |
 | **Weekly Challenge** | One server-marked paper a week for every child in a class across Uganda; places, top schools and answers on Monday. |
+| **Class contest** | Class vs class inside one school: 2–6 classes of the same year, one server-marked paper, scored on each class's best 10. |

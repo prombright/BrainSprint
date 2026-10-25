@@ -287,8 +287,36 @@ export interface Duel {
   review?: PaperQuestion[]
 }
 
+/** Class vs class inside one school. */
+export interface ClassContest {
+  id: number
+  phase: 'cancelled' | 'upcoming' | 'live' | 'finished'
+  grade: string
+  subject: string
+  classes: { id: number; name: string; teacher: string }[]
+  starts_at: string
+  ends_at: string
+  questions: number
+  minutes: number
+  my_class_id: number | null
+  mine: AttemptState
+  summary?: { winner_id: number | null; draw: boolean }
+  result?: {
+    classes: { id: number; name: string; teacher: string; players: number; counted: number; valid: boolean; average_percent: number; average_seconds: number }[]
+    winner_id: number | null
+    draw: boolean
+    top: (ContestPupil & { class_id: number; me: boolean })[]
+    my_rank: number | null
+    my_class_rank: number | null
+    counted: boolean
+    entrants: number
+  }
+  review?: PaperQuestion[]
+}
+
 export interface CompeteData {
   contests: Contest[]
+  class_contests: ClassContest[]
   duels: Duel[]
   duel_subjects: string[]
 }
@@ -317,7 +345,7 @@ export interface WeeklyData {
 }
 
 /** Where a paper lives: a school contest or duel (by id), or this week's Weekly Challenge. */
-export type PaperKind = 'contests' | 'duels' | 'weekly'
+export type PaperKind = 'contests' | 'class-contests' | 'duels' | 'weekly'
 const paperPath = (kind: PaperKind, id: number) => (kind === 'weekly' ? '/weekly' : `/${kind}/${id}`)
 
 export interface PaperStart {
@@ -329,6 +357,7 @@ export interface PaperStart {
 export const api = {
   compete: (player: PlayerAuth) => call<CompeteData>('GET', '/compete', { player }),
   contest: (player: PlayerAuth, id: number) => call<Contest>('GET', `/contests/${id}`, { player }),
+  classContest: (player: PlayerAuth, id: number) => call<ClassContest>('GET', `/class-contests/${id}`, { player }),
   duel: (player: PlayerAuth, id: number) => call<Duel>('GET', `/duels/${id}`, { player }),
   newDuel: (player: PlayerAuth, friendId: number, subject: string) => call<Duel>('POST', '/duels', { player, body: { friend_id: friendId, subject } }),
   declineDuel: (player: PlayerAuth, id: number) => call<{ duels: Duel[] }>('POST', `/duels/${id}/decline`, { player }),

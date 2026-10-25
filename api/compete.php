@@ -123,14 +123,14 @@ function attemptRow(int $paperId, int $playerId): ?array
  * Starts (or resumes) a child's one go. The deadline is the server's: the paper's minutes from
  * the first start, cut short by the competition's end. Resuming keeps the original deadline.
  */
-function startAttempt(array $paper, array $me, int $closesAt, ?int $schoolId = null): array
+function startAttempt(array $paper, array $me, int $closesAt, ?int $schoolId = null, ?int $classId = null): array
 {
     $a = attemptRow((int)$paper['id'], (int)$me['id']);
     if ($a && $a['submitted_at']) respond(409, ['error' => 'You have already handed in this paper']);
     if (!$a) {
         if ($closesAt <= time()) respond(422, ['error' => 'This competition has closed']);
         $deadline = min(time() + (int)$paper['minutes'] * 60, $closesAt);
-        q('INSERT INTO paper_attempts (paper_id, player_id, school_id, started_at, deadline) VALUES (?, ?, ?, ?, ?)', [$paper['id'], $me['id'], $schoolId, at(time()), at($deadline)]);
+        q('INSERT INTO paper_attempts (paper_id, player_id, school_id, class_id, started_at, deadline) VALUES (?, ?, ?, ?, ?, ?)', [$paper['id'], $me['id'], $schoolId, $classId, at(time()), at($deadline)]);
         $a = attemptRow((int)$paper['id'], (int)$me['id']);
     }
     $left = strtotime($a['deadline']) - time();
@@ -682,5 +682,6 @@ function competeWaiting(array $me): array
         ? !q('SELECT 1 FROM paper_attempts WHERE paper_id = ? AND player_id = ? AND submitted_at IS NOT NULL', [$paperId, $me['id']])->fetchColumn()
         // no paper yet this week: it is waiting if the class has generated questions (made on first open)
         : (bool)glob(__DIR__ . "/pool/*-{$me['grade']}.json");
+    $contests += classContestsWaiting($me);
     return ['duels' => $duels, 'contests' => $contests, 'weekly' => $weekly, 'total' => $duels + $contests + ($weekly ? 1 : 0)];
 }

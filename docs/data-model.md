@@ -125,6 +125,9 @@ results are out), `minutes`.
 out from the times), `paper_id` (set on acceptance), who created and who answered.
 **`duels`**: a child challenges a friend: `paper_id`, `challenger_id`, `opponent_id`, `grade`, `subject`, `status`
 (`open` / `declined`), `expires_at` (48 hours).
+**`class_contests`**: class vs class inside one school: `school_id`, `grade`, `subject`, `starts_at`–`ends_at`,
+`status` (`on` / `cancelled`), `paper_id` (built when set up), `created_by`. **`class_contest_classes`**: which
+classes take part. `paper_attempts.class_id` records the class a pupil played for.
 **`weekly_challenges`**: the Weekly Challenge paper for each class each week: `week_start`, `grade` (together the
 key), `paper_id`. Attempts are ordinary `paper_attempts`, with the child's school at the time.
 Also: `teachers.school_id` (the school a teacher speaks for) and `schools.open_to_challenges`.

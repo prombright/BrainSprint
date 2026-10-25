@@ -312,7 +312,7 @@ const average = (a: ClassDetail['assignments'][number]) => {
         ❓ Suggest questions
       </button>
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="competing ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openCompete">
-        ⚔️ School vs School
+        ⚔️ Competitions
       </button>
       <button class="rounded-2xl px-3 py-2.5 text-left font-semibold" :class="wholeSchool ? 'bg-ink text-white' : 'bg-white hover:bg-white/70'" @click="openWholeSchool">
         🏫 Whole school

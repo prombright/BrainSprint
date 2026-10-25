@@ -13,6 +13,7 @@ require __DIR__ . '/teachers.php';
 require __DIR__ . '/bank.php';
 require __DIR__ . '/facts.php';
 require __DIR__ . '/compete.php';
+require __DIR__ . '/classcontests.php';
 
 header('Content-Type: application/json; charset=utf-8');
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
@@ -448,6 +449,26 @@ try {
             $mm[2] === 'cancel' ? cancelContest($t, (int)$mm[1]) : answerContest($t, (int)$mm[1], $mm[2] === 'accept');
             respond(200, teacherContests($t));
 
+        // ---------- class vs class inside a school (teachers) ----------
+
+        case $route === 'GET /teacher/class-contests':
+            $t = requireTeacher();
+            $grade = in_array($_GET['grade'] ?? '', GRADES, true) ? $_GET['grade'] : null;
+            respond(200, ['contests' => teacherClassContests($t), 'classes' => $grade && $t['school_id'] ? schoolClassesOfYear($t, $grade) : []]);
+
+        case $route === 'POST /teacher/class-contests':
+            $t = requireTeacher();
+            createClassContest($t, body());
+            respond(201, ['contests' => teacherClassContests($t)]);
+
+        case $method === 'GET' && (bool)preg_match('#^/teacher/class-contests/(\d+)$#', $path, $mm):
+            respond(200, teacherClassContestDetail(requireTeacher(), (int)$mm[1]));
+
+        case $method === 'POST' && (bool)preg_match('#^/teacher/class-contests/(\d+)/cancel$#', $path, $mm):
+            $t = requireTeacher();
+            cancelClassContest($t, (int)$mm[1]);
+            respond(200, ['contests' => teacherClassContests($t)]);
+
         case $route === 'GET /teacher/school':
             $t = requireTeacher();
             respond(200, ['school' => teacherSchoolRow($t), 'subjects' => array_combine(GRADES, array_map(fn ($g) => paperSubjects($g), GRADES))]);
@@ -472,11 +493,18 @@ try {
 
         case $route === 'GET /compete':
             $p = requirePlayer();
-            respond(200, ['contests' => playerContests($p), 'duels' => myDuels($p), 'duel_subjects' => paperSubjects($p['grade'], DUEL_QUESTIONS)]);
+            respond(200, ['contests' => playerContests($p), 'class_contests' => playerClassContests($p), 'duels' => myDuels($p), 'duel_subjects' => paperSubjects($p['grade'], DUEL_QUESTIONS)]);
 
         // what is waiting for this child (the dot on Home's Compete button)
         case $route === 'GET /compete/waiting':
             respond(200, competeWaiting(requirePlayer()));
+
+        case $method === 'GET' && (bool)preg_match('#^/class-contests/(\d+)$#', $path, $mm):
+            respond(200, playerClassContest(requirePlayer(), (int)$mm[1]));
+
+        case $method === 'POST' && (bool)preg_match('#^/class-contests/(\d+)/(start|submit)$#', $path, $mm):
+            $p = requirePlayer();
+            respond(200, $mm[2] === 'start' ? startClassContest($p, (int)$mm[1]) : submitClassContest($p, (int)$mm[1], body()['picks'] ?? null));
 
         case $method === 'GET' && (bool)preg_match('#^/contests/(\d+)$#', $path, $mm):
             respond(200, playerContest(requirePlayer(), (int)$mm[1]));
