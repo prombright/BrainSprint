@@ -2,9 +2,9 @@
 // Competitions marked by the server: school-vs-school contests and duels between friends.
 //
 // The Paper Engine: the server builds every paper itself (from the Paper Pool made by the game's
-// generators, plus approved bank questions), keeps the answers, times each child with its own
-// clock, marks the answers and only shows them once the competition is over. No phone, child or
-// teacher sees an answer before then.
+// generators, approved bank questions, and the Fact Engine's questions from approved fact sets),
+// keeps the answers, times each child with its own clock, marks the answers and only shows them
+// once the competition is over. No phone, child or teacher sees an answer before then.
 declare(strict_types=1);
 
 const CONTEST_QUESTIONS = 20;
@@ -36,6 +36,8 @@ function paperPool(string $subject, string $grade): array
         $b = questionOut($r);
         $pool[] = ['level' => $b['level'], 'topic' => $b['topic'], 'prompt' => $b['prompt'], 'speak' => $b['speak'] ?: $b['prompt'], 'choices' => $b['choices'], 'answer' => $b['answer'], 'steps' => $b['steps']];
     }
+    // questions the Fact Engine makes from the class's approved fact sets (Science, SST …)
+    array_push($pool, ...factPoolQuestions($subject, $grade));
     return $cache[$key] = $pool;
 }
 

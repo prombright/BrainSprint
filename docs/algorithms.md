@@ -630,8 +630,11 @@ on the computer and saves **300 different questions per level** for every genera
 Top–P7, English Top–P3): 14,400 questions, about 3 MB, in `api/pool/<subject>-<grade>.json`. Every question is checked
 on the way (answer among the choices, no repeated choices). The folder is not reachable from the web (`.htaccess` only
 exposes `index.php`) and is not stored in git, because each release makes it fresh. Approved **bank** questions are
-added to a class's pool from the database at paper time. (Fact-set questions are not in the pool yet: the Fact
-Engine runs only in TypeScript.)
+added to a class's pool from the database at paper time, and so are the questions of the class's approved
+[fact sets](#14-fact-engine-fact-table-question-generation): `factPoolQuestions()` in `api/facts.php` is a PHP copy
+of the Fact Engine with the same rules (every fair pattern × row, wrong choices from other rows, the ambiguity guard,
+plus a few "Which is NOT …" questions per NOT pattern). A test checks that the server makes exactly the questions the
+app makes. This is what lets Science and SST into competitions once their content is approved.
 
 **Step 2: building a paper (`buildPaper`).**
 

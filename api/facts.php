@@ -130,3 +130,97 @@ function adminFactSets(): array
         return $o;
     }, q('SELECT * FROM fact_sets ORDER BY status, subject, name')->fetchAll());
 }
+
+// ---------- the Fact Engine on the server, for competition papers ----------
+// The same rules as frontend/src/game/facts.ts (factQuestion, ambiguous, notQuestion), so a paper's
+// Science and SST questions are exactly the kind children meet in practice. Papers are built by the
+// server because the phone must never hold competition answers.
+
+function factFill(string $text, array $row): string
+{
+    return preg_replace_callback('/\{([a-z_]+)\}/', fn ($m) => $row[$m[1]] ?? $m[0], $text);
+}
+
+function factSentence(string $s): string
+{
+    return mb_strtoupper(mb_substr($s, 0, 1)) . mb_substr($s, 1);
+}
+
+function factSameOn(array $a, array $b, array $cols): bool
+{
+    foreach ($cols as $c) if (mb_strtolower($a[$c]) !== mb_strtolower($b[$c])) return false;
+    return true;
+}
+
+/** Another row fills the gaps the same way but has a different answer: the question would have two right answers. */
+function factAmbiguous(array $rows, int $i, array $t, array $gaps): bool
+{
+    foreach ($rows as $j => $o) {
+        if ($j !== $i && factSameOn($o, $rows[$i], $gaps) && mb_strtolower($o[$t['answer']]) !== mb_strtolower($rows[$i][$t['answer']])) return true;
+    }
+    return false;
+}
+
+function factBuilt(array $set, array $row, string $prompt, string $answer, array $wrong, string $level): array
+{
+    return [
+        'level' => $level, 'topic' => mb_strtolower($set['name']), 'prompt' => $prompt, 'speak' => $prompt,
+        'choices' => array_merge([$answer], $wrong), 'answer' => $answer,
+        'steps' => $set['explain'] ? [factSentence(factFill($set['explain'], $row))] : [],
+    ];
+}
+
+/**
+ * Every fair question the approved fact sets of a class can ask (each pattern × each row), with
+ * wrong choices taken from other rows, plus a few "Which is NOT …" questions per NOT pattern.
+ */
+function factPoolQuestions(string $subject, string $grade): array
+{
+    $out = [];
+    foreach (publishedFactSets($subject, $grade) as $set) {
+        $rows = array_map(fn ($r) => array_combine($set['columns'], $r), $set['rows']);
+        foreach ($set['templates'] as $t) {
+            if (!empty($t['not'])) {
+                for ($k = 0; $k < 6; $k++) if ($q = factNotQuestion($set, $rows, $t)) $out[] = $q;
+                continue;
+            }
+            preg_match_all('/\{([a-z_]+)\}/', $t['ask'], $m);
+            $gaps = $m[1];
+            foreach ($rows as $i => $row) {
+                if (factAmbiguous($rows, $i, $t, $gaps)) continue;
+                $right = $row[$t['answer']];
+                $wrong = [];
+                foreach ($rows as $o) {
+                    if (!factSameOn($o, $row, $gaps) && mb_strtolower($o[$t['answer']]) !== mb_strtolower($right)) $wrong[mb_strtolower($o[$t['answer']])] = $o[$t['answer']];
+                }
+                if (!$wrong) continue;
+                $wrong = array_values($wrong);
+                shuffle($wrong);
+                $out[] = factBuilt($set, $row, factSentence(factFill($t['ask'], $row)), $right, array_slice($wrong, 0, 3), $t['level']);
+            }
+        }
+    }
+    return $out;
+}
+
+/** "Which of these is NOT a mammal?": three answers from one group and one from another. */
+function factNotQuestion(array $set, array $rows, array $t): ?array
+{
+    $group = $t['not'];
+    $groups = [];
+    foreach ($rows as $r) $groups[mb_strtolower($r[$group])][] = $r;
+    $big = array_values(array_filter($groups, fn ($g) => count(array_unique(array_map(fn ($r) => mb_strtolower($r[$t['answer']]), $g))) >= 3));
+    if (!$big) return null;
+    $inGroup = $big[array_rand($big)];
+    $g = mb_strtolower($inGroup[0][$group]);
+    $inside = array_map(fn ($r) => mb_strtolower($r[$t['answer']]), $inGroup);
+    // the odd one out must not also belong to the group under another row
+    $outside = array_values(array_filter($rows, fn ($r) => mb_strtolower($r[$group]) !== $g && !in_array(mb_strtolower($r[$t['answer']]), $inside, true)));
+    if (!$outside) return null;
+    $odd = $outside[array_rand($outside)];
+    $three = [];
+    foreach ($inGroup as $r) $three[mb_strtolower($r[$t['answer']])] = $r[$t['answer']];
+    $three = array_values($three);
+    shuffle($three);
+    return factBuilt($set, $odd, factSentence(factFill($t['ask'], $inGroup[0])), $odd[$t['answer']], array_slice($three, 0, 3), $t['level']);
+}

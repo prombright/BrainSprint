@@ -338,7 +338,7 @@ checked **Paper Pool** from them, and the server draws papers from that pool plu
 before it ends, so no school can be tipped off; and the same generators as the game keep questions at the right level.
 
 **Consequences.** The pool is a few MB, made fresh for every release (not kept in git); a release must be built
-before competitions work on a new server. Fact-set questions aren't in papers yet. Whether children play supervised
+before competitions work on a new server. Fact-set questions reach papers through a PHP copy of the Fact Engine, which must change whenever `facts.ts` does. Whether children play supervised
 in class is up to the school; a fixed window during lessons is the advice in the teacher screen.
 
 ## ADR-021: A school's score is the average of its best 10
