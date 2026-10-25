@@ -1,0 +1,727 @@
+[
+  {
+    "subject": "science",
+    "name": "food values",
+    "grade_from": "P4",
+    "grade_to": "P7",
+    "columns": [
+      "food",
+      "food_value",
+      "use"
+    ],
+    "templates": [
+      {
+        "ask": "Which food value is found mostly in {food}?",
+        "answer": "food_value",
+        "level": "simple"
+      },
+      {
+        "ask": "Foods rich in {food_value} help the body to ___",
+        "answer": "use",
+        "level": "medium"
+      },
+      {
+        "ask": "Which of these foods is NOT rich in {food_value}?",
+        "answer": "food",
+        "level": "hard",
+        "not": "food_value"
+      }
+    ],
+    "explain": "{food}: rich in {food_value}, which help the body to {use}.",
+    "rows": [
+      [
+        "beans",
+        "proteins",
+        "grow and repair itself"
+      ],
+      [
+        "fish",
+        "proteins",
+        "grow and repair itself"
+      ],
+      [
+        "meat",
+        "proteins",
+        "grow and repair itself"
+      ],
+      [
+        "eggs",
+        "proteins",
+        "grow and repair itself"
+      ],
+      [
+        "cassava",
+        "carbohydrates",
+        "get energy"
+      ],
+      [
+        "rice",
+        "carbohydrates",
+        "get energy"
+      ],
+      [
+        "posho",
+        "carbohydrates",
+        "get energy"
+      ],
+      [
+        "sweet potatoes",
+        "carbohydrates",
+        "get energy"
+      ],
+      [
+        "matooke",
+        "carbohydrates",
+        "get energy"
+      ],
+      [
+        "butter",
+        "fats and oils",
+        "keep warm"
+      ],
+      [
+        "cooking oil",
+        "fats and oils",
+        "keep warm"
+      ],
+      [
+        "ghee",
+        "fats and oils",
+        "keep warm"
+      ],
+      [
+        "oranges",
+        "vitamins",
+        "fight diseases"
+      ],
+      [
+        "mangoes",
+        "vitamins",
+        "fight diseases"
+      ],
+      [
+        "carrots",
+        "vitamins",
+        "fight diseases"
+      ],
+      [
+        "pawpaws",
+        "vitamins",
+        "fight diseases"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "deficiency diseases",
+    "grade_from": "P5",
+    "grade_to": "P7",
+    "columns": [
+      "disease",
+      "lack",
+      "sign"
+    ],
+    "templates": [
+      {
+        "ask": "{disease} is caused by a lack of ___",
+        "answer": "lack",
+        "level": "simple"
+      },
+      {
+        "ask": "A lack of {lack} in the diet causes which disease?",
+        "answer": "disease",
+        "level": "medium"
+      },
+      {
+        "ask": "Which deficiency disease has this sign: {sign}?",
+        "answer": "disease",
+        "level": "hard"
+      }
+    ],
+    "explain": "{disease} is caused by a lack of {lack}. A sign of it: {sign}.",
+    "rows": [
+      [
+        "kwashiorkor",
+        "proteins",
+        "a swollen stomach and reddish-brown hair"
+      ],
+      [
+        "marasmus",
+        "all food values",
+        "a very thin body, like skin and bones"
+      ],
+      [
+        "rickets",
+        "vitamin D",
+        "bow-shaped legs"
+      ],
+      [
+        "scurvy",
+        "vitamin C",
+        "bleeding gums"
+      ],
+      [
+        "night blindness",
+        "vitamin A",
+        "poor sight in dim light"
+      ],
+      [
+        "anaemia",
+        "iron",
+        "pale skin and tiredness"
+      ],
+      [
+        "goitre",
+        "iodine",
+        "a swelling in the front of the neck"
+      ],
+      [
+        "beriberi",
+        "vitamin B1",
+        "weak and painful muscles"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "sense organs",
+    "grade_from": "P4",
+    "grade_to": "P5",
+    "columns": [
+      "organ",
+      "sense"
+    ],
+    "templates": [
+      {
+        "ask": "Which sense organ do we use for {sense}?",
+        "answer": "organ",
+        "level": "simple"
+      },
+      {
+        "ask": "Which sense do we use {organ} for?",
+        "answer": "sense",
+        "level": "medium"
+      }
+    ],
+    "explain": "We use {organ} for {sense}.",
+    "rows": [
+      [
+        "the eyes",
+        "sight"
+      ],
+      [
+        "the ears",
+        "hearing"
+      ],
+      [
+        "the nose",
+        "smell"
+      ],
+      [
+        "the tongue",
+        "taste"
+      ],
+      [
+        "the skin",
+        "touch"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "states of matter",
+    "grade_from": "P4",
+    "grade_to": "P5",
+    "columns": [
+      "thing",
+      "state"
+    ],
+    "templates": [
+      {
+        "ask": "Which state of matter is {thing}?",
+        "answer": "state",
+        "level": "simple"
+      },
+      {
+        "ask": "Which of these is NOT {state}?",
+        "answer": "thing",
+        "level": "medium",
+        "not": "state"
+      }
+    ],
+    "explain": "{thing} is {state}.",
+    "rows": [
+      [
+        "water",
+        "a liquid"
+      ],
+      [
+        "milk",
+        "a liquid"
+      ],
+      [
+        "paraffin",
+        "a liquid"
+      ],
+      [
+        "cooking oil",
+        "a liquid"
+      ],
+      [
+        "a stone",
+        "a solid"
+      ],
+      [
+        "wood",
+        "a solid"
+      ],
+      [
+        "salt",
+        "a solid"
+      ],
+      [
+        "a book",
+        "a solid"
+      ],
+      [
+        "air",
+        "a gas"
+      ],
+      [
+        "oxygen",
+        "a gas"
+      ],
+      [
+        "carbon dioxide",
+        "a gas"
+      ],
+      [
+        "steam",
+        "a gas"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "measuring instruments",
+    "grade_from": "P4",
+    "grade_to": "P6",
+    "columns": [
+      "instrument",
+      "measures"
+    ],
+    "templates": [
+      {
+        "ask": "What does {instrument} measure?",
+        "answer": "measures",
+        "level": "simple"
+      },
+      {
+        "ask": "Which instrument is used to measure {measures}?",
+        "answer": "instrument",
+        "level": "medium"
+      }
+    ],
+    "explain": "{instrument} measures {measures}.",
+    "rows": [
+      [
+        "a thermometer",
+        "temperature"
+      ],
+      [
+        "a rain gauge",
+        "rainfall"
+      ],
+      [
+        "a wind vane",
+        "wind direction"
+      ],
+      [
+        "an anemometer",
+        "wind speed"
+      ],
+      [
+        "a barometer",
+        "air pressure"
+      ],
+      [
+        "a hygrometer",
+        "humidity"
+      ],
+      [
+        "a ruler",
+        "length"
+      ],
+      [
+        "a measuring cylinder",
+        "the volume of liquids"
+      ],
+      [
+        "a weighing scale",
+        "weight"
+      ],
+      [
+        "a stopwatch",
+        "time"
+      ],
+      [
+        "a sunshine recorder",
+        "hours of sunshine"
+      ]
+    ]
+  },
+  {
+    "subject": "science",
+    "name": "immunisable diseases",
+    "grade_from": "P5",
+    "grade_to": "P7",
+    "columns": [
+      "disease",
+      "vaccine"
+    ],
+    "templates": [
+      {
+        "ask": "Which vaccine protects a child against {disease}?",
+        "answer": "vaccine",
+        "level": "medium"
+      },
+      {
+        "ask": "Which of these diseases is NOT prevented by {vaccine}?",
+        "answer": "disease",
+        "level": "hard",
+        "not": "vaccine"
+      }
+    ],
+    "explain": "{vaccine} protects a child against {disease}.",
+    "rows": [
+      [
+        "tuberculosis",
+        "BCG"
+      ],
+      [
+        "polio",
+        "polio vaccine"
+      ],
+      [
+        "measles",
+        "measles vaccine"
+      ],
+      [
+        "diphtheria",
+        "DPT"
+      ],
+      [
+        "whooping cough",
+        "DPT"
+      ],
+      [
+        "tetanus",
+        "DPT"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "national parks",
+    "grade_from": "P4",
+    "grade_to": "P7",
+    "columns": [
+      "park",
+      "known_for"
+    ],
+    "templates": [
+      {
+        "ask": "Which national park is famous for {known_for}?",
+        "answer": "park",
+        "level": "medium"
+      },
+      {
+        "ask": "What is {park} famous for?",
+        "answer": "known_for",
+        "level": "hard"
+      }
+    ],
+    "explain": "{park} is famous for {known_for}.",
+    "rows": [
+      [
+        "Bwindi Impenetrable National Park",
+        "mountain gorillas"
+      ],
+      [
+        "Kibale National Park",
+        "chimpanzees"
+      ],
+      [
+        "Queen Elizabeth National Park",
+        "tree-climbing lions"
+      ],
+      [
+        "Murchison Falls National Park",
+        "the waterfall on the River Nile"
+      ],
+      [
+        "Lake Mburo National Park",
+        "impalas"
+      ],
+      [
+        "Kidepo Valley National Park",
+        "ostriches and cheetahs"
+      ],
+      [
+        "Rwenzori Mountains National Park",
+        "snow-capped mountains"
+      ],
+      [
+        "Semuliki National Park",
+        "the Sempaya hot springs"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "minerals of uganda",
+    "grade_from": "P5",
+    "grade_to": "P7",
+    "columns": [
+      "mineral",
+      "place",
+      "use"
+    ],
+    "templates": [
+      {
+        "ask": "Where in Uganda is {mineral} got from?",
+        "answer": "place",
+        "level": "medium"
+      },
+      {
+        "ask": "Which mineral is got from {place}?",
+        "answer": "mineral",
+        "level": "medium"
+      },
+      {
+        "ask": "Which mineral is used for {use}?",
+        "answer": "mineral",
+        "level": "hard"
+      }
+    ],
+    "explain": "{mineral}: got from {place}, used for {use}.",
+    "rows": [
+      [
+        "copper",
+        "Kilembe",
+        "making electric wires"
+      ],
+      [
+        "salt",
+        "Lake Katwe",
+        "flavouring food"
+      ],
+      [
+        "limestone",
+        "Hima",
+        "making cement"
+      ],
+      [
+        "phosphates",
+        "Sukulu hills in Tororo",
+        "making fertilisers"
+      ],
+      [
+        "oil",
+        "the Albertine region near Lake Albert",
+        "making petrol and diesel"
+      ],
+      [
+        "tin",
+        "Kikagati",
+        "coating tins and cans"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "events in uganda's history",
+    "grade_from": "P5",
+    "grade_to": "P7",
+    "columns": [
+      "event",
+      "year"
+    ],
+    "templates": [
+      {
+        "ask": "In which year did this happen: {event}?",
+        "answer": "year",
+        "level": "hard"
+      },
+      {
+        "ask": "What happened in Uganda in {year}?",
+        "answer": "event",
+        "level": "pro"
+      }
+    ],
+    "explain": "In {year}, {event}.",
+    "rows": [
+      [
+        "the Uganda Martyrs were killed at Namugongo",
+        "1886"
+      ],
+      [
+        "Uganda became a British protectorate",
+        "1894"
+      ],
+      [
+        "the Buganda Agreement was signed",
+        "1900"
+      ],
+      [
+        "Uganda got independence",
+        "1962"
+      ],
+      [
+        "Uganda became a republic",
+        "1963"
+      ],
+      [
+        "Idi Amin took power",
+        "1971"
+      ],
+      [
+        "Idi Amin was overthrown",
+        "1979"
+      ],
+      [
+        "the NRM government came to power",
+        "1986"
+      ],
+      [
+        "Uganda's present constitution was made",
+        "1995"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "african capital cities",
+    "grade_from": "P6",
+    "grade_to": "P7",
+    "columns": [
+      "country",
+      "capital"
+    ],
+    "templates": [
+      {
+        "ask": "What is the capital city of {country}?",
+        "answer": "capital",
+        "level": "medium"
+      },
+      {
+        "ask": "{capital} is the capital city of which country?",
+        "answer": "country",
+        "level": "hard"
+      }
+    ],
+    "explain": "The capital city of {country} is {capital}.",
+    "rows": [
+      [
+        "Ethiopia",
+        "Addis Ababa"
+      ],
+      [
+        "Somalia",
+        "Mogadishu"
+      ],
+      [
+        "Sudan",
+        "Khartoum"
+      ],
+      [
+        "Egypt",
+        "Cairo"
+      ],
+      [
+        "Nigeria",
+        "Abuja"
+      ],
+      [
+        "Ghana",
+        "Accra"
+      ],
+      [
+        "Zambia",
+        "Lusaka"
+      ],
+      [
+        "Malawi",
+        "Lilongwe"
+      ],
+      [
+        "Zimbabwe",
+        "Harare"
+      ],
+      [
+        "Mozambique",
+        "Maputo"
+      ],
+      [
+        "Kenya",
+        "Nairobi"
+      ],
+      [
+        "Rwanda",
+        "Kigali"
+      ]
+    ]
+  },
+  {
+    "subject": "sst",
+    "name": "compass directions",
+    "grade_from": "P4",
+    "grade_to": "P5",
+    "columns": [
+      "direction",
+      "opposite"
+    ],
+    "templates": [
+      {
+        "ask": "What is the opposite direction of {direction}?",
+        "answer": "opposite",
+        "level": "simple"
+      }
+    ],
+    "explain": "The opposite of {direction} is {opposite}.",
+    "rows": [
+      [
+        "north",
+        "south"
+      ],
+      [
+        "south",
+        "north"
+      ],
+      [
+        "east",
+        "west"
+      ],
+      [
+        "west",
+        "east"
+      ],
+      [
+        "north-east",
+        "south-west"
+      ],
+      [
+        "south-west",
+        "north-east"
+      ],
+      [
+        "north-west",
+        "south-east"
+      ],
+      [
+        "south-east",
+        "north-west"
+      ]
+    ]
+  }
+]

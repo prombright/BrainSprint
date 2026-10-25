@@ -55,9 +55,10 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
 - [ ] **Going live.** Put the site and API on a real domain over HTTPS. *Needs:* a domain and cPanel hosting with
   PHP 8.2+ and MySQL; then follow `DEPLOY.md` (everything else is ready). Until then the Android APK points at a
   placeholder API address and its online features show "connect to the internet".
-- [ ] **Review and approve the starter content**: the 8 fact sets in `content/fact-sets-starter.json` and the 40
-  questions in `content/starter-science-sst.csv` are drafts. *Needs:* a qualified teacher's time; then more fact sets
-  (each one is a big content win).
+- [ ] **Review and approve the Science and SST content.** 19 fact tables (`content/fact-sets-starter.json` and
+  `content/fact-sets-draft-2.json`) and 40 questions (`content/starter-science-sst.csv`), all drafts. Approving them
+  opens Science and SST for P4–P7 (about 160–210 Science and 70–110 SST questions per class) and for competitions.
+  *Needs:* a qualified teacher's time; `content/README.md` lists what to check in each table.
 - [ ] **AI-drafted questions with review.** Use an AI model to draft bank questions and steps in bulk, which then
   arrive as drafts for human approval ([ADR-009](decisions.md#adr-009-question-bank-with-human-approval)). *Needs:* an
   AI provider account and budget, a prompt aligned to the Uganda syllabus, and reviewers' time.
