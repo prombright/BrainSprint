@@ -62,6 +62,7 @@ Capacitor app, and the live domain). The website itself is same-origin.
 | GET | `/contests/{id}` | One contest: my attempt; while live, how many of my school have handed in; once finished, both schools' scores, top 10, my places and my paper with answers | Only pupils of the two schools' classes for that year |
 | POST | `/contests/{id}/start` | Start (or resume) my paper: questions **without answers**, `seconds_left`, `deadline` | Only while live; one go; resuming keeps the deadline |
 | POST | `/contests/{id}/submit` | Hand in `{picks: [answer or null, …]}`; returns `{correct, total, seconds}` | Once; up to 2 min after the deadline |
+| GET | `/compete/waiting` | How many competitions wait for me: duels I haven't played, live school contests I can play, and this week's paper; `total` is the number on Home's Compete button | Light: builds nothing, works out no results |
 | GET | `/weekly` | This week's Weekly Challenge for my class (built on first request) with my attempt and how many have played; last week's with my place, top 10, top schools and my paper with answers | |
 | POST | `/weekly/start`, `/weekly/submit` | As for contests | One go a week; open Monday to Sunday |
 | POST | `/duels` | Challenge a friend `{friend_id, subject}` (`subject` may be `mixed`); the paper is built now | Friends only; 5 a day; one open duel per pair |

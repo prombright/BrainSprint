@@ -474,6 +474,10 @@ try {
             $p = requirePlayer();
             respond(200, ['contests' => playerContests($p), 'duels' => myDuels($p), 'duel_subjects' => paperSubjects($p['grade'], DUEL_QUESTIONS)]);
 
+        // what is waiting for this child (the dot on Home's Compete button)
+        case $route === 'GET /compete/waiting':
+            respond(200, competeWaiting(requirePlayer()));
+
         case $method === 'GET' && (bool)preg_match('#^/contests/(\d+)$#', $path, $mm):
             respond(200, playerContest(requirePlayer(), (int)$mm[1]));
 

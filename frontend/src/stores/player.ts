@@ -351,6 +351,21 @@ export const usePlayer = defineStore('player', () => {
     }
   }
 
+  // ---------- competitions waiting for the child (the dot on Home's Compete button) ----------
+  const competeWaiting = ref(0)
+  let waitingAt = 0
+  async function loadWaiting() {
+    if (Date.now() - waitingAt < refreshEvery(30_000, 10 * 60_000)) return
+    try {
+      const a = await ensureRegistered()
+      if (!a) return
+      competeWaiting.value = (await api.waiting(a)).total
+      waitingAt = Date.now()
+    } catch {
+      // offline: keep the last count
+    }
+  }
+
   // ---------- who's playing now ----------
 
   const presence = ref<Presence | null>(null)
@@ -488,6 +503,8 @@ export const usePlayer = defineStore('player', () => {
     startPresence,
     recordRace,
     recordBoss,
+    competeWaiting,
+    loadWaiting,
     noteAnswer,
     recordMock,
     loadMocks,

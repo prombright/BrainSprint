@@ -36,6 +36,7 @@ const TILE_COLOURS: Record<string, string> = {
 onMounted(() => {
   player.loadLeague()
   player.loadClasses()
+  player.loadWaiting()
   player.setActivity(null)
 })
 </script>
@@ -149,9 +150,14 @@ onMounted(() => {
             <span class="animate-float text-5xl">{{ boss.emoji }}</span>
             <span class="text-lg leading-tight md:text-lg">Boss Battle</span>
           </button>
-          <button class="btn-chunky flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
+          <button class="btn-chunky relative flex flex-col items-center gap-1 bg-gradient-to-b from-sprint to-cherry py-5 text-white hover:brightness-110 md:py-5" @click="router.push('/compete')">
             <span class="text-5xl">⚔️</span>
             <span class="text-lg leading-tight md:text-lg">Compete</span>
+            <span
+              v-if="player.competeWaiting"
+              class="absolute top-1.5 right-1.5 grid min-w-6 place-items-center rounded-full bg-white px-1.5 text-sm font-bold text-cherry"
+              :aria-label="`${player.competeWaiting} waiting for you`"
+            >{{ player.competeWaiting }}</span>
           </button>
           <button class="btn-chunky relative flex flex-col items-center gap-1 bg-white py-5 hover:bg-cream md:hidden" @click="router.push('/progress')">
             <span class="text-5xl">🎯</span>

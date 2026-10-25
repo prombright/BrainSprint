@@ -333,6 +333,7 @@ export const api = {
   newDuel: (player: PlayerAuth, friendId: number, subject: string) => call<Duel>('POST', '/duels', { player, body: { friend_id: friendId, subject } }),
   declineDuel: (player: PlayerAuth, id: number) => call<{ duels: Duel[] }>('POST', `/duels/${id}/decline`, { player }),
   weekly: (player: PlayerAuth) => call<WeeklyData>('GET', '/weekly', { player }),
+  waiting: (player: PlayerAuth) => call<{ duels: number; contests: number; weekly: boolean; total: number }>('GET', '/compete/waiting', { player }),
   startPaper: (player: PlayerAuth, kind: PaperKind, id: number) => call<PaperStart>('POST', `${paperPath(kind, id)}/start`, { player }),
   submitPaper: (player: PlayerAuth, kind: PaperKind, id: number, picks: (string | null)[]) =>
     call<{ correct: number }>('POST', `${paperPath(kind, id)}/submit`, { player, body: { picks } }),

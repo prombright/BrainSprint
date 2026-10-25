@@ -656,3 +656,31 @@ function submitWeekly(array $me, mixed $picks): array
     }
     respond(422, ['error' => 'Start the paper first']);
 }
+
+/**
+ * How many competitions are waiting for this child, for the dot on the Home screen. Kept light:
+ * no results are worked out and no paper is built.
+ */
+function competeWaiting(array $me): array
+{
+    $now = at(time());
+    $duels = (int)q(
+        "SELECT COUNT(*) FROM duels d WHERE (d.challenger_id = ? OR d.opponent_id = ?) AND d.status = 'open' AND d.expires_at > ?
+         AND NOT EXISTS (SELECT 1 FROM paper_attempts a WHERE a.paper_id = d.paper_id AND a.player_id = ? AND a.submitted_at IS NOT NULL)",
+        [$me['id'], $me['id'], $now, $me['id']],
+    )->fetchColumn();
+    $contests = (int)q(
+        "SELECT COUNT(DISTINCT sc.id) FROM school_contests sc
+         JOIN classes c ON c.grade = sc.grade JOIN class_members m ON m.class_id = c.id AND m.player_id = ?
+         JOIN teachers t ON t.id = c.teacher_id AND t.school_id IN (sc.school_a, sc.school_b)
+         WHERE sc.status = 'accepted' AND sc.starts_at <= ? AND sc.ends_at > ?
+         AND NOT EXISTS (SELECT 1 FROM paper_attempts a WHERE a.paper_id = sc.paper_id AND a.player_id = ? AND a.submitted_at IS NOT NULL)",
+        [$me['id'], $now, $now, $me['id']],
+    )->fetchColumn();
+    $paperId = q('SELECT paper_id FROM weekly_challenges WHERE week_start = ? AND grade = ?', [weekStart(), $me['grade']])->fetchColumn();
+    $weekly = $paperId
+        ? !q('SELECT 1 FROM paper_attempts WHERE paper_id = ? AND player_id = ? AND submitted_at IS NOT NULL', [$paperId, $me['id']])->fetchColumn()
+        // no paper yet this week: it is waiting if the class has generated questions (made on first open)
+        : (bool)glob(__DIR__ . "/pool/*-{$me['grade']}.json");
+    return ['duels' => $duels, 'contests' => $contests, 'weekly' => $weekly, 'total' => $duels + $contests + ($weekly ? 1 : 0)];
+}
