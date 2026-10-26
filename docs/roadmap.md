@@ -62,6 +62,8 @@ Each item: what it is, and what is needed (accounts, money or decisions) to fini
   `content/fact-sets-draft-2.json`) and 40 questions (`content/starter-science-sst.csv`), all drafts. Approving them
   opens Science and SST for P4–P7 (about 160–210 Science and 70–110 SST questions per class) and for competitions.
   *Needs:* a qualified teacher's time; `content/README.md` lists what to check in each table.
+  **Note (26 Oct 2026):** on the development computer all of it was approved *for testing only*, so the owner could try
+  Science and SST on a phone. It is still unchecked: a teacher must review it before it is approved on a live server.
 - [ ] **AI-drafted questions with review.** Use an AI model to draft bank questions and steps in bulk, which then
   arrive as drafts for human approval ([ADR-009](decisions.md#adr-009-question-bank-with-human-approval)). *Needs:* an
   AI provider account and budget, a prompt aligned to the Uganda syllabus, and reviewers' time.
