@@ -201,6 +201,16 @@ in Progress and in the teacher's homework form).
 
 ---
 
+**No repeats for each child** (`lib/seen.ts`): every question a child is given is remembered as a 32-bit FNV-1a
+fingerprint (about 7 characters) of its key, up to the last 20,000, in its own storage slot (`bsk:seen`). New
+sprints skip anything in it while the level still has fresh questions. In a test of 1,000 questions (two days of
+very heavy play) at one level, Maths P1–P7 and English P1–P7 never repeated a question.
+
+**Difficulty that follows the child** (`adaptNext` in `SprintView.vue`): in a normal sprint, three right answers in a
+row swap the next question for a **Challenge** from the level above (with 5 extra seconds); two wrong in a row swap
+it for a **Warm-up** from the level below. At most four swaps per sprint. Boss fights, homework, practice and races
+are never changed, so they stay fair and as set.
+
 ## 3. Scoring and stars
 
 ### Points for one answer

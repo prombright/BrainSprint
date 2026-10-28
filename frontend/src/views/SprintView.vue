@@ -186,12 +186,41 @@ function readSteps() {
   if (current.value?.steps) speak(`The answer is ${current.value.answer}. ${current.value.steps.join('. ')}`)
 }
 
+// ---------- difficulty that follows the child ----------
+// In a normal sprint, three right answers in a row bring a Challenge question from the level above,
+// and two wrong in a row bring a Warm-up from the level below. Boss fights, homework, practice and
+// races stay exactly as set. At most four swaps a sprint, so a sprint stays mostly at its level.
+const ORDER = LEVELS.map((l) => l.id)
+const adaptive = !isBoss && !isPractice && !isHomework && !raceId
+let swaps = 0
+function adaptNext() {
+  if (!adaptive || swaps >= 4 || index.value + 1 >= questions.value.length) return
+  const at = ORDER.indexOf(level)
+  const last3 = answers.value.slice(-3)
+  const last2 = answers.value.slice(-2)
+  let to: Level | null = null
+  let tag: 'challenge' | 'warmup' = 'challenge'
+  if (last3.length === 3 && last3.every((a) => a.correct) && at < ORDER.length - 1) to = ORDER[at + 1]
+  else if (last2.length === 2 && last2.every((a) => !a.correct) && at > 0) {
+    to = ORDER[at - 1]
+    tag = 'warmup'
+  }
+  if (!to) return
+  const inSprint = new Set(questions.value.map((q) => q.key))
+  const [q] = makeSprint(subject, grade, to, 1, { has: (k) => inSprint.has(k) || seenQuestions.has(k) })
+  if (!q) return
+  questions.value[index.value + 1] = { ...q, adapt: tag, extraSeconds: (q.extraSeconds ?? 0) + (tag === 'challenge' ? 5 : 0) }
+  player.rememberQuestions([q.key])
+  swaps++
+}
+
 function next() {
   showSteps.value = false
   stopSpeaking()
   if (player.outOfPower) finish(true)
   else if (bossOver.value) finish()
   else if (index.value + 1 < questions.value.length) {
+    adaptNext()
     index.value++
     startQuestion()
   } else finish()
@@ -404,6 +433,11 @@ onBeforeUnmount(() => {
           🔊
         </button>
 
+        <span
+          v-if="current.adapt"
+          class="absolute top-4 left-4 rounded-full px-3 py-1 text-sm font-semibold"
+          :class="current.adapt === 'challenge' ? 'bg-sun text-ink' : 'bg-leaf/15 text-leaf'"
+        >{{ current.adapt === 'challenge' ? 'Challenge' : 'Warm-up' }}</span>
         <div v-if="pictures.length" class="mt-8 mb-4 flex max-w-xs flex-wrap justify-center gap-1" :class="pictures.length === 1 ? 'text-8xl' : pictures.length > 12 ? 'text-3xl' : 'text-4xl'">
           <span v-for="(p, i) in pictures" :key="i">{{ p }}</span>
         </div>
