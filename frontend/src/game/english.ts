@@ -58,7 +58,50 @@ const PICTURES: { word: string; emoji: string; easy?: true }[] = [
   { word: 'clock', emoji: '🕐' },
   { word: 'banana', emoji: '🍌' },
   { word: 'orange', emoji: '🍊' },
+  { word: 'van', emoji: '🚐', easy: true },
+  { word: 'bag', emoji: '👜', easy: true },
+  { word: 'rat', emoji: '🐀', easy: true },
+  { word: 'ox', emoji: '🐂', easy: true },
+  { word: 'ear', emoji: '👂', easy: true },
+  { word: 'eye', emoji: '👁️' },
+  { word: 'nose', emoji: '👃' },
+  { word: 'hand', emoji: '✋' },
+  { word: 'rabbit', emoji: '🐰' },
+  { word: 'monkey', emoji: '🐒' },
+  { word: 'elephant', emoji: '🐘' },
+  { word: 'mouse', emoji: '🐭' },
+  { word: 'owl', emoji: '🦉' },
+  { word: 'crab', emoji: '🦀' },
+  { word: 'snail', emoji: '🐌' },
+  { word: 'whale', emoji: '🐳' },
+  { word: 'tomato', emoji: '🍅' },
+  { word: 'carrot', emoji: '🥕' },
+  { word: 'lemon', emoji: '🍋' },
+  { word: 'pineapple', emoji: '🍍' },
+  { word: 'bread', emoji: '🍞' },
+  { word: 'maize', emoji: '🌽' },
+  { word: 'bicycle', emoji: '🚲' },
+  { word: 'train', emoji: '🚆' },
+  { word: 'plane', emoji: '✈️' },
+  { word: 'ship', emoji: '🚢' },
+  { word: 'umbrella', emoji: '☂️' },
+  { word: 'leaf', emoji: '🍃' },
+  { word: 'rose', emoji: '🌹' },
+  { word: 'cloud', emoji: '☁️' },
+  { word: 'gift', emoji: '🎁' },
+  { word: 'queen', emoji: '👸' },
+  { word: 'king', emoji: '🤴' },
+  { word: 'watch', emoji: '⌚' },
 ]
+
+// groups for "which one is NOT …": a word belongs to one group only, so the odd one out is clear
+const GROUPS: { name: string; ask: string; words: string[] }[] = [
+  { name: 'animals', ask: 'an animal', words: ['cat', 'dog', 'hen', 'pig', 'cow', 'goat', 'duck', 'frog', 'lion', 'horse', 'sheep', 'snake', 'rabbit', 'monkey', 'elephant', 'mouse', 'ox', 'rat'] },
+  { name: 'fruits', ask: 'a fruit', words: ['mango', 'banana', 'orange', 'apple', 'pineapple', 'lemon'] },
+  { name: 'transport', ask: 'something we travel in', words: ['bus', 'car', 'boat', 'bicycle', 'train', 'plane', 'ship', 'van'] },
+  { name: 'body', ask: 'a part of the body', words: ['eye', 'ear', 'nose', 'hand'] },
+]
+const emojiOf = (word: string) => PICTURES.find((p) => p.word === word)?.emoji ?? ''
 const EASY = PICTURES.filter((p) => p.easy)
 
 const RHYMES = [
@@ -359,6 +402,42 @@ const verbForm = (tenses: ('every day' | 'yesterday' | 'now')[]): Make => () => 
   }
 }
 
+/** "Look at the ___." under a picture: read the word that names it. */
+const seeSentence = (words: typeof PICTURES): Make => () => {
+  const p = pick(words)
+  const frame = pick(['Look at the ___.', 'This is my ___.', 'Point to the ___.', 'Where is the ___?'])
+  const sameLength = words.filter((w) => w.word.length === p.word.length).map((w) => w.word)
+  return {
+    topic: 'reading',
+    prompt: frame,
+    speak: `${frame.replace('___', 'blank')} Which word goes with the picture?`,
+    visual: p.emoji,
+    answer: p.word,
+    choices: choicesFrom(p.word, sameLength.length >= 4 ? sameLength : words.map((w) => w.word)),
+    steps: [`The picture shows a ${p.word}: ${frame.replace('___', p.word)}`],
+  }
+}
+
+/** "Which one is NOT an animal?" with pictures: three from one group, one from another. */
+const oddOneOut = (): Make => () => {
+  const g = pick(GROUPS)
+  const others = GROUPS.filter((x) => x !== g)
+  const three = shuffle(g.words).slice(0, 3)
+  // people ride horses and oxen pull carts, so they are never the odd one out among things we travel in
+  const odd = pick(pick(others).words.filter((w) => !(g.name === 'transport' && ['horse', 'ox'].includes(w))))
+  const label = (w: string) => `${emojiOf(w)} ${w}`.trim()
+  const choices = shuffle([...three, odd].map(label))
+  return {
+    topic: 'sorting words',
+    prompt: `Which one is NOT ${g.ask}?`,
+    speak: `Which one is not ${g.ask}? ${three.concat(odd).join(', ')}.`,
+    answer: label(odd),
+    choices,
+    variant: [...choices].sort().join('|'),
+    steps: [`${three.join(', ')}: each is ${g.ask}. Not this one: ${label(odd)}.`],
+  }
+}
+
 // ---------- what each class + level practises ----------
 
 export const ENGLISH_PLAN: Plan = {
@@ -367,19 +446,19 @@ export const ENGLISH_PLAN: Plan = {
   TOP: {
     simple: [letterFind(true, true)],
     medium: [caseMatch(), letterFind(false, true)],
-    hard: [firstSound(EASY)],
-    pro: [pictureWord(EASY), firstSound(EASY)],
+    hard: [firstSound(EASY), oddOneOut()],
+    pro: [pictureWord(EASY), firstSound(EASY), oddOneOut()],
   },
   P1: {
-    simple: [firstSound(PICTURES), letterFind(false, false)],
-    medium: [pictureWord(EASY)],
-    hard: [missingLetter(3), pictureWord(PICTURES)],
-    pro: [rhyme(), missingLetter(4)],
+    simple: [firstSound(PICTURES), letterFind(false, false), seeSentence(EASY)],
+    medium: [pictureWord(EASY), pictureWord(PICTURES), seeSentence(PICTURES), oddOneOut()],
+    hard: [missingLetter(3), pictureWord(PICTURES), seeSentence(PICTURES)],
+    pro: [rhyme(), missingLetter(4), oddOneOut()],
   },
   P2: {
-    simple: [missingLetter(5), pictureWord(PICTURES)],
+    simple: [missingLetter(5), pictureWord(PICTURES), oddOneOut(), verbSentence(['now'])],
     medium: [rhyme(), plural(['regular']), verbSentence(['every day'])],
-    hard: [opposite('easy'), aOrAn(), plural(['regular', 'es'])],
+    hard: [opposite('easy'), aOrAn(), plural(['regular', 'es']), verbSentence(['yesterday'])],
     pro: [isAre(), verbForm(['every day']), spelling(SPELLING_EASY), verbSentence(['every day', 'now'])],
   },
   P3: {
