@@ -14,6 +14,7 @@ import { api } from '../lib/api'
 import { shuffle } from '../game/random'
 import { BOSS_HEARTS, BOSS_HP, BOSS_QUESTIONS, bossThisWeek, capFirst } from '../game/boss'
 import { buildPractice } from '../game/practice'
+import { seenQuestions } from '../lib/seen'
 
 const route = useRoute()
 const router = useRouter()
@@ -242,7 +243,8 @@ function quit() {
 }
 
 onMounted(() => {
-  const recent = new Set(player.state.recent)
+  // questions this child has seen (the last 20,000), so a sprint gives new ones
+  const recent = seenQuestions
   const allLevels = LEVELS.map((l) => l.id)
   questions.value = isHomework
     ? practiceTopic

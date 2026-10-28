@@ -83,7 +83,7 @@ export const questionKey = (q: Omit<Question, 'key'>) => `${q.prompt}|${q.big ??
  * A fresh sprint of `count` questions with no repeats inside the sprint, and avoiding
  * `recent` (questions this child saw in earlier sprints) whenever the level has enough variety.
  */
-export function makeSprint(subject: Subject, grade: Grade, level: Level, count = 10, recent: ReadonlySet<string> = new Set()): Question[] {
+export function makeSprint(subject: Subject, grade: Grade, level: Level, count = 10, recent: { has(key: string): boolean } = new Set<string>()): Question[] {
   const makers = PLANS[subject]?.[grade]?.[level]
   if (!makers) return []
   const out: Question[] = []

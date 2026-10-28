@@ -1,4 +1,5 @@
 import { refreshEvery } from '../lib/settings'
+import { seenQuestions } from '../lib/seen'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import type { Grade, Level, Question, SprintResult, Subject } from '../game/types'
@@ -42,7 +43,7 @@ interface Saved {
   daily: { date: string; count: number }
   pass: { plan: PassPlan; expiresAt: string } | null
   pending: SprintPayload[]
-  recent: string[] // keys of recently seen questions, so new sprints avoid repeats
+  recent: string[] // (old) full keys of recent questions; moved into lib/seen.ts on first load
   power: { value: number; at: number } // Brain Power at time `at`; refills from there
   summary: PlayerSummary | null // last known XP / league tier from the server
   dayStreak: { count: number; last: string | null } // days in a row with at least one sprint
@@ -257,11 +258,15 @@ export const usePlayer = defineStore('player', () => {
     sync()
   }
 
-  const RECENT_LIMIT = 800 // roughly a full day of play
+  // questions already seen now live in lib/seen.ts (fingerprints of the last 20,000);
+  // the old list of full keys is moved over once and then emptied
+  if (state.value.recent.length) {
+    seenQuestions.add(state.value.recent)
+    state.value.recent = []
+  }
 
   function rememberQuestions(keys: string[]) {
-    const s = state.value
-    s.recent = [...s.recent.filter((k) => !keys.includes(k)), ...keys].slice(-RECENT_LIMIT)
+    seenQuestions.add(keys)
   }
 
   // Placeholder until MTN MoMo / Airtel Money are wired in: only used by the dev-only button.
