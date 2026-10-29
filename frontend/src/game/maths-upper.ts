@@ -4,6 +4,7 @@ import type { Question } from './types.ts'
 import type { Make, Plan } from './sprint.ts'
 import { choicesFrom, fmt, gcd, lcm, pick, randInt, shuffle } from './random.ts'
 import { NAMES, numeric, roman, romanSteps } from './mathskit.ts'
+import { barGraph, circleDrawn, clockFace, rectangleDrawn, triangleDrawn, vennRead } from './maths-pictures.ts'
 
 type Q = Omit<Question, 'key'>
 
@@ -845,29 +846,33 @@ const coins = (): Make => () => {
 
 // ---------- what each class + level practises ----------
 
+// word problems on a syllabus topic are filed under that topic (so reports show "area and perimeter",
+// not "word problem"); puzzles like heads-and-legs stay as word problems
+const topic = (name: string, make: Make): Make => () => ({ ...make(), topic: name })
+
 export const UPPER_MATHS_PLAN: Plan = {
   P4: {
-    simple: [addSubBig(4), placeValueBig(4), romanBig(50), conversions(), pattern(false)],
-    medium: [longMul(99, 9), longDiv(9, 99), rounding(), sets(false), fracSameDen()],
-    hard: [equivalent(), perimeterArea(false), clock24(), romanBig(100), primePick(), pattern(false)],
-    pro: [fractionOfQty(), profitLoss(), angles(false), mean(false), proportion(), thinkOfNumber()],
+    simple: [addSubBig(4), placeValueBig(4), romanBig(50), conversions(), pattern(false), barGraph(false)],
+    medium: [longMul(99, 9), longDiv(9, 99), rounding(), sets(false), fracSameDen(), rectangleDrawn('both', 15)],
+    hard: [equivalent(), topic('area and perimeter', perimeterArea(false)), clock24(), romanBig(100), primePick(), pattern(false), vennRead(false)],
+    pro: [fractionOfQty(), topic('profit and loss', profitLoss()), angles(false), mean(false), topic('proportion', proportion()), thinkOfNumber(), clockFace('five'), barGraph(false)],
   },
   P5: {
     simple: [addSubBig(5), placeValueBig(5), longMul(999, 9), conversions(), factors()],
-    medium: [lcmHcf(30), fracDiffDen(), decimals(1), mixedImproper(), sets(false), pattern(false)],
-    hard: [perimeterArea(true), fracToDecimal(), integers(10), angles(false), clock24(), romanBig(500), thinkOfNumber()],
-    pro: [percentOf(), duration(), profitLoss(), mean(false), fractionOfQty(), algebraSimplify(), pattern(true), consecutive()],
+    medium: [lcmHcf(30), fracDiffDen(), decimals(1), mixedImproper(), sets(false), pattern(false), vennRead(false)],
+    hard: [topic('area and perimeter', perimeterArea(true)), fracToDecimal(), integers(10), angles(false), clock24(), romanBig(500), thinkOfNumber(), triangleDrawn(), rectangleDrawn('area', 20)],
+    pro: [percentOf(), duration(), topic('profit and loss', profitLoss()), mean(false), fractionOfQty(), algebraSimplify(), pattern(true), consecutive(), barGraph(true)],
   },
   P6: {
     simple: [squares(), divisibility(), lcmHcf(48), decimals(2), integers(20)],
-    medium: [fracMulDiv(), toPercent(), solve(false, false), bases(), finite(), algebraSimplify(), pattern(true)],
-    hard: [ratioShare(), speed(), volume(), sets(true), angles(true), substitution(), headsLegs(), ages()],
-    pro: [discount(), solve(true, false), mean(true), duration(), romanBig(2000), bases(), handshakes(), digitPuzzle(), coins()],
+    medium: [fracMulDiv(), toPercent(), solve(false, false), bases(), finite(), algebraSimplify(), pattern(true), barGraph(true)],
+    hard: [topic('ratio', ratioShare()), topic('speed distance and time', speed()), topic('volume', volume()), sets(true), angles(true), substitution(), headsLegs(), ages(), vennRead(true)],
+    pro: [topic('discount', discount()), solve(true, false), mean(true), duration(), romanBig(2000), bases(), handshakes(), digitPuzzle(), coins(), triangleDrawn()],
   },
   P7: {
-    simple: [squares(), fracMulDiv(), percentOf(), integers(30), lcmHcf(60), bases()],
-    medium: [solve(true, false), ratioShare(), proportion(), finite(), substitution(), sets(true), pattern(true)],
-    hard: [circle(), volume(), speed(), angles(true), discount(), mean(true), headsLegs(), ages(), consecutive()],
-    pro: [simpleInterest(), solve(true, true), circle(), sets(true), profitLoss(), fracDiffDen(), duration(), handshakes(), digitPuzzle(), coins(), thinkOfNumber()],
+    simple: [squares(), fracMulDiv(), percentOf(), integers(30), lcmHcf(60), bases(), barGraph(true)],
+    medium: [solve(true, false), topic('ratio', ratioShare()), topic('proportion', proportion()), finite(), substitution(), sets(true), pattern(true), vennRead(true)],
+    hard: [topic('circles', circle()), topic('volume', volume()), topic('speed distance and time', speed()), angles(true), topic('discount', discount()), mean(true), headsLegs(), ages(), consecutive(), circleDrawn()],
+    pro: [topic('simple interest', simpleInterest()), solve(true, true), topic('circles', circle()), sets(true), topic('profit and loss', profitLoss()), fracDiffDen(), duration(), handshakes(), digitPuzzle(), coins(), thinkOfNumber(), circleDrawn(), vennRead(true)],
   },
 }

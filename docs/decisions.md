@@ -418,3 +418,18 @@ easier for young readers, and less waiting between taps.
 **Consequences.** New screens should use the tokens (`bg-sprint`, `bg-ink`, `text-ocean` …), not new colours, and
 should not put emojis in front of words. The four subject tiles are green, black, deep green and white with a green
 edge, so they still look different from one another.
+
+## ADR-026: Diagrams are data, and Pro maths is typed
+
+**Context.** Many PLE maths questions are about a picture (a clock, a shape with measurements, a Venn diagram, a
+graph), and PLE answers are written, not picked. Emoji pictures and four choices could not match that.
+
+**Decision.** A question can carry a `diagram` described as data, which the app draws as SVG. At Maths Pro and in
+PLE mocks, number answers are typed on a fixed keypad; elsewhere children still choose (young children need choices,
+and competitions are marked by the server against a choice).
+
+**Why.** Data is tiny, works offline, travels through the server unchanged for competition papers, can be checked by
+the same tests as text, and draws crisply in light and dark. Typing removes guessing where it matters most.
+
+**Consequences.** A new kind of diagram needs a few lines in `QuestionDiagram.vue`. Typed answers accept the same
+number written differently, but fractions must be in simplest form, matching PLE marking.

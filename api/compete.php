@@ -70,7 +70,7 @@ function buildPaper(string $subject, string $grade, int $count, int $minutes): i
             $n = (int)round($want * $share);
             foreach ($byLevel[$level] ?? [] as $q) {
                 if ($n <= 0 || count($take) >= $want) break;
-                $k = $q['prompt'] . '|' . ($q['big'] ?? '') . '|' . ($q['visual'] ?? '') . '|' . ($q['passage'] ?? '') . '|' . ($q['variant'] ?? '');
+                $k = $q['prompt'] . '|' . ($q['big'] ?? '') . '|' . ($q['visual'] ?? '') . '|' . ($q['passage'] ?? '') . '|' . ($q['variant'] ?? '') . '|' . json_encode($q['diagram'] ?? null);
                 if (isset($seen[$k])) continue;
                 $seen[$k] = true;
                 $take[] = $q + ['subject' => $s];
@@ -80,7 +80,7 @@ function buildPaper(string $subject, string $grade, int $count, int $minutes): i
         // a level that ran short is filled from any level
         foreach ($pool as $q) {
             if (count($take) >= $want) break;
-            $k = $q['prompt'] . '|' . ($q['big'] ?? '') . '|' . ($q['visual'] ?? '') . '|' . ($q['passage'] ?? '') . '|' . ($q['variant'] ?? '');
+            $k = $q['prompt'] . '|' . ($q['big'] ?? '') . '|' . ($q['visual'] ?? '') . '|' . ($q['passage'] ?? '') . '|' . ($q['variant'] ?? '') . '|' . json_encode($q['diagram'] ?? null);
             if (isset($seen[$k])) continue;
             $seen[$k] = true;
             $take[] = $q + ['subject' => $s];
@@ -110,6 +110,7 @@ function paperQuestions(array $paper, bool $withAnswers): array
         if (!empty($q['visual'])) $out['visual'] = $q['visual'];
         if (!empty($q['big'])) $out['big'] = $q['big'];
         if (!empty($q['passage'])) $out['passage'] = $q['passage'];
+        if (!empty($q['diagram'])) $out['diagram'] = $q['diagram'];
         if ($withAnswers) $out += ['answer' => $q['answer'], 'steps' => $q['steps'] ?? []];
         return $out;
     }, $paper['questions']);

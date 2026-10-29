@@ -5,6 +5,7 @@ import type { Make, Plan } from './sprint.ts'
 import { choicesFrom, fmt, numberChoices, pick, randInt, shuffle } from './random.ts'
 import { NAMES, numeric, roman, romanSteps } from './mathskit.ts'
 import { UPPER_MATHS_PLAN } from './maths-upper.ts'
+import { clockFace, fractionShaded, numberLine, rectangleDrawn, shapeName, shapeSides } from './maths-pictures.ts'
 
 const THINGS = [
   { emoji: '🥭', one: 'mango', many: 'mangoes' },
@@ -397,28 +398,28 @@ const smallRoman = (max: number): Make => () => {
 
 const LOWER: Plan = {
   TOP: {
-    simple: [count(1, 5), numberNext(6), tapNumber(10, true), pickGroup(5)],
-    medium: [count(3, 10), numberNext(10), tapNumber(10, false), pickGroup(8), bigger(10)],
+    simple: [count(1, 5), numberNext(6), tapNumber(10, true), pickGroup(5), shapeName(['circle', 'square', 'triangle'])],
+    medium: [count(3, 10), numberNext(10), tapNumber(10, false), pickGroup(8), bigger(10), shapeName(['circle', 'square', 'triangle', 'rectangle', 'oval'])],
     hard: [pictureAdd(3, 2), count(5, 10), numberNext(10), pickGroup(10), bigger(20)],
     pro: [pictureAdd(5, 5), pictureTakeAway(6), numberNext(15), tapNumber(20, false), bigger(20)],
   },
   P1: {
-    simple: [count(3, 10), add(5, 5), numberNext(20), pictureAdd(5, 5), tapNumber(50, false), bigger(50)],
-    medium: [add(10, 10), sub(20), compare(20), numberNext(50), skipCount([2, 5, 10], 5), missingAdd(10), pictureTakeAway(10), wordAdd(10)],
-    hard: [add(30, 20), sub(50), missingAdd(20), wordAdd(20), tensOnes()],
-    pro: [add(60, 39), sub(99), missingAdd(50), missingSub(30), wordAdd(50), wordSub(50), tensOnes()],
+    simple: [count(3, 10), add(5, 5), numberNext(20), pictureAdd(5, 5), tapNumber(50, false), bigger(50), numberLine(10, 1)],
+    medium: [add(10, 10), sub(20), compare(20), numberNext(50), skipCount([2, 5, 10], 5), missingAdd(10), pictureTakeAway(10), wordAdd(10), shapeName(['circle', 'square', 'triangle', 'rectangle', 'oval']), clockFace('oclock')],
+    hard: [add(30, 20), sub(50), missingAdd(20), wordAdd(20), tensOnes(), numberLine(20, 1)],
+    pro: [add(60, 39), sub(99), missingAdd(50), missingSub(30), wordAdd(50), wordSub(50), tensOnes(), shapeSides(['triangle', 'square', 'rectangle'])],
   },
   P2: {
-    simple: [add(20, 20), sub(40), compare(100), oddEven(50), skipCount([2, 5, 10], 10)],
-    medium: [add(50, 49), sub(99), mul([2, 5, 10], 10), clock(false), tensOnes()],
-    hard: [mul([2, 3, 4, 5, 10], 10), missingAdd(100), wordSub(99), wordMul([2, 5, 10]), clock(true)],
-    pro: [div([2, 5, 10], 10), mul([2, 3, 4, 5, 10], 10), money([100, 200, 500], 5), wordShare([2, 5, 10]), missingSub(99)],
+    simple: [add(20, 20), sub(40), compare(100), oddEven(50), skipCount([2, 5, 10], 10), clockFace('half'), clockFace('oclock')],
+    medium: [add(50, 49), sub(99), mul([2, 5, 10], 10), clock(false), tensOnes(), fractionShaded(4)],
+    hard: [mul([2, 3, 4, 5, 10], 10), missingAdd(100), wordSub(99), wordMul([2, 5, 10]), clock(true), numberLine(100, 10)],
+    pro: [div([2, 5, 10], 10), mul([2, 3, 4, 5, 10], 10), money([100, 200, 500], 5), wordShare([2, 5, 10]), missingSub(99), shapeSides(['triangle', 'square', 'rectangle', 'pentagon', 'hexagon'])],
   },
   P3: {
-    simple: [add(99, 99), sub(99), mul([2, 3, 4, 5], 10), oddEven(200), clock(true)],
-    medium: [add(500, 400, 100), sub(999, 100), mul([2, 3, 4, 5, 6, 7, 8, 9, 10], 10), placeValue(), measures()],
-    hard: [div([2, 3, 4, 5, 6, 10], 10), wordMul([3, 4, 5, 6]), money([100, 200, 500], 6), fractionOf([2, 4], 40), smallRoman(20), change([500, 1000])],
-    pro: [mixed(), fractionOf([2, 3, 4], 90), money([200, 500, 1000], 9), missingMul([3, 4, 6, 7, 8, 9]), wordShare([3, 4, 5, 6]), change([1000, 2000, 5000])],
+    simple: [add(99, 99), sub(99), mul([2, 3, 4, 5], 10), oddEven(200), clock(true), clockFace('quarter')],
+    medium: [add(500, 400, 100), sub(999, 100), mul([2, 3, 4, 5, 6, 7, 8, 9, 10], 10), placeValue(), measures(), fractionShaded(8)],
+    hard: [div([2, 3, 4, 5, 6, 10], 10), wordMul([3, 4, 5, 6]), money([100, 200, 500], 6), fractionOf([2, 4], 40), smallRoman(20), change([500, 1000]), rectangleDrawn('perimeter', 12)],
+    pro: [mixed(), fractionOf([2, 3, 4], 90), money([200, 500, 1000], 9), missingMul([3, 4, 6, 7, 8, 9]), wordShare([3, 4, 5, 6]), change([1000, 2000, 5000]), clockFace('five')],
   },
 }
 

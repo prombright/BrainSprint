@@ -12,6 +12,7 @@ export interface Question {
   passage?: string // a short story shown above the question (reading comprehension)
   variant?: string // tells apart questions with the same wording (e.g. different pairs to match); not shown
   adapt?: 'challenge' | 'warmup' // swapped in during a sprint: from the level above (challenge) or below (warm-up)
+  diagram?: Diagram // a picture the app draws (components/QuestionDiagram.vue)
   choices: string[]
   answer: string
   extraSeconds?: number // longer questions (word problems) get more time
@@ -74,3 +75,15 @@ export const SUBJECTS: { id: Subject; label: string; emoji: string }[] = [
   { id: 'science', label: 'Science', emoji: '🔬' },
   { id: 'sst', label: 'SST', emoji: '🌍' },
 ]
+
+/** A diagram described as data; the app draws it, so it is crisp at any size and never repeats. */
+export type Diagram =
+  | { kind: 'clock'; h: number; m: number }
+  | { kind: 'shape'; shape: 'circle' | 'square' | 'triangle' | 'rectangle' | 'oval' | 'pentagon' | 'hexagon' }
+  | { kind: 'rect'; w: string; h: string }
+  | { kind: 'triangle'; base: string; height: string }
+  | { kind: 'circle'; label: string; line: 'radius' | 'diameter' }
+  | { kind: 'venn'; a: string; b: string; onlyA: string; both: string; onlyB: string; outside?: string }
+  | { kind: 'bars'; title: string; labels: string[]; values: number[]; step: number }
+  | { kind: 'numberline'; from: number; to: number; step: number; mark: number }
+  | { kind: 'fraction'; parts: number; shaded: number; style: 'circle' | 'bar' }

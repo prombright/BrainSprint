@@ -77,7 +77,7 @@ export function registerBank(subject: Subject, grade: Grade, questions: BankQues
   bankSubjects.add(key)
 }
 
-export const questionKey = (q: Omit<Question, 'key'>) => `${q.prompt}|${q.big ?? ''}|${q.visual ?? ''}${q.passage ? `|${q.passage}` : ''}${q.variant ? `|${q.variant}` : ''}`
+export const questionKey = (q: Omit<Question, 'key'>) => `${q.prompt}|${q.big ?? ''}|${q.visual ?? ''}${q.passage ? `|${q.passage}` : ''}${q.variant ? `|${q.variant}` : ''}${q.diagram ? `|${JSON.stringify(q.diagram)}` : ''}`
 
 /**
  * A fresh sprint of `count` questions with no repeats inside the sprint, and avoiding

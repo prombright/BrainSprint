@@ -151,6 +151,23 @@ wrong choices break the rule ("goed", "biger", "do'nt"), and where a broken form
 "goodly", "beauteous"), the wrong choices are written by hand. Words that could also be right are kept out of the
 wrong choices (a swarm or a colony of bees; a crowd of pupils). Each question explains its rule.
 
+**Maths with diagrams** (`maths-pictures.ts`, drawn by `components/QuestionDiagram.vue`): a question can carry a
+`diagram` described as data (a clock at 4:35, a hexagon, a 12 cm by 7 cm rectangle, a Venn diagram, a bar graph,
+a number line, a shaded fraction), and the app draws it in the theme colours. The numbers are random, so these never
+run out either: reading clock faces (o'clock to any five minutes), naming shapes and counting sides (Top Class–P2),
+number lines, "what fraction is shaded?" (never offering an equivalent fraction as a wrong choice), area and perimeter
+of drawn rectangles and triangles, circles with π = 22/7 (radius a multiple of 7 so answers are whole numbers), Venn
+diagrams (only A, both, altogether, neither, and a hidden region found from the total), and bar graphs (most,
+fewest, how many more, total, mean). The diagram is part of the question's fingerprint, and competition papers carry
+it too. Word problems on syllabus topics (area and perimeter, volume, circles, ratio, proportion, speed distance and
+time, profit and loss, discount, simple interest) are filed under those topics, not "word problem".
+
+**Typed answers** (`game/answers.ts`): at Maths **Pro** (and Challenge questions from Pro) and in PLE mocks, an
+answer that is a number, decimal, fraction or time is typed on a keypad instead of chosen, as in the real exam. The
+keypad always has the same keys (0–9 . / : −), so it hints at nothing. 1,250 and 1250 count the same, as do 0.5 and
+0.50; fractions must be in simplest form. Typed questions get 8 extra seconds. Competition papers stay
+multiple-choice, because the server marks a choice.
+
 **English in sentences** (`english-sentences.ts`, P2–P7): choose the right verb form inside a real sentence. 33
 verbs (every form: base, -s, past, -ing, past participle) × 26 kinds of person (Amina, he, the children, I, you …) ×
 sentence endings × eight patterns (every day, yesterday, now, tomorrow, did not, has/have, the helping verb is/are/am,

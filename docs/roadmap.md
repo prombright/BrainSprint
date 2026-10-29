@@ -39,6 +39,8 @@
 - **No repeats for each child**: the app remembers the last 20,000 questions a child saw (as short fingerprints in
   `lib/seen.ts`) and avoids them. More objects to count and picture words, "Look at the ___" reading and odd-one-out
   for Top Class–P2. In a 1,000-question test, P1+ Maths and English never repeated a question.
+- **Maths finishing touches**: diagrams drawn by the app (clocks, shapes, number lines, shaded fractions, rectangles,
+  triangles, circles, Venn diagrams, bar graphs); syllabus topics shown by name; typed answers at Pro and in PLE mocks.
 - **Difficulty that follows the child**: Challenge questions from the level above after three right in a row, Warm-ups
   from the level below after two wrong.
 - **Science and SST in competitions**: the server makes fact-set questions with the same rules as the app, so any

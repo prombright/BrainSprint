@@ -15,6 +15,8 @@ import { shuffle } from '../game/random'
 import { BOSS_HEARTS, BOSS_HP, BOSS_QUESTIONS, bossThisWeek, capFirst } from '../game/boss'
 import { buildPractice } from '../game/practice'
 import { seenQuestions } from '../lib/seen'
+import { sameAnswer, typable } from '../game/answers'
+import QuestionDiagram from '../components/QuestionDiagram.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -113,8 +115,26 @@ const bossHp = computed(() => Math.max(0, BOSS_HP - score.value))
 const bossHit = ref(0) // changes on every hit, to replay the shake
 const bossOver = computed(() => isBoss && (bossHp.value <= 0 || hearts.value <= 0))
 // nursery children get double time; word problems get extra
+// ---------- typed answers: Maths at Pro (and Challenge questions from Pro) are typed, not chosen ----------
+const typing = computed(
+  () => subject === 'maths' && !!current.value && (level === 'pro' || (level === 'hard' && current.value.adapt === 'challenge')) && typable(current.value.answer),
+)
+const typed = ref('')
+const KEYS = ['7', '8', '9', '⌫', '4', '5', '6', '/', '1', '2', '3', ':', '0', '.', '-', 'OK']
+function press(k: string) {
+  if (phase.value !== 'question') return
+  if (k === 'OK') return submitTyped()
+  if (k === '⌫') typed.value = typed.value.slice(0, -1)
+  else if (typed.value.length < 12) typed.value += k
+}
+function submitTyped() {
+  if (!typed.value || !current.value) return
+  // a right answer however it is written (1,250 or 1250) counts as the answer itself
+  answer(sameAnswer(typed.value, current.value.answer) ? current.value.answer : typed.value)
+}
+
 const msAllowed = computed(() => {
-  const base = (levelInfo?.seconds ?? 15) + (current.value?.extraSeconds ?? 0)
+  const base = (levelInfo?.seconds ?? 15) + (current.value?.extraSeconds ?? 0) + (typing.value ? 8 : 0)
   return base * (grade === 'TOP' ? 2 : 1) * 1000
 })
 const timePct = computed(() => (msAllowed.value ? (msLeft.value / msAllowed.value) * 100 : 0))
@@ -138,6 +158,7 @@ let timer: number | undefined
 let startedAt = 0
 
 function startQuestion() {
+  typed.value = ''
   phase.value = 'question'
   picked.value = null
   startedAt = performance.now()
@@ -322,6 +343,15 @@ function onKey(e: KeyboardEvent) {
     return
   }
   if (phase.value !== 'question' || !current.value) return
+  if (typing.value) {
+    // the keyboard types into the answer box
+    const k = e.key === 'Backspace' ? '⌫' : e.key === 'Enter' ? 'OK' : /^[0-9./:-]$/.test(e.key) ? e.key : null
+    if (k) {
+      e.preventDefault()
+      press(k)
+    }
+    return
+  }
   const i = '1234'.indexOf(e.key) >= 0 ? '1234'.indexOf(e.key) : 'abcd'.indexOf(e.key.toLowerCase())
   const choice = current.value.choices[i]
   if (choice !== undefined) {
@@ -441,6 +471,7 @@ onBeforeUnmount(() => {
         <div v-if="pictures.length" class="mt-8 mb-4 flex max-w-xs flex-wrap justify-center gap-1" :class="pictures.length === 1 ? 'text-8xl' : pictures.length > 12 ? 'text-3xl' : 'text-4xl'">
           <span v-for="(p, i) in pictures" :key="i">{{ p }}</span>
         </div>
+        <QuestionDiagram v-if="current.diagram" :d="current.diagram" />
         <p v-if="current.big" class="mb-3 font-medium tracking-wide text-ocean" :class="current.big.length <= 2 ? 'text-8xl' : 'text-5xl'">{{ current.big }}</p>
         <!-- reading comprehension: the story, then a smaller question -->
         <p v-if="current.passage" class="mt-10 mb-4 rounded-2xl bg-cream p-4 text-left text-lg leading-relaxed font-normal">{{ current.passage }}</p>
@@ -474,6 +505,31 @@ onBeforeUnmount(() => {
         <button class="btn-chunky mt-3 w-full bg-ocean py-4 text-2xl text-white" @click="next">
           Got it! Next ➜ <span class="hidden text-sm font-normal opacity-70 pointer-fine:inline">(Enter)</span>
         </button>
+      </div>
+
+      <!-- typed answer: a number keypad (the same keys every time, so it gives nothing away) -->
+      <div v-else-if="typing" class="mt-4">
+        <div
+          class="mb-3 flex min-h-16 items-center justify-center rounded-2xl border-2 px-4 text-4xl font-bold tabular-nums"
+          :class="phase === 'question' ? 'border-ink/15 bg-white' : picked === current.answer ? 'border-leaf bg-leaf/15 text-leaf' : 'border-cherry bg-cherry/10 text-cherry'"
+          aria-live="polite"
+        >
+          {{ typed || (phase === 'question' ? ' ' : '–') }}
+        </div>
+        <p v-if="phase !== 'question' && picked !== current.answer" class="mb-2 text-center text-lg font-bold text-leaf">Answer: {{ current.answer }}</p>
+        <div class="grid grid-cols-4 gap-2">
+          <button
+            v-for="k in KEYS"
+            :key="k"
+            class="btn-chunky py-4 text-2xl tabular-nums"
+            :class="k === 'OK' ? 'bg-sprint text-white' : k === '⌫' ? 'bg-ink/10' : 'bg-white'"
+            :disabled="phase !== 'question' || (k === 'OK' && !typed)"
+            :aria-label="k === '⌫' ? 'Delete' : k === 'OK' ? 'Check my answer' : k"
+            @click="press(k)"
+          >
+            {{ k === '-' ? '−' : k }}
+          </button>
+        </div>
       </div>
 
       <div v-else class="mt-4 grid grid-cols-2 gap-4">

@@ -225,6 +225,7 @@ export interface PaperQuestion {
   visual?: string
   big?: string
   passage?: string // a story to read first
+  diagram?: import('../game/types').Diagram // a picture the app draws
   choices: string[]
   answer?: string // only once the results are out
   steps?: string[]

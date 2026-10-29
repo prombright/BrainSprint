@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // A marked paper: each question with the child's answer next to the right one, and the working.
 import type { PaperQuestion } from '../lib/api'
+import QuestionDiagram from './QuestionDiagram.vue'
 
 defineProps<{ questions: PaperQuestion[] }>()
 </script>
@@ -11,6 +12,7 @@ defineProps<{ questions: PaperQuestion[] }>()
     <ol class="space-y-3">
       <li v-for="(q, i) in questions" :key="i" class="rounded-2xl p-3" :class="q.picked === q.answer ? 'bg-leaf/10' : 'bg-cherry/5'">
         <p v-if="q.passage" class="mb-1 text-sm text-ink/70 italic">{{ q.passage }}</p>
+        <QuestionDiagram v-if="q.diagram" :d="q.diagram" class="!mt-1 max-w-[14rem]" />
         <p class="font-semibold">
           {{ i + 1 }}. <span v-if="q.visual && q.visual.length <= 12">{{ q.visual }} </span>{{ q.prompt }} <span v-if="q.big" class="text-ocean">{{ q.big }}</span>
         </p>

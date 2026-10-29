@@ -33,6 +33,7 @@ for (const subject of ['maths', 'english'] as const) {
           ...(q.visual ? { visual: q.visual } : {}),
           ...(q.big ? { big: q.big } : {}),
           ...(q.passage ? { passage: q.passage } : {}),
+          ...(q.diagram ? { diagram: q.diagram } : {}),
           choices: q.choices,
           answer: q.answer,
           ...(q.steps?.length ? { steps: q.steps } : {}),

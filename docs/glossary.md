@@ -54,6 +54,8 @@
 | **Duel** | A one-to-one competition between two friends on the same server-marked paper. |
 | **Window** | The time a school competition is open; each child also has 15 minutes from when they start. |
 | **Weekly Challenge** | One server-marked paper a week for every child in a class across Uganda; places, top schools and answers on Monday. |
+| **Diagram** | A picture described as data on a question (clock, shape, Venn diagram, bar graph …) that the app draws. |
+| **Typed answer** | At Maths Pro and in PLE mocks: a number answer typed on the keypad instead of chosen. |
 | **Passage** | A short story shown above a reading-comprehension question; part of what makes the question unique. |
 | **Matched pairs** | "Which is correctly matched?": four pairs from a fact table, exactly one true. Made automatically for every table. |
 | **Class contest** | Class vs class inside one school: 2–6 classes of the same year, one server-marked paper, scored on each class's best 10. |

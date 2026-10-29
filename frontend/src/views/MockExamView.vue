@@ -9,6 +9,8 @@ import { canSpeak, speak, stopSpeaking } from '../lib/speech'
 import { playFinish } from '../lib/sounds'
 import { pauseMusic, resumeMusic } from '../lib/music'
 import { usePlayer } from '../stores/player'
+import { sameAnswer, typable } from '../game/answers'
+import QuestionDiagram from '../components/QuestionDiagram.vue'
 
 const player = usePlayer()
 const router = useRouter()
@@ -29,10 +31,13 @@ const clock = computed(() => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 })
 const current = computed(() => questions.value[index.value])
-const answered = computed(() => picks.value.filter((p) => p !== null).length)
+const answered = computed(() => picks.value.filter((p) => p !== null && p !== '').length)
+// number answers are typed, as in the real PLE paper
+const typedHere = computed(() => !!current.value && typable(current.value.answer))
+const isRight = (i: number) => (typable(questions.value[i].answer) ? sameAnswer(picks.value[i], questions.value[i].answer) : picks.value[i] === questions.value[i].answer)
 
 // ---------- results ----------
-const correctList = computed(() => questions.value.map((q, i) => picks.value[i] === q.answer))
+const correctList = computed(() => questions.value.map((_, i) => isRight(i)))
 const correct = computed(() => correctList.value.filter(Boolean).length)
 const percent = computed(() => (questions.value.length ? Math.round((correct.value / questions.value.length) * 100) : 0))
 const band = computed(() => readinessBand(percent.value))
@@ -129,11 +134,22 @@ onBeforeRouteLeave(() => phase.value === 'review' || confirm('Leave the mock? Yo
           </div>
         </div>
         <p v-if="current.visual && current.visual.length <= 12" class="mb-2 text-4xl">{{ current.visual }}</p>
+        <QuestionDiagram v-if="current.diagram" :d="current.diagram" />
         <p v-if="current.big" class="mb-2 text-4xl font-medium text-ocean">{{ current.big }}</p>
         <p class="text-2xl leading-snug font-bold md:text-3xl">{{ current.prompt }}</p>
       </section>
 
-      <div class="grid gap-3 sm:grid-cols-2">
+      <label v-if="typedHere" class="block rounded-3xl bg-white p-4 shadow-sm">
+        <span class="mb-2 block font-semibold">Type your answer</span>
+        <input
+          v-model="picks[index]"
+          inputmode="decimal"
+          autocomplete="off"
+          class="w-full rounded-2xl border-2 border-ink/15 bg-cream px-4 py-3 text-3xl font-bold tabular-nums outline-none focus:border-ocean"
+          :aria-label="`Answer to question ${index + 1}`"
+        />
+      </label>
+      <div v-else class="grid gap-3 sm:grid-cols-2">
         <button
           v-for="(c, i) in current.choices"
           :key="c"
